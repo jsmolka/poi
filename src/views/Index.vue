@@ -4,9 +4,11 @@
 
 <script setup>
 import { mapboxAccessToken } from '@/common/mapboxAccessToken';
-import LocationMarker from '@/views/LocationMarker.vue';
+import { locations } from '@/data/locations';
+import Marker from '@/views/Marker.vue';
+import MarkerLocation from '@/views/MarkerLocation.vue';
 import { useGeolocation, watchOnce } from '@vueuse/core';
-import { Map, Marker } from 'mapbox-gl';
+import { Map, Marker as MapMarker } from 'mapbox-gl';
 import { computed, createApp, onMounted, watch } from 'vue';
 
 const { coords, isSupported } = useGeolocation();
@@ -28,19 +30,19 @@ const location = computed(() => {
 const center = computed(() => {
   return (
     location.value ?? {
-      lat: 51.3397,
-      lng: 12.3731,
+      lat: 51.34482272560187,
+      lng: 12.381337332992878,
     }
   );
 });
 
 let map = null;
 
-const createMarker = (component, props = {}) => {
+const mount = (component, props = {}) => {
   const div = document.createElement('div');
   const app = createApp(component, props);
   app.mount(div);
-  return new Marker(div);
+  return div;
 };
 
 onMounted(() => {
@@ -58,7 +60,7 @@ onMounted(() => {
   watchOnce(location, (latLng) => {
     map.setCenter(latLng);
 
-    const marker = createMarker(LocationMarker);
+    const marker = new MapMarker(mount(MarkerLocation));
     marker.setLngLat(latLng);
     marker.addTo(map);
 
@@ -66,5 +68,11 @@ onMounted(() => {
       marker.setLngLat(latLng);
     });
   });
+
+  for (const location of locations) {
+    const marker = new MapMarker(mount(Marker));
+    marker.setLngLat(location);
+    marker.addTo(map);
+  }
 });
 </script>
