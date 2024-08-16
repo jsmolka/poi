@@ -11,7 +11,7 @@ onMounted(() => {
   new Map({
     accessToken: mapboxAccessToken,
     container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v11',
+    style: 'mapbox://styles/juliansmolka/clzwx15zy002n01qs7yrr9zsr',
   });
 });
 </script>
