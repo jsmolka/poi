@@ -10,6 +10,7 @@ const brands = [
   'Aral',
   'Shell',
   'Total',
+  'ELAN',
   'Esso',
   'Avia',
   'Jet',
@@ -20,6 +21,7 @@ const brands = [
   'Eni',
   'Tamoil',
   'HEM',
+  'OMV',
   'Westfalen',
   'Hoyer',
   'Oil!',
@@ -50,7 +52,6 @@ async function readCsv(file, options = { headers: true }) {
       });
   });
 }
-
 function relative(...paths) {
   const cwd = dirname(fileURLToPath(import.meta.url));
   return resolve(cwd, ...paths);
