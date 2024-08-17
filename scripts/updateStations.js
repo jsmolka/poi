@@ -3,26 +3,85 @@ import { writeFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
-async function read(file) {
-  const rows = [];
+// Station brands by count
+// https://de.wikipedia.org/wiki/Tankstelle#Anzahl_von_Tankstellen_in_Deutschland
+const brands = [
+  'BFT',
+  'Aral',
+  'Shell',
+  'Total',
+  'Esso',
+  'Avia',
+  'Jet',
+  'Raiffeisen',
+  'Star',
+  'Orlen',
+  'Agip',
+  'Eni',
+  'Tamoil',
+  'HEM',
+  'Westfalen',
+  'Hoyer',
+  'Oil!',
+  'Q1',
+  'Classic',
+  'Nordoel',
+  'team',
+  'Calpam',
+  'Sprint',
+  'Score',
+  'Bavaria',
+  'Allguth',
+  'Pinoil',
+  'Mundorf',
+  'SVG',
+];
+
+async function readCsv(file, options = { headers: true }) {
+  const data = [];
   return new Promise((resolve) => {
     csv
-      .parseFile(file, { headers: true })
-      .on('data', (row) => {
-        rows.push(row);
+      .parseFile(file, options)
+      .on('data', (item) => {
+        data.push(item);
       })
       .on('end', () => {
-        resolve(rows);
+        resolve(data);
       });
   });
 }
 
-async function main() {
+function relative(...paths) {
   const cwd = dirname(fileURLToPath(import.meta.url));
-  const rows = await read(resolve(cwd, 'stations.csv'));
+  return resolve(cwd, ...paths);
+}
+
+async function main() {
+  const data = await readCsv(relative('stations.csv'));
+
+  // Normalize brand names
+  for (const item of data) {
+    for (const brand of brands) {
+      if (item.brand.toLowerCase().includes(brand.toLowerCase())) {
+        item.brand = brand;
+        break;
+      }
+    }
+  }
+
   writeFileSync(
-    resolve(cwd, '../src/data/stations.json'),
-    JSON.stringify(rows.map((row) => ({ lng: row.longitude, lat: row.latitude }))),
+    relative('../src/data/stations.json'),
+    JSON.stringify(
+      data
+        .filter((item) => brands.some((brand) => item.brand === brand))
+        .map((item) => ({
+          brand: item.brand,
+          lat: parseFloat(item.latitude),
+          lng: parseFloat(item.longitude),
+        })),
+      null,
+      2,
+    ),
   );
 }
 
