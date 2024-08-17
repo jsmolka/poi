@@ -70,26 +70,32 @@ onMounted(() => {
   });
 
   map.on('load', () => {
-    map.addSource('point', {
+    map.addSource('stations', {
       type: 'geojson',
       data: {
         type: 'FeatureCollection',
-        features: stations.map((loc) => ({
+        features: stations.map((station) => ({
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [loc.lng, loc.lat],
+            coordinates: [station.lng, station.lat],
           },
         })),
       },
     });
 
     map.addLayer({
-      id: 'point',
+      id: 'stations',
       type: 'circle',
-      source: 'point',
+      source: 'stations',
       paint: {
-        'circle-radius': 8,
+        'circle-radius': {
+          base: 1,
+          stops: [
+            [6, 1],
+            [18, 16],
+          ],
+        },
         'circle-color': colors.shade2.hex,
       },
     });
