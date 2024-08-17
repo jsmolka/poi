@@ -4,8 +4,8 @@
 
 <script setup>
 import { mapboxAccessToken } from '@/common/mapboxAccessToken';
-import { locations } from '@/data/locations';
-import Marker from '@/views/Marker.vue';
+import stations from '@/data/stations.json';
+import { colors } from '@/utils/colors';
 import MarkerLocation from '@/views/MarkerLocation.vue';
 import { useGeolocation, watchOnce } from '@vueuse/core';
 import { Map, Marker as MapMarker } from 'mapbox-gl';
@@ -69,10 +69,30 @@ onMounted(() => {
     });
   });
 
-  for (const location of locations) {
-    const marker = new MapMarker(mount(Marker));
-    marker.setLngLat(location);
-    marker.addTo(map);
-  }
+  map.on('load', () => {
+    map.addSource('point', {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: stations.map((loc) => ({
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [loc.lng, loc.lat],
+          },
+        })),
+      },
+    });
+
+    map.addLayer({
+      id: 'point',
+      type: 'circle',
+      source: 'point',
+      paint: {
+        'circle-radius': 8,
+        'circle-color': colors.shade2.hex,
+      },
+    });
+  });
 });
 </script>
