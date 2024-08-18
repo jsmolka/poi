@@ -1,6 +1,6 @@
 {
   "name": "points-of-interest",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Points of interest.",
   "private": true,
   "type": "module",
