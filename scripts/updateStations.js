@@ -3,40 +3,65 @@ import { writeFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
-// Station brands by count
-// https://de.wikipedia.org/wiki/Tankstelle#Anzahl_von_Tankstellen_in_Deutschland
 const brands = [
-  'BFT',
-  'Aral',
-  'Shell',
-  'Total',
-  'ELAN',
-  'Esso',
-  'Avia',
-  'Jet',
-  'Raiffeisen',
-  'Star',
-  'Orlen',
+  'Access',
   'Agip',
-  'Eni',
-  'Tamoil',
-  'HEM',
-  'OMV',
-  'Westfalen',
-  'Hoyer',
-  'Oil!',
-  'Q1',
-  'Classic',
-  'Nordoel',
-  'team',
-  'Calpam',
-  'Sprint',
-  'Score',
-  'Bavaria',
+  'Albers',
   'Allguth',
-  'Pinoil',
+  'Aral',
+  'Avex',
+  'Avia',
+  'Bavaria',
+  'Bell',
+  'Bergler',
+  'BFT',
+  'Calpam',
+  'Classic',
+  'ED',
+  'ELAN',
+  'Elo',
+  'Eni',
+  'Esso',
+  'Familia',
+  'Felta',
+  'Globus',
+  'GO',
+  'Gulf',
+  'HEM',
+  'HERM',
+  'Hessol',
+  'Honsel',
+  'Hoyer',
+  'Jet',
+  'Joiss',
+  'LTG',
+  'Markant',
   'Mundorf',
+  'Nordoel',
+  'Oil!',
+  'OMV',
+  'Orlen',
+  'Pinoil',
+  'Pludra',
+  'PM',
+  'Q1',
+  'Raiffeisen',
+  'RAN',
+  'Rolfes',
+  'SB',
+  'Score',
+  'Shell',
+  'Sprint',
+  'Star',
+  'Supol',
   'SVG',
+  'Tamoil',
+  'Tankpoint',
+  'TAS',
+  'team',
+  'Total',
+  'TS',
+  'Westfalen',
 ];
 
 async function readCsv(file, options = { headers: true }) {
@@ -79,11 +104,17 @@ async function main() {
 
   // Normalize brand names
   for (const item of data) {
-    const value = (item.brand || item.name).toLowerCase();
-    for (const brand of brands) {
-      if (value.includes(brand.toLowerCase())) {
-        item.brand = brand;
-        break;
+    const words = (item.brand || item.name)
+      .toLowerCase()
+      .replace(/(\(|\))/g, '')
+      .split(/(\s|-)/g);
+
+    brandsLoop: for (const brand of brands) {
+      for (const word of words) {
+        if (word === brand.toLowerCase()) {
+          item.brand = brand;
+          break brandsLoop;
+        }
       }
     }
   }

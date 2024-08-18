@@ -6,7 +6,7 @@
     </div>
     <div class="flex items-center gap-2">
       <div class="size-2 bg-shade-2 rounded-full" />
-      <div>Petrol station</div>
+      <div>Gas station</div>
     </div>
     <div class="flex items-center gap-2">
       <div class="size-2 bg-red rounded-full" />
