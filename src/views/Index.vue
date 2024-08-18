@@ -109,7 +109,7 @@ onMounted(() => {
     });
 
     map.addLayer(createLayer('stations', colors.shade2.hex));
-    map.addLayer(createLayer('graveyards', '#bf616a'));
+    map.addLayer(createLayer('graveyards', colors.red.hex));
 
     const layers = ['stations', 'graveyards'];
 
