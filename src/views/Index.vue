@@ -8,7 +8,7 @@ import stations from '@/data/stations.json';
 import { colors } from '@/utils/colors';
 import LocationMarker from '@/views/LocationMarker.vue';
 import { useGeolocation, watchOnce } from '@vueuse/core';
-import { Map, Marker, ScaleControl } from 'mapbox-gl';
+import { Map, Marker, Popup, ScaleControl } from 'mapbox-gl';
 import { computed, createApp, onMounted, watch } from 'vue';
 
 const { coords, isSupported } = useGeolocation();
@@ -81,6 +81,9 @@ onMounted(() => {
             type: 'Point',
             coordinates: [station.lng, station.lat],
           },
+          properties: {
+            station,
+          },
         })),
       },
     });
@@ -100,6 +103,31 @@ onMounted(() => {
         'circle-color': colors.shade2.hex,
       },
     });
+
+    map.on('mouseenter', 'stations', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+
+    map.on('mouseleave', 'stations', () => {
+      map.getCanvas().style.cursor = '';
+    });
+
+    map.on('click', 'stations', (event) => {
+      const coordinates = event.features[0].geometry.coordinates;
+      const station = JSON.parse(event.features[0].properties.station);
+      new Popup().setLngLat(coordinates).setHTML(`<div>${station.brand}</div>`).addTo(map);
+    });
   });
 });
 </script>
+
+<style lang="scss">
+.mapboxgl-popup-content {
+  @apply bg-shade-6;
+  @apply text-shade-2;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  @apply border-t-shade-6;
+}
+</style>
