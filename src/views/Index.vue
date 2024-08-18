@@ -8,7 +8,7 @@ import stations from '@/data/stations.json';
 import { colors } from '@/utils/colors';
 import LocationMarker from '@/views/LocationMarker.vue';
 import { useGeolocation, watchOnce } from '@vueuse/core';
-import { Map, Marker } from 'mapbox-gl';
+import { Map, Marker, ScaleControl } from 'mapbox-gl';
 import { computed, createApp, onMounted, watch } from 'vue';
 
 const { coords, isSupported } = useGeolocation();
@@ -56,6 +56,7 @@ onMounted(() => {
 
   map.dragRotate.disable();
   map.touchZoomRotate.disableRotation();
+  map.addControl(new ScaleControl());
 
   watchOnce(location, (latLng) => {
     map.setCenter(latLng);
