@@ -7,6 +7,7 @@ import { mapboxAccessToken } from '@/common/mapboxAccessToken';
 import graveyards from '@/data/graveyards.json';
 import stations from '@/data/stations.json';
 import { colors } from '@/utils/colors';
+import Legend from '@/views/Legend.vue';
 import LocationMarker from '@/views/LocationMarker.vue';
 import { useGeolocation, watchOnce } from '@vueuse/core';
 import { Map, Marker, Popup, ScaleControl } from 'mapbox-gl';
@@ -57,6 +58,17 @@ onMounted(() => {
 
   map.dragRotate.disable();
   map.touchZoomRotate.disableRotation();
+
+  map.addControl(
+    {
+      onAdd() {
+        const div = mount(Legend);
+        div.className = 'mapboxgl-ctrl';
+        return div;
+      },
+    },
+    'bottom-left',
+  );
   map.addControl(new ScaleControl());
 
   watchOnce(location, (latLng) => {
@@ -124,10 +136,11 @@ onMounted(() => {
     map.on('click', layers, (event) => {
       const coordinates = event.features[0].geometry.coordinates;
       const location = JSON.parse(event.features[0].properties.location);
-      new Popup({ closeButton: false, maxWidth: '256px' })
-        .setLngLat(coordinates)
-        .setHTML(location.name)
-        .addTo(map);
+
+      const popup = new Popup({ closeButton: false });
+      popup.setLngLat(coordinates);
+      popup.setHTML(location.name);
+      popup.addTo(map);
     });
   });
 });
@@ -138,6 +151,7 @@ onMounted(() => {
   @apply bg-shade-5;
   @apply text-shade-2;
   @apply border-none;
+  @apply rounded-sm;
 }
 
 .mapboxgl-popup-content {
