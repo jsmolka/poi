@@ -64,6 +64,19 @@ const brands = [
   'Westfalen',
 ];
 
+// Relaxed bounding box
+// https://en.wikipedia.org/wiki/Geography_of_Germany#Area
+const germany = {
+  lat: {
+    min: 46,
+    max: 56,
+  },
+  lng: {
+    min: 4,
+    max: 17,
+  },
+};
+
 async function readCsv(file, options = { headers: true }) {
   const data = [];
   return new Promise((resolve) => {
@@ -72,7 +85,12 @@ async function readCsv(file, options = { headers: true }) {
       .on('data', (item) => {
         item.lat = parseFloat(item.lat);
         item.lng = parseFloat(item.lng);
-        if (item.lat !== 0 && item.lng !== 0) {
+        if (
+          item.lat >= germany.lat.min &&
+          item.lat <= germany.lat.max &&
+          item.lng >= germany.lng.min &&
+          item.lng <= germany.lng.max
+        ) {
           data.push(item);
         }
       })
