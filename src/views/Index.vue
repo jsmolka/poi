@@ -115,7 +115,10 @@ onMounted(() => {
     map.on('click', 'stations', (event) => {
       const coordinates = event.features[0].geometry.coordinates;
       const station = JSON.parse(event.features[0].properties.station);
-      new Popup().setLngLat(coordinates).setHTML(`<div>${station.brand}</div>`).addTo(map);
+      new Popup({ closeButton: false, maxWidth: '256px' })
+        .setLngLat(coordinates)
+        .setHTML(station.brand)
+        .addTo(map);
     });
   });
 });
@@ -123,8 +126,11 @@ onMounted(() => {
 
 <style lang="scss">
 .mapboxgl-popup-content {
+  @apply px-2;
+  @apply py-1.5;
   @apply bg-shade-6;
   @apply text-shade-2;
+  @apply rounded-sm;
 }
 
 .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
