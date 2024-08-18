@@ -92,7 +92,7 @@ onMounted(() => {
     map.addSource('stations', createSource(stations));
     map.addSource('graveyards', createSource(graveyards));
 
-    const createLayer = (id) => ({
+    const createLayer = (id, color) => ({
       id,
       type: 'circle',
       source: id,
@@ -104,12 +104,12 @@ onMounted(() => {
             [18, 16],
           ],
         },
-        'circle-color': colors.shade2.hex,
+        'circle-color': color,
       },
     });
 
-    map.addLayer(createLayer('stations'));
-    map.addLayer(createLayer('graveyards'));
+    map.addLayer(createLayer('stations', colors.shade2.hex));
+    map.addLayer(createLayer('graveyards', '#bf616a'));
 
     const layers = ['stations', 'graveyards'];
 
