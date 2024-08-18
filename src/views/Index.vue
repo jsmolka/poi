@@ -1,5 +1,5 @@
 <template>
-  <div id="map" class="h-full" />
+  <div id="map" class="h-full bg-shade-6" />
 </template>
 
 <script setup>
