@@ -45,25 +45,43 @@ async function readCsv(file, options = { headers: true }) {
     csv
       .parseFile(file, options)
       .on('data', (item) => {
-        data.push(item);
+        item.lat = parseFloat(item.lat);
+        item.lng = parseFloat(item.lng);
+        if (item.lat !== 0 && item.lng !== 0) {
+          data.push(item);
+        }
       })
       .on('end', () => {
         resolve(data);
       });
   });
 }
+
 function relative(...paths) {
   const cwd = dirname(fileURLToPath(import.meta.url));
   return resolve(cwd, ...paths);
 }
 
 async function main() {
-  const data = await readCsv(relative('stations.csv'));
+  const data = await readCsv(relative('stations.csv'), {
+    headers: (headers) =>
+      headers.map((header) => {
+        switch (header) {
+          case 'latitude':
+            return 'lat';
+          case 'longitude':
+            return 'lng';
+          default:
+            return header;
+        }
+      }),
+  });
 
   // Normalize brand names
   for (const item of data) {
+    const value = (item.brand || item.name).toLowerCase();
     for (const brand of brands) {
-      if (item.brand.toLowerCase().includes(brand.toLowerCase())) {
+      if (value.includes(brand.toLowerCase())) {
         item.brand = brand;
         break;
       }
@@ -77,8 +95,8 @@ async function main() {
         .filter((item) => brands.some((brand) => item.brand === brand))
         .map((item) => ({
           brand: item.brand,
-          lat: parseFloat(item.latitude),
-          lng: parseFloat(item.longitude),
+          lat: item.lat,
+          lng: item.lng,
         })),
       null,
       2,
