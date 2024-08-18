@@ -125,15 +125,21 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
+.mapboxgl-ctrl-scale {
+  @apply bg-shade-5;
+  @apply text-shade-2;
+  @apply border-none;
+}
+
 .mapboxgl-popup-content {
   @apply px-2;
   @apply py-1.5;
-  @apply bg-shade-6;
+  @apply bg-shade-5;
   @apply text-shade-2;
   @apply rounded-sm;
 }
 
 .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
-  @apply border-t-shade-6;
+  @apply border-t-shade-5;
 }
 </style>
