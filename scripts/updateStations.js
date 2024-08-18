@@ -94,7 +94,7 @@ async function main() {
       data
         .filter((item) => brands.some((brand) => item.brand === brand))
         .map((item) => ({
-          brand: item.brand,
+          name: item.brand,
           lat: item.lat,
           lng: item.lng,
         })),

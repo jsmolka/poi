@@ -4,6 +4,7 @@
 
 <script setup>
 import { mapboxAccessToken } from '@/common/mapboxAccessToken';
+import graveyards from '@/data/graveyards.json';
 import stations from '@/data/stations.json';
 import { colors } from '@/utils/colors';
 import LocationMarker from '@/views/LocationMarker.vue';
@@ -71,27 +72,30 @@ onMounted(() => {
   });
 
   map.on('load', () => {
-    map.addSource('stations', {
+    const createSource = (locations) => ({
       type: 'geojson',
       data: {
         type: 'FeatureCollection',
-        features: stations.map((station) => ({
+        features: locations.map((location) => ({
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [station.lng, station.lat],
+            coordinates: [location.lng, location.lat],
           },
           properties: {
-            station,
+            location,
           },
         })),
       },
     });
 
-    map.addLayer({
-      id: 'stations',
+    map.addSource('stations', createSource(stations));
+    map.addSource('graveyards', createSource(graveyards));
+
+    const createLayer = (id) => ({
+      id,
       type: 'circle',
-      source: 'stations',
+      source: id,
       paint: {
         'circle-radius': {
           base: 1,
@@ -104,20 +108,25 @@ onMounted(() => {
       },
     });
 
-    map.on('mouseenter', 'stations', () => {
+    map.addLayer(createLayer('stations'));
+    map.addLayer(createLayer('graveyards'));
+
+    const layers = ['stations', 'graveyards'];
+
+    map.on('mouseenter', layers, () => {
       map.getCanvas().style.cursor = 'pointer';
     });
 
-    map.on('mouseleave', 'stations', () => {
+    map.on('mouseleave', layers, () => {
       map.getCanvas().style.cursor = '';
     });
 
-    map.on('click', 'stations', (event) => {
+    map.on('click', layers, (event) => {
       const coordinates = event.features[0].geometry.coordinates;
-      const station = JSON.parse(event.features[0].properties.station);
+      const location = JSON.parse(event.features[0].properties.location);
       new Popup({ closeButton: false, maxWidth: '256px' })
         .setLngLat(coordinates)
-        .setHTML(station.brand)
+        .setHTML(location.name)
         .addTo(map);
     });
   });
