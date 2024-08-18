@@ -6,9 +6,9 @@
 import { mapboxAccessToken } from '@/common/mapboxAccessToken';
 import stations from '@/data/stations.json';
 import { colors } from '@/utils/colors';
-import MarkerLocation from '@/views/MarkerLocation.vue';
+import LocationMarker from '@/views/LocationMarker.vue';
 import { useGeolocation, watchOnce } from '@vueuse/core';
-import { Map, Marker as MapMarker } from 'mapbox-gl';
+import { Map, Marker } from 'mapbox-gl';
 import { computed, createApp, onMounted, watch } from 'vue';
 
 const { coords, isSupported } = useGeolocation();
@@ -60,7 +60,7 @@ onMounted(() => {
   watchOnce(location, (latLng) => {
     map.setCenter(latLng);
 
-    const marker = new MapMarker(mount(MarkerLocation));
+    const marker = new Marker(mount(LocationMarker));
     marker.setLngLat(latLng);
     marker.addTo(map);
 
