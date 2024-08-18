@@ -10,6 +10,7 @@ import { colors } from '@/utils/colors';
 import Legend from '@/views/Legend.vue';
 import LocationMarker from '@/views/LocationMarker.vue';
 import { useGeolocation, watchOnce } from '@vueuse/core';
+import _ from 'lodash';
 import { Map, Marker, Popup, ScaleControl } from 'mapbox-gl';
 import { computed, createApp, onMounted, watch } from 'vue';
 
@@ -71,6 +72,11 @@ onMounted(() => {
   );
   map.addControl(new ScaleControl());
 
+  const stops = [
+    [6, 1],
+    [18, 16],
+  ];
+
   watchOnce(location, (latLng) => {
     map.setCenter(latLng);
 
@@ -81,6 +87,24 @@ onMounted(() => {
     watch(location, (latLng) => {
       marker.setLngLat(latLng);
     });
+
+    const scale = (value, min1, max1, min2, max2) => {
+      return ((_.clamp(value, min1, max1) - min1) * (max2 - min2)) / (max1 - min1) + min2;
+    };
+
+    const scaleMarker = () => {
+      const element = marker.getElement().children[0];
+      element.style.transformOrigin = 'center';
+      element.style.transform = `scale(${scale(
+        map.getZoom(),
+        stops[0][0],
+        stops[1][0],
+        1 / (2 * stops[1][1]),
+        1,
+      )})`;
+    };
+    scaleMarker();
+    map.on('zoom', scaleMarker);
   });
 
   map.on('load', () => {
@@ -109,14 +133,8 @@ onMounted(() => {
       type: 'circle',
       source: id,
       paint: {
-        'circle-radius': {
-          base: 1,
-          stops: [
-            [6, 1],
-            [18, 16],
-          ],
-        },
         'circle-color': color,
+        'circle-radius': { stops },
       },
     });
 
