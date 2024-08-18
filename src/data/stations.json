@@ -225,6 +225,11 @@
     "lng": 13.70855
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.89803,
+    "lng": 11.063398
+  },
+  {
     "name": "Shell",
     "lat": 51.928075,
     "lng": 9.626535
@@ -388,6 +393,11 @@
     "name": "Esso",
     "lat": 52.436652,
     "lng": 13.695944
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.08742,
+    "lng": 12.84946
   },
   {
     "name": "TAS",
@@ -670,6 +680,11 @@
     "lng": 7.818036
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.988082,
+    "lng": 7.959252
+  },
+  {
     "name": "Star",
     "lat": 51.816037,
     "lng": 6.612123
@@ -710,6 +725,11 @@
     "lng": 8.029237
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.003346,
+    "lng": 10.117968
+  },
+  {
     "name": "Raiffeisen",
     "lat": 50.74185,
     "lng": 9.47747
@@ -738,6 +758,11 @@
     "name": "Jet",
     "lat": 53.39292,
     "lng": 7.20731
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.340853,
+    "lng": 10.784046
   },
   {
     "name": "Star",
@@ -788,6 +813,11 @@
     "name": "Avia",
     "lat": 50.52405,
     "lng": 11.66134
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.648328,
+    "lng": 10.005961
   },
   {
     "name": "Shell",
@@ -1060,6 +1090,11 @@
     "lng": 13.002695
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.626505,
+    "lng": 9.934207
+  },
+  {
     "name": "Star",
     "lat": 50.921823,
     "lng": 6.929136
@@ -1125,6 +1160,11 @@
     "lng": 10.91357
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.782849,
+    "lng": 12.880382
+  },
+  {
     "name": "Shell",
     "lat": 47.665889,
     "lng": 9.358608
@@ -1160,6 +1200,11 @@
     "lng": 7.75827
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.702771,
+    "lng": 7.116055
+  },
+  {
     "name": "Jet",
     "lat": 49.01323,
     "lng": 8.42873
@@ -1190,9 +1235,19 @@
     "lng": 10.35919
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.039847,
+    "lng": 13.657067
+  },
+  {
     "name": "Aral",
     "lat": 51.818752,
     "lng": 8.659243
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.447369,
+    "lng": 10.584102
   },
   {
     "name": "Aral",
@@ -1338,6 +1393,11 @@
     "name": "Jet",
     "lat": 51.0004,
     "lng": 6.79608
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.028477,
+    "lng": 11.246092
   },
   {
     "name": "Shell",
@@ -1488,6 +1548,11 @@
     "name": "Raiffeisen",
     "lat": 49.981300354004,
     "lng": 6.9049491882324
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.733849,
+    "lng": 8.689568
   },
   {
     "name": "Star",
@@ -1645,6 +1710,16 @@
     "lng": 7.14296
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.146099,
+    "lng": 14.983898
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.543652,
+    "lng": 9.290245
+  },
+  {
     "name": "BFT",
     "lat": 50.644790649414,
     "lng": 9.0318393707275
@@ -1715,6 +1790,11 @@
     "lng": 8.18694
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.165029,
+    "lng": 8.724259
+  },
+  {
     "name": "SB",
     "lat": 48.134536743164,
     "lng": 8.7572937011719
@@ -1753,6 +1833,11 @@
     "name": "Star",
     "lat": 51.902075,
     "lng": 7.638205
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.08313,
+    "lng": 13.76156
   },
   {
     "name": "Shell",
@@ -1970,6 +2055,11 @@
     "lng": 13.60157
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.65733,
+    "lng": 11.383276
+  },
+  {
     "name": "Star",
     "lat": 53.364471,
     "lng": 7.209347
@@ -2065,6 +2155,11 @@
     "lng": 11.01177
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.344918,
+    "lng": 11.987999
+  },
+  {
     "name": "Orlen",
     "lat": 52.509346,
     "lng": 9.117737
@@ -2098,6 +2193,11 @@
     "name": "Avia",
     "lat": 52.03022,
     "lng": 7.099118
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.439863,
+    "lng": 7.214262
   },
   {
     "name": "Aral",
@@ -2205,6 +2305,11 @@
     "lng": 13.56292
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.188318,
+    "lng": 6.994868
+  },
+  {
     "name": "Oil!",
     "lat": 49.9795,
     "lng": 7.931
@@ -2248,6 +2353,11 @@
     "name": "Jet",
     "lat": 51.44985,
     "lng": 7.78036
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.711396,
+    "lng": 9.648948
   },
   {
     "name": "Star",
@@ -2333,6 +2443,11 @@
     "name": "Shell",
     "lat": 54.10993,
     "lng": 12.16812
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.504367,
+    "lng": 10.833668
   },
   {
     "name": "Raiffeisen",
@@ -2520,6 +2635,11 @@
     "lng": 7.082926
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.168945,
+    "lng": 6.875034
+  },
+  {
     "name": "Aral",
     "lat": 50.3253,
     "lng": 7.213625
@@ -2613,6 +2733,11 @@
     "name": "Star",
     "lat": 52.670352,
     "lng": 13.583753
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.299696,
+    "lng": 11.202084
   },
   {
     "name": "Jet",
@@ -2748,6 +2873,11 @@
     "name": "Classic",
     "lat": 53.2189,
     "lng": 8.78161
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.556613,
+    "lng": 13.71417
   },
   {
     "name": "ED",
@@ -2910,6 +3040,11 @@
     "lng": 9.0092153549194
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.7036,
+    "lng": 13.271795
+  },
+  {
     "name": "Avia",
     "lat": 53.00879,
     "lng": 7.49148
@@ -2965,6 +3100,11 @@
     "lng": 8.707331
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.140672,
+    "lng": 12.65012
+  },
+  {
     "name": "Jet",
     "lat": 50.96577,
     "lng": 7.00581
@@ -2983,6 +3123,11 @@
     "name": "Aral",
     "lat": 47.7661,
     "lng": 12.640801
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.902145,
+    "lng": 9.122195
   },
   {
     "name": "Aral",
@@ -3055,6 +3200,11 @@
     "lng": 13.341226
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.23643,
+    "lng": 6.942589
+  },
+  {
     "name": "Star",
     "lat": 52.40539,
     "lng": 9.611252
@@ -3063,6 +3213,11 @@
     "name": "Aral",
     "lat": 49.52605,
     "lng": 8.354932
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.155181,
+    "lng": 9.176363
   },
   {
     "name": "Star",
@@ -3420,6 +3575,11 @@
     "lng": 10.414285
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.475344,
+    "lng": 7.788722
+  },
+  {
     "name": "Jet",
     "lat": 48.2153,
     "lng": 8.95249
@@ -3488,6 +3648,16 @@
     "name": "Esso",
     "lat": 50.324656,
     "lng": 8.790744
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.412624,
+    "lng": 6.894133
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.50397,
+    "lng": 9.21235
   },
   {
     "name": "Star",
@@ -3710,6 +3880,11 @@
     "lng": 9.861645
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.797243,
+    "lng": 12.98743
+  },
+  {
     "name": "Avia",
     "lat": 49.342075358749,
     "lng": 12.534142062164
@@ -3748,6 +3923,11 @@
     "name": "Jet",
     "lat": 51.47568,
     "lng": 7.2343
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.466399,
+    "lng": 13.868065
   },
   {
     "name": "Esso",
@@ -3920,6 +4100,11 @@
     "lng": 7.178255
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.135286,
+    "lng": 8.400434
+  },
+  {
     "name": "BFT",
     "lat": 47.77569,
     "lng": 9.377067
@@ -4090,6 +4275,16 @@
     "lng": 9.029866
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.893761,
+    "lng": 12.455094
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.729522,
+    "lng": 14.629268
+  },
+  {
     "name": "BFT",
     "lat": 50.95337,
     "lng": 6.92766
@@ -4155,9 +4350,19 @@
     "lng": 12.134007
   },
   {
+    "name": "TotalEnergies",
+    "lat": 47.735831,
+    "lng": 9.341367
+  },
+  {
     "name": "Esso",
     "lat": 50.812627,
     "lng": 12.810819
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.53158,
+    "lng": 8.066086
   },
   {
     "name": "Aral",
@@ -4293,6 +4498,11 @@
     "name": "Jet",
     "lat": 53.55823,
     "lng": 8.56462
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.131509,
+    "lng": 12.062656
   },
   {
     "name": "SB",
@@ -4485,6 +4695,11 @@
     "lng": 7.969346
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.450165,
+    "lng": 8.423482
+  },
+  {
     "name": "BFT",
     "lat": 48.726157,
     "lng": 8.633988
@@ -4635,6 +4850,11 @@
     "lng": 6.85731
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.2843,
+    "lng": 13.630328
+  },
+  {
     "name": "Aral",
     "lat": 53.52223,
     "lng": 10.244515
@@ -4710,6 +4930,11 @@
     "lng": 8.59911
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.546928,
+    "lng": 8.159311
+  },
+  {
     "name": "Tamoil",
     "lat": 50.76933333,
     "lng": 7.47786667
@@ -4773,6 +4998,11 @@
     "name": "Jet",
     "lat": 48.8937,
     "lng": 8.69659
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.524975,
+    "lng": 7.262966
   },
   {
     "name": "Aral",
@@ -4850,9 +5080,24 @@
     "lng": 6.690727
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.647913,
+    "lng": 12.265485
+  },
+  {
     "name": "Jet",
     "lat": 48.6979,
     "lng": 9.22086
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.360818,
+    "lng": 7.375968
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.532499,
+    "lng": 8.649999
   },
   {
     "name": "Aral",
@@ -5070,6 +5315,11 @@
     "lng": 10.097095
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.404265,
+    "lng": 8.682606
+  },
+  {
     "name": "TS",
     "lat": 50.62498,
     "lng": 6.96036
@@ -5160,6 +5410,11 @@
     "lng": 8.199483
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.382371,
+    "lng": 13.088523
+  },
+  {
     "name": "Jet",
     "lat": 51.62705,
     "lng": 6.57813
@@ -5188,6 +5443,11 @@
     "name": "Esso",
     "lat": 48.137168,
     "lng": 11.621395
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.436633,
+    "lng": 11.174675
   },
   {
     "name": "Aral",
@@ -5263,6 +5523,11 @@
     "name": "Oil!",
     "lat": 49.8427,
     "lng": 8.17525
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.815767,
+    "lng": 8.08796
   },
   {
     "name": "Shell",
@@ -5375,6 +5640,11 @@
     "lng": 6.92024
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.287732,
+    "lng": 14.820038
+  },
+  {
     "name": "Jet",
     "lat": 50.82281,
     "lng": 6.25243
@@ -5403,6 +5673,11 @@
     "name": "Esso",
     "lat": 48.9303,
     "lng": 9.4811
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.363467,
+    "lng": 6.863279
   },
   {
     "name": "Aral",
@@ -5460,6 +5735,11 @@
     "lng": 8.575004
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.140392,
+    "lng": 13.797571
+  },
+  {
     "name": "BFT",
     "lat": 49.931819915771,
     "lng": 11.971779823303
@@ -5493,6 +5773,11 @@
     "name": "Aral",
     "lat": 50.30041,
     "lng": 8.236824
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.746735,
+    "lng": 12.74194
   },
   {
     "name": "Jet",
@@ -5540,6 +5825,11 @@
     "lng": 10.359544
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.048005,
+    "lng": 10.942121
+  },
+  {
     "name": "Avia",
     "lat": 50.523013074998,
     "lng": 10.363201976999
@@ -5555,9 +5845,19 @@
     "lng": 7.180465
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.30046,
+    "lng": 8.645012
+  },
+  {
     "name": "Nordoel",
     "lat": 52.951186,
     "lng": 11.948831
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.364087,
+    "lng": 11.287002
   },
   {
     "name": "Jet",
@@ -5735,6 +6035,11 @@
     "lng": 8.158241
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.5994,
+    "lng": 12.297083
+  },
+  {
     "name": "Jet",
     "lat": 54.46294,
     "lng": 9.83994
@@ -5790,6 +6095,11 @@
     "lng": 9.73714
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.586291,
+    "lng": 11.838674
+  },
+  {
     "name": "BFT",
     "lat": 49.7745,
     "lng": 10.4649
@@ -5833,6 +6143,11 @@
     "name": "ELAN",
     "lat": 51.288641,
     "lng": 9.471839
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.708883,
+    "lng": 11.806677
   },
   {
     "name": "Jet",
@@ -5990,6 +6305,11 @@
     "lng": 8.120672
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.447844,
+    "lng": 7.786557
+  },
+  {
     "name": "OMV",
     "lat": 49.96434,
     "lng": 9.15247
@@ -6015,6 +6335,11 @@
     "lng": 10.924327
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.587316,
+    "lng": 7.326022
+  },
+  {
     "name": "BFT",
     "lat": 51.3775163,
     "lng": 7.7635197
@@ -6033,6 +6358,11 @@
     "name": "Aral",
     "lat": 49.577007,
     "lng": 10.986522
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.804144,
+    "lng": 11.738516
   },
   {
     "name": "Pludra",
@@ -6078,6 +6408,11 @@
     "name": "Score",
     "lat": 53.475252,
     "lng": 7.326286
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.402414,
+    "lng": 13.602854
   },
   {
     "name": "SB",
@@ -6263,6 +6598,11 @@
     "name": "Jet",
     "lat": 48.6285,
     "lng": 9.33945
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.537242,
+    "lng": 13.375376
   },
   {
     "name": "Jet",
@@ -6565,6 +6905,11 @@
     "lng": 10.171886
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.152839,
+    "lng": 8.180473
+  },
+  {
     "name": "Avia",
     "lat": 51.048656,
     "lng": 9.662755
@@ -6655,6 +7000,11 @@
     "lng": 7.57018
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.642863,
+    "lng": 13.696318
+  },
+  {
     "name": "Orlen",
     "lat": 53.170655,
     "lng": 8.635749
@@ -6688,6 +7038,11 @@
     "name": "Aral",
     "lat": 52.581387,
     "lng": 13.291377
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.507398,
+    "lng": 8.636922
   },
   {
     "name": "Esso",
@@ -6850,9 +7205,19 @@
     "lng": 11.623856
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.216822,
+    "lng": 8.253954
+  },
+  {
     "name": "Esso",
     "lat": 52.247423,
     "lng": 10.821691
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.036099,
+    "lng": 13.748482
   },
   {
     "name": "Esso",
@@ -6900,9 +7265,19 @@
     "lng": 9.05775
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.280475,
+    "lng": 10.573746
+  },
+  {
     "name": "Aral",
     "lat": 50.141445,
     "lng": 8.609893
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.465322,
+    "lng": 10.542578
   },
   {
     "name": "Esso",
@@ -6963,6 +7338,11 @@
     "name": "Aral",
     "lat": 51.212322,
     "lng": 6.448193
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.840122,
+    "lng": 11.753641
   },
   {
     "name": "Jet",
@@ -7125,6 +7505,11 @@
     "lng": 7.671221
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.419762,
+    "lng": 6.786564
+  },
+  {
     "name": "Aral",
     "lat": 49.56729,
     "lng": 11.327495
@@ -7168,6 +7553,16 @@
     "name": "SB",
     "lat": 49.431767,
     "lng": 11.88723
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.792288,
+    "lng": 11.129096
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.001296,
+    "lng": 11.746876
   },
   {
     "name": "Star",
@@ -7275,6 +7670,11 @@
     "lng": 9.071075
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.330122,
+    "lng": 13.404113
+  },
+  {
     "name": "Oil!",
     "lat": 51.3965,
     "lng": 14.3942
@@ -7350,6 +7750,11 @@
     "lng": 6.99662
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.708687,
+    "lng": 13.106989
+  },
+  {
     "name": "Avia",
     "lat": 49.36957,
     "lng": 12.70373
@@ -7408,6 +7813,11 @@
     "name": "Aral",
     "lat": 50.071472,
     "lng": 8.245563
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.060944,
+    "lng": 10.010858
   },
   {
     "name": "Aral",
@@ -7560,6 +7970,11 @@
     "lng": 6.99761
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.642589,
+    "lng": 8.553434
+  },
+  {
     "name": "ED",
     "lat": 50.370136,
     "lng": 7.570178
@@ -7573,6 +7988,11 @@
     "name": "Aral",
     "lat": 49.608467,
     "lng": 8.181643
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.06247,
+    "lng": 13.291189
   },
   {
     "name": "Aral",
@@ -7720,9 +8140,19 @@
     "lng": 7.265088
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.066445,
+    "lng": 6.088018
+  },
+  {
     "name": "Aral",
     "lat": 53.942005,
     "lng": 10.30004
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.191867,
+    "lng": 7.599652
   },
   {
     "name": "Oil!",
@@ -7765,6 +8195,11 @@
     "lng": 14.079668
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.657426,
+    "lng": 11.347354
+  },
+  {
     "name": "Star",
     "lat": 53.416395,
     "lng": 7.971508
@@ -7788,6 +8223,11 @@
     "name": "Raiffeisen",
     "lat": 52.2745,
     "lng": 9.359885
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.745128,
+    "lng": 6.691606
   },
   {
     "name": "RAN",
@@ -7845,6 +8285,11 @@
     "lng": 7.023379
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.2939,
+    "lng": 6.892088
+  },
+  {
     "name": "Shell",
     "lat": 48.740129,
     "lng": 10.115569
@@ -7863,6 +8308,11 @@
     "name": "Esso",
     "lat": 49.405044,
     "lng": 11.111215
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.266699,
+    "lng": 6.551393
   },
   {
     "name": "Shell",
@@ -7908,6 +8358,11 @@
     "name": "Shell",
     "lat": 50.4817,
     "lng": 8.28463
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.822349,
+    "lng": 9.285043
   },
   {
     "name": "Esso",
@@ -8010,6 +8465,11 @@
     "lng": 9.847839
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.554041,
+    "lng": 10.063172
+  },
+  {
     "name": "Aral",
     "lat": 51.406857,
     "lng": 6.327047
@@ -8033,6 +8493,16 @@
     "name": "Shell",
     "lat": 50.744104,
     "lng": 7.053082
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.58809,
+    "lng": 10.71919
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.504121,
+    "lng": 7.510754
   },
   {
     "name": "Aral",
@@ -8230,6 +8700,11 @@
     "lng": 8.95304
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.485222,
+    "lng": 10.210361
+  },
+  {
     "name": "Shell",
     "lat": 51.558457,
     "lng": 8.127861
@@ -8325,6 +8800,11 @@
     "lng": 9.246882
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.931393,
+    "lng": 10.950915
+  },
+  {
     "name": "Esso",
     "lat": 53.847001,
     "lng": 8.685481
@@ -8353,6 +8833,11 @@
     "name": "Aral",
     "lat": 49.704643,
     "lng": 8.333475
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.155687,
+    "lng": 11.986555
   },
   {
     "name": "Aral",
@@ -8460,6 +8945,11 @@
     "lng": 6.913608
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.279604,
+    "lng": 10.505423
+  },
+  {
     "name": "Markant",
     "lat": 52.02606,
     "lng": 8.91595
@@ -8498,6 +8988,11 @@
     "name": "SB",
     "lat": 51.738697,
     "lng": 6.285855
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.087051,
+    "lng": 13.640393
   },
   {
     "name": "Classic",
@@ -8585,6 +9080,11 @@
     "lng": 13.555774
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.836608,
+    "lng": 7.877203
+  },
+  {
     "name": "Raiffeisen",
     "lat": 52.79882,
     "lng": 10.914455
@@ -8593,6 +9093,11 @@
     "name": "Shell",
     "lat": 51.362814,
     "lng": 6.610518
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.269119,
+    "lng": 7.717478
   },
   {
     "name": "Esso",
@@ -8625,6 +9130,11 @@
     "lng": 11.448307
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.460773,
+    "lng": 8.569707
+  },
+  {
     "name": "Esso",
     "lat": 51.079587,
     "lng": 13.659717
@@ -8643,6 +9153,11 @@
     "name": "Gulf",
     "lat": 51.1336,
     "lng": 14.7706
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.865663,
+    "lng": 12.615115
   },
   {
     "name": "Aral",
@@ -8668,6 +9183,11 @@
     "name": "Esso",
     "lat": 51.53389,
     "lng": 9.908078
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.337642,
+    "lng": 10.417812
   },
   {
     "name": "Westfalen",
@@ -8855,6 +9375,11 @@
     "lng": 10.90886
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.457298,
+    "lng": 7.801527
+  },
+  {
     "name": "Shell",
     "lat": 50.369627,
     "lng": 8.018524
@@ -8903,6 +9428,11 @@
     "name": "Aral",
     "lat": 52.314495,
     "lng": 13.662701
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.767666,
+    "lng": 11.064826
   },
   {
     "name": "Aral",
@@ -8955,6 +9485,11 @@
     "lng": 9.953411
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.680566,
+    "lng": 12.592741
+  },
+  {
     "name": "team",
     "lat": 54.6215,
     "lng": 9.37943
@@ -8983,6 +9518,11 @@
     "name": "Aral",
     "lat": 50.974747,
     "lng": 6.970322
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.181043,
+    "lng": 7.174071
   },
   {
     "name": "Star",
@@ -9020,6 +9560,11 @@
     "lng": 8.423204
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.586399,
+    "lng": 13.064999
+  },
+  {
     "name": "Star",
     "lat": 50.829489,
     "lng": 12.940287
@@ -9035,9 +9580,19 @@
     "lng": 10.501871
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.25707,
+    "lng": 6.486893
+  },
+  {
     "name": "Avia",
     "lat": 49.4784,
     "lng": 7.63697
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.081546,
+    "lng": 11.815554
   },
   {
     "name": "Esso",
@@ -9060,6 +9615,11 @@
     "lng": 11.859816
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.785857,
+    "lng": 12.570469
+  },
+  {
     "name": "Q1",
     "lat": 51.2839,
     "lng": 9.631
@@ -9073,6 +9633,11 @@
     "name": "Bell",
     "lat": 50.6934,
     "lng": 7.654354
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.642172,
+    "lng": 9.433691
   },
   {
     "name": "BFT",
@@ -9090,6 +9655,11 @@
     "lng": 11.377887
   },
   {
+    "name": "TotalEnergies",
+    "lat": 54.109253,
+    "lng": 13.05623
+  },
+  {
     "name": "Felta",
     "lat": 52.9527,
     "lng": 10.5482
@@ -9098,6 +9668,11 @@
     "name": "Esso",
     "lat": 48.408175,
     "lng": 9.787762
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.360433,
+    "lng": 8.526936
   },
   {
     "name": "Shell",
@@ -9240,6 +9815,11 @@
     "lng": 6.104749
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.582894,
+    "lng": 13.404284
+  },
+  {
     "name": "Orlen",
     "lat": 51.016019,
     "lng": 13.770903
@@ -9268,6 +9848,11 @@
     "name": "Esso",
     "lat": 53.157509,
     "lng": 8.221297
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.848763,
+    "lng": 12.240352
   },
   {
     "name": "Aral",
@@ -9330,6 +9915,11 @@
     "lng": 8.349439
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.660755,
+    "lng": 7.73613
+  },
+  {
     "name": "Esso",
     "lat": 51.531512,
     "lng": 12.124019
@@ -9353,6 +9943,11 @@
     "name": "Shell",
     "lat": 48.500088,
     "lng": 9.21878
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.800822,
+    "lng": 6.162648
   },
   {
     "name": "Aral",
@@ -9458,6 +10053,11 @@
     "name": "Aral",
     "lat": 50.618107,
     "lng": 6.651867
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.117154,
+    "lng": 13.363749
   },
   {
     "name": "Esso",
@@ -9700,6 +10300,11 @@
     "lng": 12.122612
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.334795,
+    "lng": 7.048918
+  },
+  {
     "name": "Star",
     "lat": 51.113393,
     "lng": 13.896483
@@ -9775,6 +10380,11 @@
     "lng": 7.4405
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.171938,
+    "lng": 7.089516
+  },
+  {
     "name": "BFT",
     "lat": 51.284911,
     "lng": 6.365688
@@ -9808,6 +10418,11 @@
     "name": "BFT",
     "lat": 48.34828,
     "lng": 8.0696
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.346111,
+    "lng": 12.373611
   },
   {
     "name": "Star",
@@ -9853,6 +10468,11 @@
     "name": "Esso",
     "lat": 50.73184136,
     "lng": 6.210677352
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.943099,
+    "lng": 13.913482
   },
   {
     "name": "Shell",
@@ -10990,6 +11610,11 @@
     "lng": 7.034375
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.420064,
+    "lng": 9.0091
+  },
+  {
     "name": "BFT",
     "lat": 50.1108166,
     "lng": 8.55194
@@ -11035,6 +11660,11 @@
     "lng": 12.15885
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.861427,
+    "lng": 8.646803
+  },
+  {
     "name": "Avia",
     "lat": 49.02864,
     "lng": 12.20431
@@ -11068,6 +11698,11 @@
     "name": "Aral",
     "lat": 48.086857,
     "lng": 9.211907
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.585858,
+    "lng": 13.231867
   },
   {
     "name": "ELAN",
@@ -11240,6 +11875,11 @@
     "lng": 6.966327
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.118728,
+    "lng": 7.893328
+  },
+  {
     "name": "Avia",
     "lat": 48.72639,
     "lng": 13.59633
@@ -11265,6 +11905,11 @@
     "lng": 11.302749355871
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.556247,
+    "lng": 13.312756
+  },
+  {
     "name": "BFT",
     "lat": 51.515793,
     "lng": 9.953711
@@ -11285,9 +11930,19 @@
     "lng": 9.839136
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.16795,
+    "lng": 6.59075
+  },
+  {
     "name": "Esso",
     "lat": 51.303487,
     "lng": 6.671054
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.422285,
+    "lng": 11.166052
   },
   {
     "name": "Jet",
@@ -11320,6 +11975,11 @@
     "lng": 8.45347
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.143433,
+    "lng": 7.207813
+  },
+  {
     "name": "BFT",
     "lat": 48.744021,
     "lng": 8.729947
@@ -11333,6 +11993,11 @@
     "name": "Shell",
     "lat": 51.20781,
     "lng": 7.655383
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.045712,
+    "lng": 9.263923
   },
   {
     "name": "Star",
@@ -11358,6 +12023,11 @@
     "name": "Aral",
     "lat": 51.38057,
     "lng": 7.68189
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.468021,
+    "lng": 7.492767
   },
   {
     "name": "Jet",
@@ -11400,6 +12070,11 @@
     "lng": 7.986355
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.44367,
+    "lng": 9.608598
+  },
+  {
     "name": "Aral",
     "lat": 48.511715,
     "lng": 9.204224
@@ -11418,6 +12093,11 @@
     "name": "Shell",
     "lat": 48.168581,
     "lng": 11.586574
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.331734,
+    "lng": 13.431131
   },
   {
     "name": "Sprint",
@@ -11495,6 +12175,11 @@
     "lng": 11.556605
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.600769,
+    "lng": 10.625707
+  },
+  {
     "name": "Aral",
     "lat": 49.205822,
     "lng": 12.486366
@@ -11518,6 +12203,11 @@
     "name": "SB",
     "lat": 50.764325,
     "lng": 6.080526
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.170615,
+    "lng": 9.859743
   },
   {
     "name": "Aral",
@@ -11640,6 +12330,11 @@
     "lng": 7.801762
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.710188,
+    "lng": 8.833537
+  },
+  {
     "name": "Raiffeisen",
     "lat": 52.544399261475,
     "lng": 6.7381401062012
@@ -11738,6 +12433,11 @@
     "name": "Star",
     "lat": 50.658904,
     "lng": 11.34891
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.812335,
+    "lng": 6.474528
   },
   {
     "name": "BFT",
@@ -11880,6 +12580,11 @@
     "lng": 11.428295
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.318361,
+    "lng": 11.691502
+  },
+  {
     "name": "Star",
     "lat": 52.799787,
     "lng": 9.969816
@@ -11908,6 +12613,16 @@
     "name": "Star",
     "lat": 52.850464,
     "lng": 8.727202
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.071391,
+    "lng": 14.254327
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.897853,
+    "lng": 10.183157
   },
   {
     "name": "Aral",
@@ -12060,6 +12775,11 @@
     "lng": 8.634045
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.439823,
+    "lng": 7.226107
+  },
+  {
     "name": "Westfalen",
     "lat": 52.08164,
     "lng": 7.00225
@@ -12098,6 +12818,11 @@
     "name": "Jet",
     "lat": 51.52633,
     "lng": 9.88048
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.049195,
+    "lng": 13.793189
   },
   {
     "name": "Raiffeisen",
@@ -12215,6 +12940,11 @@
     "lng": 7.629157
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.385538,
+    "lng": 13.109646
+  },
+  {
     "name": "Avia",
     "lat": 48.736704942226,
     "lng": 12.191201837808
@@ -12245,6 +12975,11 @@
     "lng": 11.24299838
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.064376,
+    "lng": 13.763571
+  },
+  {
     "name": "Shell",
     "lat": 49.799129,
     "lng": 9.946224
@@ -12253,6 +12988,11 @@
     "name": "BFT",
     "lat": 50.74721,
     "lng": 13.4894
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.481699,
+    "lng": 11.945292
   },
   {
     "name": "Calpam",
@@ -12283,6 +13023,11 @@
     "name": "Star",
     "lat": 50.749859,
     "lng": 13.062141
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.26583,
+    "lng": 8.133551
   },
   {
     "name": "Aral",
@@ -12485,6 +13230,11 @@
     "lng": 8.523771
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.003057,
+    "lng": 13.086964
+  },
+  {
     "name": "Avia",
     "lat": 50.019937499421,
     "lng": 11.386201082965
@@ -12620,6 +13370,11 @@
     "lng": 11.26198
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.810308,
+    "lng": 8.310143
+  },
+  {
     "name": "Avia",
     "lat": 53.8912,
     "lng": 12.24949
@@ -12720,9 +13475,24 @@
     "lng": 9.384148
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.82864,
+    "lng": 8.80122
+  },
+  {
     "name": "Avia",
     "lat": 48.75751,
     "lng": 11.84877
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.638707,
+    "lng": 9.893509
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.049725,
+    "lng": 12.556274
   },
   {
     "name": "BFT",
@@ -12800,6 +13570,11 @@
     "lng": 7.318657
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.878548,
+    "lng": 12.82176
+  },
+  {
     "name": "Aral",
     "lat": 48.445885,
     "lng": 10.21254
@@ -12853,6 +13628,11 @@
     "name": "Esso",
     "lat": 48.372293,
     "lng": 10.88873
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.769437,
+    "lng": 10.470366
   },
   {
     "name": "HEM",
@@ -13048,6 +13828,11 @@
     "name": "Star",
     "lat": 50.764237,
     "lng": 13.757474
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.153883,
+    "lng": 9.929226
   },
   {
     "name": "HEM",
@@ -13285,6 +14070,16 @@
     "lng": 10.2273515
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.132339,
+    "lng": 12.50571
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.81976,
+    "lng": 6.532959
+  },
+  {
     "name": "Aral",
     "lat": 50.809383,
     "lng": 6.144159
@@ -13373,6 +14168,11 @@
     "name": "Aral",
     "lat": 51.88875,
     "lng": 13.837191
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.931279,
+    "lng": 6.962356
   },
   {
     "name": "Esso",
@@ -13480,6 +14280,11 @@
     "lng": 10.075801
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.426045,
+    "lng": 7.675567
+  },
+  {
     "name": "Shell",
     "lat": 52.393289,
     "lng": 13.218789
@@ -13498,6 +14303,11 @@
     "name": "Avia",
     "lat": 48.6057,
     "lng": 9.76001
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.738262,
+    "lng": 13.249142
   },
   {
     "name": "Westfalen",
@@ -13670,6 +14480,11 @@
     "lng": 9.4768
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.216242,
+    "lng": 10.463415
+  },
+  {
     "name": "Tankpoint",
     "lat": 54.78188407,
     "lng": 8.85187843
@@ -13710,6 +14525,16 @@
     "lng": 11.87841
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.883315,
+    "lng": 13.704688
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.457048,
+    "lng": 13.436356
+  },
+  {
     "name": "Esso",
     "lat": 47.652412,
     "lng": 9.48372
@@ -13738,6 +14563,11 @@
     "name": "Shell",
     "lat": 48.186541,
     "lng": 11.561132
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.069233,
+    "lng": 6.881855
   },
   {
     "name": "Aral",
@@ -13850,6 +14680,11 @@
     "lng": 11.932847
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.902733,
+    "lng": 11.404688
+  },
+  {
     "name": "Raiffeisen",
     "lat": 53.09865,
     "lng": 9.977
@@ -13903,6 +14738,11 @@
     "name": "Aral",
     "lat": 50.928047,
     "lng": 6.365275
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.141251,
+    "lng": 11.623434
   },
   {
     "name": "Aral",
@@ -14095,6 +14935,11 @@
     "lng": 7.819616
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.753051,
+    "lng": 14.297501
+  },
+  {
     "name": "GO",
     "lat": 51.744319,
     "lng": 7.881927
@@ -14143,6 +14988,11 @@
     "name": "PM",
     "lat": 51.514225,
     "lng": 6.328181
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.008008,
+    "lng": 12.453298
   },
   {
     "name": "Esso",
@@ -14350,9 +15200,19 @@
     "lng": 11.7942
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.565599,
+    "lng": 13.491795
+  },
+  {
     "name": "Avia",
     "lat": 48.4207,
     "lng": 9.0403
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.385834,
+    "lng": 10.735236
   },
   {
     "name": "BFT",
@@ -14460,6 +15320,16 @@
     "lng": 12.869132
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.237716,
+    "lng": 12.055587
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.222132,
+    "lng": 6.820284
+  },
+  {
     "name": "Jet",
     "lat": 51.25348,
     "lng": 6.39849
@@ -14515,6 +15385,11 @@
     "lng": 9.483775
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.340698,
+    "lng": 14.529344
+  },
+  {
     "name": "Avia",
     "lat": 50.03699,
     "lng": 8.625066
@@ -14558,6 +15433,11 @@
     "name": "Avia",
     "lat": 49.36398,
     "lng": 10.30873
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.252376,
+    "lng": 12.9861
   },
   {
     "name": "Esso",
@@ -14895,6 +15775,11 @@
     "lng": 13.07117
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.196899,
+    "lng": 13.314181
+  },
+  {
     "name": "BFT",
     "lat": 51.6433007,
     "lng": 6.7629576
@@ -14933,6 +15818,11 @@
     "name": "Aral",
     "lat": 50.95316,
     "lng": 13.938441
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.28373,
+    "lng": 11.875212
   },
   {
     "name": "Jet",
@@ -15230,6 +16120,11 @@
     "lng": 8.470242
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.358646,
+    "lng": 7.261169
+  },
+  {
     "name": "Shell",
     "lat": 48.810788,
     "lng": 8.92719
@@ -15405,6 +16300,11 @@
     "lng": 10.0572
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.700237,
+    "lng": 12.897694
+  },
+  {
     "name": "Aral",
     "lat": 53.608547,
     "lng": 10.190714
@@ -15490,9 +16390,19 @@
     "lng": 8.721109
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.192311,
+    "lng": 11.564284
+  },
+  {
     "name": "GO",
     "lat": 51.32649,
     "lng": 12.312083
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.286706,
+    "lng": 9.529284
   },
   {
     "name": "Bavaria",
@@ -15500,14 +16410,29 @@
     "lng": 12.270607
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.970639,
+    "lng": 11.17414
+  },
+  {
     "name": "SVG",
     "lat": 50.8889,
     "lng": 6.9249
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.367647,
+    "lng": 11.73191
+  },
+  {
     "name": "Aral",
     "lat": 52.136566,
     "lng": 9.970387
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.825771,
+    "lng": 10.160083
   },
   {
     "name": "Aral",
@@ -15520,9 +16445,29 @@
     "lng": 9.58023
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.108268,
+    "lng": 8.968889
+  },
+  {
     "name": "Oil!",
     "lat": 51.381,
     "lng": 12.7401
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.343231,
+    "lng": 12.395467
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.787241,
+    "lng": 11.742624
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.519193,
+    "lng": 11.95504
   },
   {
     "name": "Aral",
@@ -15530,9 +16475,19 @@
     "lng": 9.007651
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.088522,
+    "lng": 13.179147
+  },
+  {
     "name": "Raiffeisen",
     "lat": 51.50741,
     "lng": 8.170376
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.271143,
+    "lng": 13.537723
   },
   {
     "name": "Classic",
@@ -15558,6 +16513,11 @@
     "name": "Raiffeisen",
     "lat": 53.06467,
     "lng": 10.88571
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.701059,
+    "lng": 11.614298
   },
   {
     "name": "Westfalen",
@@ -15650,6 +16610,11 @@
     "lng": 8.60288
   },
   {
+    "name": "TotalEnergies",
+    "lat": 54.067402,
+    "lng": 13.919616
+  },
+  {
     "name": "Shell",
     "lat": 49.465979,
     "lng": 8.978889
@@ -15675,6 +16640,11 @@
     "lng": 9.3911
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.494437,
+    "lng": 10.81467
+  },
+  {
     "name": "Avia",
     "lat": 52.84159,
     "lng": 7.101053
@@ -15698,6 +16668,11 @@
     "name": "BFT",
     "lat": 48.49022,
     "lng": 8.59959
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.932023,
+    "lng": 11.57218
   },
   {
     "name": "Oil!",
@@ -15940,6 +16915,11 @@
     "lng": 11.46014
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.371793,
+    "lng": 11.982872
+  },
+  {
     "name": "Mundorf",
     "lat": 50.8191,
     "lng": 7.113401
@@ -16043,6 +17023,11 @@
     "name": "Shell",
     "lat": 53.550593,
     "lng": 10.059729
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.838653,
+    "lng": 13.714726
   },
   {
     "name": "Aral",
@@ -16190,6 +17175,11 @@
     "lng": 9.566276
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.032199,
+    "lng": 13.710689
+  },
+  {
     "name": "Gulf",
     "lat": 52.2888,
     "lng": 13.0057
@@ -16255,6 +17245,11 @@
     "lng": 8.895533
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.651634,
+    "lng": 9.246344
+  },
+  {
     "name": "Supol",
     "lat": 49.2859158,
     "lng": 10.5662908
@@ -16285,6 +17280,11 @@
     "lng": 8.92863
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.17169,
+    "lng": 13.140833
+  },
+  {
     "name": "Supol",
     "lat": 49.434896,
     "lng": 11.124902
@@ -16293,6 +17293,11 @@
     "name": "Markant",
     "lat": 51.55736,
     "lng": 6.79608
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.437949,
+    "lng": 6.738798
   },
   {
     "name": "Shell",
@@ -16565,6 +17570,11 @@
     "lng": 9.137921
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.237582,
+    "lng": 7.004841
+  },
+  {
     "name": "Shell",
     "lat": 49.170329,
     "lng": 7.23179
@@ -16598,6 +17608,11 @@
     "name": "Jet",
     "lat": 49.0141,
     "lng": 8.35528
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.511399,
+    "lng": 13.428477
   },
   {
     "name": "Esso",
@@ -16658,6 +17673,11 @@
     "name": "Aral",
     "lat": 51.0938568,
     "lng": 13.7664928
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.13218,
+    "lng": 8.683576
   },
   {
     "name": "Shell",
@@ -16728,6 +17748,11 @@
     "name": "Classic",
     "lat": 52.6175,
     "lng": 10.2392
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.500478,
+    "lng": 13.376696
   },
   {
     "name": "Classic",
@@ -16823,6 +17848,11 @@
     "name": "Esso",
     "lat": 49.389983,
     "lng": 7.337301
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.820908,
+    "lng": 6.613598
   },
   {
     "name": "Esso",
@@ -17020,6 +18050,11 @@
     "lng": 8.80606
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.654,
+    "lng": 6.47073
+  },
+  {
     "name": "Aral",
     "lat": 51.274136,
     "lng": 7.238901
@@ -17028,6 +18063,11 @@
     "name": "Hoyer",
     "lat": 53.08781814575,
     "lng": 8.78441905975
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.65419,
+    "lng": 10.660536
   },
   {
     "name": "Esso",
@@ -17048,6 +18088,11 @@
     "name": "Avia",
     "lat": 48.99436,
     "lng": 13.30225
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.182387,
+    "lng": 9.007049
   },
   {
     "name": "Aral",
@@ -17220,6 +18265,11 @@
     "lng": 13.720363
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.756348,
+    "lng": 7.008644
+  },
+  {
     "name": "Shell",
     "lat": 51.438874,
     "lng": 6.662787
@@ -17273,6 +18323,11 @@
     "name": "Aral",
     "lat": 52.484894,
     "lng": 13.381366
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.482766,
+    "lng": 7.749125
   },
   {
     "name": "Shell",
@@ -17383,6 +18438,11 @@
     "name": "Aral",
     "lat": 50.0777,
     "lng": 8.221285
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.257223,
+    "lng": 11.628863
   },
   {
     "name": "Avia",
@@ -17573,6 +18633,11 @@
     "name": "Esso",
     "lat": 48.862492,
     "lng": 13.396763
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.268831,
+    "lng": 6.455859
   },
   {
     "name": "Aral",
@@ -17875,6 +18940,11 @@
     "lng": 9.160152
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.864882,
+    "lng": 13.178886
+  },
+  {
     "name": "Shell",
     "lat": 52.534381,
     "lng": 13.283034
@@ -17933,6 +19003,11 @@
     "name": "Esso",
     "lat": 48.278352,
     "lng": 11.673661
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.025306,
+    "lng": 8.448921
   },
   {
     "name": "Aral",
@@ -18385,6 +19460,11 @@
     "lng": 7.58622
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.148045,
+    "lng": 8.656484
+  },
+  {
     "name": "ELAN",
     "lat": 50.20706,
     "lng": 9.155713
@@ -18720,6 +19800,11 @@
     "lng": 11.440239
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.4222,
+    "lng": 13.487083
+  },
+  {
     "name": "Aral",
     "lat": 51.53306,
     "lng": 7.214134
@@ -18840,6 +19925,11 @@
     "lng": 9.159887
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.179423,
+    "lng": 8.909233
+  },
+  {
     "name": "Esso",
     "lat": 50.646052,
     "lng": 8.990496
@@ -18923,6 +20013,11 @@
     "name": "Shell",
     "lat": 47.855742,
     "lng": 12.015652
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.596781,
+    "lng": 9.715919
   },
   {
     "name": "Esso",
@@ -19025,6 +20120,11 @@
     "lng": 7.50459
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.330291,
+    "lng": 13.867537
+  },
+  {
     "name": "Aral",
     "lat": 51.54656,
     "lng": 7.012883
@@ -19105,9 +20205,19 @@
     "lng": 9.906061
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.865385,
+    "lng": 11.2095
+  },
+  {
     "name": "Aral",
     "lat": 49.654736,
     "lng": 8.359395
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.989216,
+    "lng": 10.081495
   },
   {
     "name": "Aral",
@@ -19195,6 +20305,11 @@
     "lng": 8.928578
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.733436,
+    "lng": 9.241473
+  },
+  {
     "name": "Oil!",
     "lat": 53.6106,
     "lng": 9.84013
@@ -19238,6 +20353,11 @@
     "name": "Aral",
     "lat": 52.301098,
     "lng": 8.034664
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.629923,
+    "lng": 13.999691
   },
   {
     "name": "Shell",
@@ -19385,9 +20505,19 @@
     "lng": 8.742365
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.043723,
+    "lng": 9.263684
+  },
+  {
     "name": "Aral",
     "lat": 51.47276,
     "lng": 6.863527
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.913089,
+    "lng": 10.977469
   },
   {
     "name": "SB",
@@ -19438,6 +20568,11 @@
     "name": "Aral",
     "lat": 53.727634,
     "lng": 9.997779
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.212302,
+    "lng": 9.077307
   },
   {
     "name": "Shell",
@@ -19695,6 +20830,11 @@
     "lng": 8.71705
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.414336,
+    "lng": 9.7974
+  },
+  {
     "name": "Aral",
     "lat": 48.0350456,
     "lng": 10.1534758
@@ -19705,9 +20845,19 @@
     "lng": 7.020729
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.307008,
+    "lng": 8.697208
+  },
+  {
     "name": "Esso",
     "lat": 49.6931,
     "lng": 9.8478
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.340076,
+    "lng": 8.534939
   },
   {
     "name": "Shell",
@@ -19735,6 +20885,11 @@
     "lng": 9.948806
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.166157,
+    "lng": 14.24021
+  },
+  {
     "name": "BFT",
     "lat": 47.848853,
     "lng": 10.418074
@@ -19743,6 +20898,11 @@
     "name": "Aral",
     "lat": 52.276943,
     "lng": 8.055264
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.30663,
+    "lng": 7.790957
   },
   {
     "name": "Avia",
@@ -19783,6 +20943,11 @@
     "name": "Aral",
     "lat": 50.988155,
     "lng": 7.087447
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.518378,
+    "lng": 13.520045
   },
   {
     "name": "BFT",
@@ -19828,6 +20993,11 @@
     "name": "Gulf",
     "lat": 51.2575,
     "lng": 13.1009
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.470835,
+    "lng": 6.530862
   },
   {
     "name": "Esso",
@@ -19940,6 +21110,11 @@
     "lng": 13.714604
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.587042,
+    "lng": 13.248595
+  },
+  {
     "name": "Markant",
     "lat": 51.43562,
     "lng": 6.89037
@@ -19988,6 +21163,11 @@
     "name": "Shell",
     "lat": 48.660162,
     "lng": 9.775219
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.934109,
+    "lng": 14.19451
   },
   {
     "name": "Shell",
@@ -20120,6 +21300,11 @@
     "lng": 7.074402
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.98833,
+    "lng": 6.899069
+  },
+  {
     "name": "Aral",
     "lat": 49.38397,
     "lng": 11.34805
@@ -20138,6 +21323,11 @@
     "name": "Esso",
     "lat": 52.617128,
     "lng": 8.378345
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.513303,
+    "lng": 13.603129
   },
   {
     "name": "Shell",
@@ -20195,6 +21385,11 @@
     "lng": 7.277615
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.121755,
+    "lng": 6.666714
+  },
+  {
     "name": "Esso",
     "lat": 49.23421,
     "lng": 11.66826
@@ -20235,6 +21430,11 @@
     "lng": 9.762458
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.704994,
+    "lng": 10.731859
+  },
+  {
     "name": "Esso",
     "lat": 47.736617,
     "lng": 10.311316
@@ -20250,6 +21450,11 @@
     "lng": 10.160623
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.208645,
+    "lng": 7.231365
+  },
+  {
     "name": "Shell",
     "lat": 51.261111,
     "lng": 12.709074
@@ -20260,9 +21465,19 @@
     "lng": 12.067706
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.527171,
+    "lng": 6.735937
+  },
+  {
     "name": "Aral",
     "lat": 50.317463,
     "lng": 10.352696
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.837992,
+    "lng": 12.896985
   },
   {
     "name": "team",
@@ -20273,6 +21488,11 @@
     "name": "Westfalen",
     "lat": 52.41971,
     "lng": 7.83828
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.286863,
+    "lng": 10.936809
   },
   {
     "name": "Aral",
@@ -20295,6 +21515,11 @@
     "lng": 9.25558
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.992269,
+    "lng": 8.649521
+  },
+  {
     "name": "Hoyer",
     "lat": 53.37035369873,
     "lng": 9.80150413513
@@ -20303,6 +21528,11 @@
     "name": "ELAN",
     "lat": 51.259071,
     "lng": 7.151105
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.535395,
+    "lng": 13.522849
   },
   {
     "name": "Aral",
@@ -20385,6 +21615,16 @@
     "lng": 9.813508
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.765038,
+    "lng": 11.987581
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.924245,
+    "lng": 7.824723
+  },
+  {
     "name": "Aral",
     "lat": 52.31478,
     "lng": 7.353656
@@ -20398,6 +21638,11 @@
     "name": "Aral",
     "lat": 53.839943,
     "lng": 12.287809
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.302192,
+    "lng": 13.100592
   },
   {
     "name": "Shell",
@@ -20490,6 +21735,11 @@
     "lng": 8.477448
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.577505,
+    "lng": 13.584722
+  },
+  {
     "name": "Aral",
     "lat": 52.839058,
     "lng": 13.7546
@@ -20575,6 +21825,11 @@
     "lng": 7.9621
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.36991,
+    "lng": 6.739864
+  },
+  {
     "name": "Bell",
     "lat": 50.549335,
     "lng": 7.656307
@@ -20588,6 +21843,11 @@
     "name": "Shell",
     "lat": 49.394088,
     "lng": 8.786206
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.483401,
+    "lng": 10.725491
   },
   {
     "name": "Esso",
@@ -20625,9 +21885,19 @@
     "lng": 14.020287
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.754605,
+    "lng": 9.641849
+  },
+  {
     "name": "Shell",
     "lat": 48.825322,
     "lng": 9.309199
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.809143,
+    "lng": 11.12874
   },
   {
     "name": "OMV",
@@ -20653,6 +21923,11 @@
     "name": "Aral",
     "lat": 48.809128,
     "lng": 9.57053
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.582052,
+    "lng": 13.43239
   },
   {
     "name": "HEM",
@@ -20700,9 +21975,24 @@
     "lng": 9.57197189331
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.59026,
+    "lng": 13.013472
+  },
+  {
     "name": "Albers",
     "lat": 53.08625,
     "lng": 7.93815
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.09877,
+    "lng": 9.100041
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.548412,
+    "lng": 7.245048
   },
   {
     "name": "OMV",
@@ -20870,9 +22160,19 @@
     "lng": 6.474836
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.813242,
+    "lng": 6.488431
+  },
+  {
     "name": "Shell",
     "lat": 49.549632,
     "lng": 8.655579
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.863835,
+    "lng": 8.217852
   },
   {
     "name": "SB",
@@ -20970,6 +22270,11 @@
     "lng": 6.966174
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.975315,
+    "lng": 7.140252
+  },
+  {
     "name": "Aral",
     "lat": 48.49567,
     "lng": 8.813009
@@ -21043,6 +22348,11 @@
     "name": "Aral",
     "lat": 49.32193,
     "lng": 9.363825
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.174856,
+    "lng": 13.825185
   },
   {
     "name": "Oil!",
@@ -21125,6 +22435,11 @@
     "lng": 9.999674
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.1378,
+    "lng": 8.519186
+  },
+  {
     "name": "Globus",
     "lat": 49.5115644,
     "lng": 6.7543252
@@ -21175,6 +22490,11 @@
     "lng": 13.312269
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.896099,
+    "lng": 8.68058
+  },
+  {
     "name": "Avia",
     "lat": 53.02157,
     "lng": 8.349598
@@ -21220,9 +22540,19 @@
     "lng": 8.269961
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.891225,
+    "lng": 12.068717
+  },
+  {
     "name": "Aral",
     "lat": 51.15636,
     "lng": 6.507381
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.274546,
+    "lng": 7.704868
   },
   {
     "name": "Aral",
@@ -21315,6 +22645,11 @@
     "lng": 8.19464
   },
   {
+    "name": "TotalEnergies",
+    "lat": 47.80201,
+    "lng": 12.17543
+  },
+  {
     "name": "Aral",
     "lat": 49.31526,
     "lng": 8.57763
@@ -21323,6 +22658,11 @@
     "name": "Joiss",
     "lat": 52.682587,
     "lng": 8.814871
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.344397,
+    "lng": 11.709186
   },
   {
     "name": "Esso",
@@ -21355,6 +22695,11 @@
     "lng": 6.13669
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.258345,
+    "lng": 9.778154
+  },
+  {
     "name": "Access",
     "lat": 48.883837,
     "lng": 8.699208
@@ -21385,6 +22730,11 @@
     "lng": 8.241534
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.739577,
+    "lng": 9.319722
+  },
+  {
     "name": "Shell",
     "lat": 50.893639,
     "lng": 12.94213
@@ -21410,6 +22760,11 @@
     "lng": 8.179079
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.405599,
+    "lng": 7.139186
+  },
+  {
     "name": "Aral",
     "lat": 51.404987,
     "lng": 6.711944
@@ -21418,6 +22773,11 @@
     "name": "Access",
     "lat": 50.066025,
     "lng": 8.537291
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.547499,
+    "lng": 13.46808
   },
   {
     "name": "Shell",
@@ -21540,6 +22900,11 @@
     "lng": 10.53973
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.416588,
+    "lng": 12.486736
+  },
+  {
     "name": "Bell",
     "lat": 50.82368,
     "lng": 8.0785
@@ -21548,6 +22913,11 @@
     "name": "ELAN",
     "lat": 51.995833,
     "lng": 8.8075
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.630039,
+    "lng": 11.153438
   },
   {
     "name": "Avia",
@@ -21605,6 +22975,11 @@
     "lng": 11.089259
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.883055,
+    "lng": 10.174955
+  },
+  {
     "name": "Shell",
     "lat": 49.001655,
     "lng": 12.197134
@@ -21645,6 +23020,11 @@
     "lng": 7.523512
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.549561,
+    "lng": 6.728918
+  },
+  {
     "name": "Oil!",
     "lat": 53.5094,
     "lng": 9.72968
@@ -21663,6 +23043,11 @@
     "name": "Raiffeisen",
     "lat": 49.8385,
     "lng": 7.779
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.62437,
+    "lng": 7.192956
   },
   {
     "name": "Esso",
@@ -21693,6 +23078,11 @@
     "name": "Calpam",
     "lat": 51.286331176758,
     "lng": 8.180009841919
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.904118,
+    "lng": 7.488412
   },
   {
     "name": "Esso",
@@ -21730,6 +23120,11 @@
     "lng": 8.88479
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.214427,
+    "lng": 6.864853
+  },
+  {
     "name": "Globus",
     "lat": 51.08128,
     "lng": 12.10981
@@ -21738,6 +23133,11 @@
     "name": "SB",
     "lat": 51.868142,
     "lng": 7.730963
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.03978,
+    "lng": 11.938508
   },
   {
     "name": "ED",
@@ -21750,6 +23150,11 @@
     "lng": 9.087135
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.863279,
+    "lng": 8.332962
+  },
+  {
     "name": "Sprint",
     "lat": 52.536163,
     "lng": 13.191189
@@ -21758,6 +23163,11 @@
     "name": "Allguth",
     "lat": 48.142944,
     "lng": 11.424927
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.390341,
+    "lng": 13.340665
   },
   {
     "name": "Shell",
@@ -22005,6 +23415,11 @@
     "lng": 6.898796
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.672499,
+    "lng": 6.172083
+  },
+  {
     "name": "Oil!",
     "lat": 49.1914,
     "lng": 7.60874
@@ -22043,6 +23458,11 @@
     "name": "Esso",
     "lat": 50.642291,
     "lng": 9.394659
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.413528,
+    "lng": 12.524095
   },
   {
     "name": "Shell",
@@ -22125,6 +23545,11 @@
     "lng": 11.468299
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.723158,
+    "lng": 12.587859
+  },
+  {
     "name": "Raiffeisen",
     "lat": 51.26755,
     "lng": 7.458504
@@ -22150,6 +23575,11 @@
     "lng": 9.7956
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.290311,
+    "lng": 13.135587
+  },
+  {
     "name": "Avia",
     "lat": 51.7816,
     "lng": 8.47482
@@ -22158,6 +23588,11 @@
     "name": "Aral",
     "lat": 51.290897,
     "lng": 12.076298
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.124818,
+    "lng": 10.58159
   },
   {
     "name": "Markant",
@@ -22183,6 +23618,11 @@
     "name": "Aral",
     "lat": 50.73569,
     "lng": 7.877913
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.659519,
+    "lng": 6.638875
   },
   {
     "name": "Shell",
@@ -22255,6 +23695,11 @@
     "lng": 9.037156
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.464658,
+    "lng": 7.321221
+  },
+  {
     "name": "Esso",
     "lat": 50.768256,
     "lng": 6.121284
@@ -22308,6 +23753,11 @@
     "name": "Aral",
     "lat": 50.631516,
     "lng": 12.736795
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.824224,
+    "lng": 9.732466
   },
   {
     "name": "Shell",
@@ -22385,6 +23835,11 @@
     "lng": 9.68294
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.656601,
+    "lng": 6.768086
+  },
+  {
     "name": "Aral",
     "lat": 51.260918,
     "lng": 6.334866
@@ -22415,6 +23870,11 @@
     "lng": 6.98615
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.220685,
+    "lng": 11.772799
+  },
+  {
     "name": "Mundorf",
     "lat": 50.81207,
     "lng": 7.122648
@@ -22438,6 +23898,11 @@
     "name": "Shell",
     "lat": 52.057634,
     "lng": 8.368181
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.922497,
+    "lng": 10.552224
   },
   {
     "name": "Aral",
@@ -22515,9 +23980,24 @@
     "lng": 6.998562
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.602225,
+    "lng": 12.320053
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.607199,
+    "lng": 7.124186
+  },
+  {
     "name": "Shell",
     "lat": 53.545879,
     "lng": 10.538518
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.21633,
+    "lng": 10.300219
   },
   {
     "name": "Esso",
@@ -22533,6 +24013,11 @@
     "name": "Aral",
     "lat": 51.59776,
     "lng": 8.51572
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.138946,
+    "lng": 11.730228
   },
   {
     "name": "Oil!",
@@ -22605,6 +24090,11 @@
     "lng": 8.0164260864258
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.596135,
+    "lng": 8.817457
+  },
+  {
     "name": "Avia",
     "lat": 50.90667,
     "lng": 9.23354
@@ -22638,6 +24128,16 @@
     "name": "Shell",
     "lat": 52.252058,
     "lng": 10.491936
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.184064,
+    "lng": 11.45024
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.714914,
+    "lng": 8.900578
   },
   {
     "name": "Raiffeisen",
@@ -22680,6 +24180,11 @@
     "lng": 10.0784941
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.996099,
+    "lng": 13.652083
+  },
+  {
     "name": "Aral",
     "lat": 51.348534,
     "lng": 12.301473
@@ -22710,9 +24215,19 @@
     "lng": 10.2625
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.427552,
+    "lng": 10.288246
+  },
+  {
     "name": "Aral",
     "lat": 50.994186,
     "lng": 10.292966
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.05335,
+    "lng": 9.031812
   },
   {
     "name": "Nordoel",
@@ -22830,6 +24345,11 @@
     "lng": 13.777
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.324341,
+    "lng": 11.784478
+  },
+  {
     "name": "Shell",
     "lat": 50.327717,
     "lng": 7.24213
@@ -22838,6 +24358,11 @@
     "name": "Aral",
     "lat": 51.302345,
     "lng": 7.667049
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.428481,
+    "lng": 7.242503
   },
   {
     "name": "Aral",
@@ -22918,6 +24443,11 @@
     "name": "Aral",
     "lat": 52.444546,
     "lng": 13.242588
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.983596,
+    "lng": 8.579311
   },
   {
     "name": "Nordoel",
@@ -23008,6 +24538,11 @@
     "name": "BFT",
     "lat": 51.1163,
     "lng": 6.6495
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.248422,
+    "lng": 7.44306
   },
   {
     "name": "BFT",
@@ -23305,9 +24840,19 @@
     "lng": 9.854159
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.900906,
+    "lng": 6.965748
+  },
+  {
     "name": "ED",
     "lat": 50.123962,
     "lng": 7.005759
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.080731,
+    "lng": 12.189121
   },
   {
     "name": "Raiffeisen",
@@ -23380,6 +24925,11 @@
     "lng": 8.376568
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.52445,
+    "lng": 7.511009
+  },
+  {
     "name": "Shell",
     "lat": 51.340204,
     "lng": 9.482081
@@ -23413,6 +24963,11 @@
     "name": "Shell",
     "lat": 53.444726,
     "lng": 9.990998
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.223767,
+    "lng": 6.916481
   },
   {
     "name": "Shell",
@@ -23453,6 +25008,11 @@
     "name": "Shell",
     "lat": 53.570618,
     "lng": 9.953872
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.31607,
+    "lng": 11.506477
   },
   {
     "name": "Esso",
@@ -23520,6 +25080,11 @@
     "lng": 8.309247
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.198265,
+    "lng": 11.963868
+  },
+  {
     "name": "Sprint",
     "lat": 51.154625,
     "lng": 13.485028
@@ -23558,6 +25123,16 @@
     "name": "Avia",
     "lat": 51.86033,
     "lng": 6.501222
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.018255,
+    "lng": 10.273633
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.267114,
+    "lng": 7.011219
   },
   {
     "name": "Aral",
@@ -23638,6 +25213,11 @@
     "name": "Aral",
     "lat": 50.54755,
     "lng": 7.647419
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 47.699386,
+    "lng": 10.3415
   },
   {
     "name": "Aral",
@@ -23860,6 +25440,11 @@
     "lng": 10.58694
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.366007,
+    "lng": 12.366082
+  },
+  {
     "name": "ELAN",
     "lat": 52.526015,
     "lng": 11.383101
@@ -23953,6 +25538,11 @@
     "name": "Mundorf",
     "lat": 50.809839,
     "lng": 7.038533
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.443414,
+    "lng": 7.498813
   },
   {
     "name": "Felta",
@@ -24130,6 +25720,11 @@
     "lng": 9.58119
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.153874,
+    "lng": 13.119686
+  },
+  {
     "name": "Raiffeisen",
     "lat": 51.80219,
     "lng": 9.685273
@@ -24198,6 +25793,11 @@
     "name": "OMV",
     "lat": 48.45494,
     "lng": 12.33477
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.592107,
+    "lng": 14.16661
   },
   {
     "name": "Avia",
@@ -24335,6 +25935,11 @@
     "lng": 12.7912504
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.054533,
+    "lng": 7.922698
+  },
+  {
     "name": "OMV",
     "lat": 47.69755,
     "lng": 10.79405
@@ -24385,6 +25990,11 @@
     "lng": 7.69379
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.646891,
+    "lng": 6.185342
+  },
+  {
     "name": "BFT",
     "lat": 51.185504,
     "lng": 7.179288
@@ -24415,6 +26025,11 @@
     "lng": 12.623325
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.165184,
+    "lng": 12.163585
+  },
+  {
     "name": "Esso",
     "lat": 49.154868,
     "lng": 9.22429
@@ -24425,9 +26040,19 @@
     "lng": 12.3122
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.962701,
+    "lng": 7.244351
+  },
+  {
     "name": "BFT",
     "lat": 49.98248,
     "lng": 8.44706
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.761389,
+    "lng": 14.324722
   },
   {
     "name": "Aral",
@@ -24480,6 +26105,11 @@
     "lng": 7.05515
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.043054,
+    "lng": 7.07234
+  },
+  {
     "name": "Shell",
     "lat": 49.443446,
     "lng": 8.178693
@@ -24518,6 +26148,11 @@
     "name": "Westfalen",
     "lat": 51.93393,
     "lng": 7.59954
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.845299,
+    "lng": 13.97308
   },
   {
     "name": "Aral",
@@ -24570,6 +26205,11 @@
     "lng": 11.5756
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.204903,
+    "lng": 7.041496
+  },
+  {
     "name": "Esso",
     "lat": 51.26948995,
     "lng": 8.877826949
@@ -24615,6 +26255,11 @@
     "lng": 9.53672
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.222064,
+    "lng": 8.083536
+  },
+  {
     "name": "Aral",
     "lat": 49.39913,
     "lng": 8.624707
@@ -24650,6 +26295,11 @@
     "lng": 11.054491
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.510792,
+    "lng": 9.984535
+  },
+  {
     "name": "Aral",
     "lat": 47.996338,
     "lng": 10.199143
@@ -24670,6 +26320,11 @@
     "lng": 10.83621
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.580547,
+    "lng": 8.111727
+  },
+  {
     "name": "Hoyer",
     "lat": 52.88830947876,
     "lng": 11.72065544128
@@ -24683,6 +26338,11 @@
     "name": "Aral",
     "lat": 52.75454,
     "lng": 12.85539
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.311758,
+    "lng": 13.243392
   },
   {
     "name": "team",
@@ -24743,6 +26403,11 @@
     "name": "Sprint",
     "lat": 51.3284,
     "lng": 13.955064
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.439546,
+    "lng": 11.845423
   },
   {
     "name": "Shell",
@@ -24845,6 +26510,11 @@
     "lng": 10.304672
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.41509,
+    "lng": 6.762589
+  },
+  {
     "name": "Esso",
     "lat": 50.179124,
     "lng": 8.513556
@@ -24885,6 +26555,11 @@
     "lng": 11.8514986
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.523507,
+    "lng": 9.039299
+  },
+  {
     "name": "Avia",
     "lat": 49.54165,
     "lng": 11.94042
@@ -24913,6 +26588,11 @@
     "name": "Esso",
     "lat": 49.385352,
     "lng": 7.454639
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.306022,
+    "lng": 8.738884
   },
   {
     "name": "Shell",
@@ -24965,6 +26645,16 @@
     "lng": 7.266715
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.688948,
+    "lng": 10.844776
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.541648,
+    "lng": 10.098817
+  },
+  {
     "name": "Aral",
     "lat": 52.9639435,
     "lng": 10.5672741
@@ -25013,6 +26703,11 @@
     "name": "Aral",
     "lat": 53.910786,
     "lng": 11.758571
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.568682,
+    "lng": 10.024122
   },
   {
     "name": "Shell",
@@ -25128,6 +26823,11 @@
     "name": "Sprint",
     "lat": 52.465668,
     "lng": 13.806244
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.076068,
+    "lng": 8.20861
   },
   {
     "name": "Sprint",
@@ -25290,6 +26990,11 @@
     "lng": 9.08179
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.367031,
+    "lng": 11.727077
+  },
+  {
     "name": "Aral",
     "lat": 53.545967,
     "lng": 10.015121
@@ -25333,6 +27038,11 @@
     "name": "OMV",
     "lat": 47.7345,
     "lng": 10.3105
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.147092,
+    "lng": 9.111798
   },
   {
     "name": "Avia",
@@ -25430,6 +27140,11 @@
     "lng": 12.331131
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.282761,
+    "lng": 7.256123
+  },
+  {
     "name": "Shell",
     "lat": 54.0142,
     "lng": 10.02063
@@ -25480,6 +27195,11 @@
     "lng": 11.156861
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.606671,
+    "lng": 14.608634
+  },
+  {
     "name": "Aral",
     "lat": 50.85687,
     "lng": 12.875218
@@ -25525,6 +27245,11 @@
     "lng": 12.119877
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.813387,
+    "lng": 13.208991
+  },
+  {
     "name": "Esso",
     "lat": 51.013378,
     "lng": 8.648724
@@ -25565,9 +27290,19 @@
     "lng": 8.93875581
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.875278,
+    "lng": 9.270556
+  },
+  {
     "name": "ELAN",
     "lat": 52.00122,
     "lng": 8.50592
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.407479,
+    "lng": 13.418115
   },
   {
     "name": "BFT",
@@ -25628,6 +27363,11 @@
     "name": "BFT",
     "lat": 50.796191,
     "lng": 12.243467
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.897882,
+    "lng": 13.537308
   },
   {
     "name": "BFT",
@@ -25800,9 +27540,19 @@
     "lng": 8.10619
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.493702,
+    "lng": 7.520649
+  },
+  {
     "name": "BFT",
     "lat": 49.4481,
     "lng": 10.3298
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.66806,
+    "lng": 13.58234
   },
   {
     "name": "Aral",
@@ -25820,9 +27570,19 @@
     "lng": 12.072177
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.479283,
+    "lng": 11.784206
+  },
+  {
     "name": "Hoyer",
     "lat": 52.73741531372,
     "lng": 11.24422931671
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.455461,
+    "lng": 7.250342
   },
   {
     "name": "Shell",
@@ -25965,6 +27725,11 @@
     "lng": 7.20028
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.253158,
+    "lng": 8.909657
+  },
+  {
     "name": "Shell",
     "lat": 53.815883,
     "lng": 10.878649
@@ -26060,6 +27825,11 @@
     "lng": 14.3319874
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.120799,
+    "lng": 13.150689
+  },
+  {
     "name": "ELAN",
     "lat": 49.227926,
     "lng": 8.371802
@@ -26115,6 +27885,21 @@
     "lng": 8.704847
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.37533,
+    "lng": 10.148411
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.997663,
+    "lng": 8.256677
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.070305,
+    "lng": 11.876505
+  },
+  {
     "name": "Aral",
     "lat": 49.08014,
     "lng": 8.549252
@@ -26155,9 +27940,19 @@
     "lng": 10.56188
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.950114,
+    "lng": 7.903223
+  },
+  {
     "name": "Aral",
     "lat": 51.093803,
     "lng": 7.145046
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.397817,
+    "lng": 7.085411
   },
   {
     "name": "Shell",
@@ -26190,6 +27985,11 @@
     "lng": 9.01704
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.5247,
+    "lng": 12.358189
+  },
+  {
     "name": "BFT",
     "lat": 51.3514,
     "lng": 13.23557
@@ -26218,6 +28018,11 @@
     "name": "Shell",
     "lat": 51.53246,
     "lng": 11.941428
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.955079,
+    "lng": 10.022439
   },
   {
     "name": "BFT",
@@ -26270,6 +28075,11 @@
     "lng": 7.107774
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.569289,
+    "lng": 7.511427
+  },
+  {
     "name": "Aral",
     "lat": 48.057713,
     "lng": 8.535515
@@ -26310,6 +28120,11 @@
     "lng": 8.537089
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.338685,
+    "lng": 8.030357
+  },
+  {
     "name": "Raiffeisen",
     "lat": 52.97408,
     "lng": 8.940565
@@ -26318,6 +28133,11 @@
     "name": "BFT",
     "lat": 48.72161,
     "lng": 8.00142
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.504209,
+    "lng": 13.624332
   },
   {
     "name": "Esso",
@@ -26365,6 +28185,11 @@
     "lng": 9.27256
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.949585,
+    "lng": 11.094185
+  },
+  {
     "name": "Avia",
     "lat": 53.6204,
     "lng": 7.725064
@@ -26373,6 +28198,11 @@
     "name": "Avia",
     "lat": 48.40164,
     "lng": 9.975014
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.785019,
+    "lng": 12.196471
   },
   {
     "name": "Shell",
@@ -26385,9 +28215,19 @@
     "lng": 9.343829
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.155665,
+    "lng": 8.626797
+  },
+  {
     "name": "Aral",
     "lat": 51.86591,
     "lng": 8.37158
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.299797,
+    "lng": 6.748377
   },
   {
     "name": "Aral",
@@ -26413,6 +28253,11 @@
     "name": "Aral",
     "lat": 52.311558,
     "lng": 10.823885
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.06848,
+    "lng": 9.937957
   },
   {
     "name": "Esso",
@@ -26465,6 +28310,11 @@
     "lng": 7.445442
   },
   {
+    "name": "TotalEnergies",
+    "lat": 54.102776,
+    "lng": 9.990301
+  },
+  {
     "name": "Raiffeisen",
     "lat": 51.637949,
     "lng": 11.62722
@@ -26483,6 +28333,11 @@
     "name": "Aral",
     "lat": 51.29687,
     "lng": 7.360476
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.274568,
+    "lng": 6.796683
   },
   {
     "name": "Esso",
@@ -26535,6 +28390,11 @@
     "lng": 12.463378
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.48183,
+    "lng": 7.436307
+  },
+  {
     "name": "BFT",
     "lat": 52.387987,
     "lng": 8.062656
@@ -26573,6 +28433,11 @@
     "name": "Aral",
     "lat": 49.421474,
     "lng": 7.703652
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.939014,
+    "lng": 12.818679
   },
   {
     "name": "Shell",
@@ -26693,6 +28558,11 @@
     "name": "Shell",
     "lat": 50.213336,
     "lng": 8.254564
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.564165,
+    "lng": 8.06227
   },
   {
     "name": "Esso",
@@ -26860,6 +28730,11 @@
     "lng": 6.172566
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.884801,
+    "lng": 8.72729
+  },
+  {
     "name": "Aral",
     "lat": 49.086723,
     "lng": 9.27556
@@ -26895,6 +28770,16 @@
     "lng": 8.5014
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.356192,
+    "lng": 11.180036
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.971858,
+    "lng": 9.387147
+  },
+  {
     "name": "team",
     "lat": 54.7221,
     "lng": 9.66057
@@ -26908,6 +28793,11 @@
     "name": "Nordoel",
     "lat": 53.9465227,
     "lng": 9.1363877
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.695116,
+    "lng": 12.738757
   },
   {
     "name": "Aral",
@@ -26935,6 +28825,11 @@
     "lng": 8.394477
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.436532,
+    "lng": 8.681493
+  },
+  {
     "name": "Aral",
     "lat": 47.863983,
     "lng": 11.795796
@@ -26943,6 +28838,11 @@
     "name": "Sprint",
     "lat": 53.375824,
     "lng": 7.206325
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.896111,
+    "lng": 9.18
   },
   {
     "name": "Avia",
@@ -26993,6 +28893,11 @@
     "name": "Esso",
     "lat": 53.748865,
     "lng": 9.657759
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.948153,
+    "lng": 11.192957
   },
   {
     "name": "Raiffeisen",
@@ -27125,6 +29030,11 @@
     "lng": 8.093315
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.299819,
+    "lng": 6.749409
+  },
+  {
     "name": "Shell",
     "lat": 50.146054,
     "lng": 8.807487
@@ -27138,6 +29048,11 @@
     "name": "Shell",
     "lat": 49.250943,
     "lng": 8.867961
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.768495,
+    "lng": 11.409829
   },
   {
     "name": "Shell",
@@ -27240,9 +29155,19 @@
     "lng": 12.32265
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.94499,
+    "lng": 7.062567
+  },
+  {
     "name": "OMV",
     "lat": 49.93496,
     "lng": 11.5899
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.341651,
+    "lng": 7.020608
   },
   {
     "name": "Aral",
@@ -27390,9 +29315,19 @@
     "lng": 11.573566
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.333197,
+    "lng": 9.414628
+  },
+  {
     "name": "Aral",
     "lat": 49.384426,
     "lng": 11.348847
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.3906,
+    "lng": 8.130287
   },
   {
     "name": "Raiffeisen",
@@ -27510,6 +29445,11 @@
     "lng": 10.1805
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.066935,
+    "lng": 8.844334
+  },
+  {
     "name": "Esso",
     "lat": 51.289585,
     "lng": 6.838902
@@ -27595,6 +29535,11 @@
     "lng": 9.833535
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.12995,
+    "lng": 6.604146
+  },
+  {
     "name": "Shell",
     "lat": 50.806012,
     "lng": 12.694472
@@ -27618,6 +29563,11 @@
     "name": "Aral",
     "lat": 51.89044,
     "lng": 10.543603
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.408178,
+    "lng": 12.175533
   },
   {
     "name": "BFT",
@@ -27668,6 +29618,11 @@
     "name": "Esso",
     "lat": 54.166002,
     "lng": 9.856789
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.295791,
+    "lng": 8.95444
   },
   {
     "name": "Aral",
@@ -27728,6 +29683,11 @@
     "name": "Aral",
     "lat": 52.49251,
     "lng": 13.309285
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.104253,
+    "lng": 10.664366
   },
   {
     "name": "Shell",
@@ -27830,6 +29790,11 @@
     "lng": 9.210672
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.698278,
+    "lng": 8.40891
+  },
+  {
     "name": "Sprint",
     "lat": 52.343533,
     "lng": 9.665395
@@ -27920,6 +29885,11 @@
     "lng": 8.912507
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.009575,
+    "lng": 11.018028
+  },
+  {
     "name": "Aral",
     "lat": 53.59994,
     "lng": 9.917373
@@ -27995,6 +29965,11 @@
     "lng": 9.95614
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.512288,
+    "lng": 7.111116
+  },
+  {
     "name": "Esso",
     "lat": 49.435202,
     "lng": 11.038754
@@ -28008,6 +29983,11 @@
     "name": "OMV",
     "lat": 50.28668,
     "lng": 10.98028
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.604639,
+    "lng": 7.214727
   },
   {
     "name": "Shell",
@@ -28070,6 +30050,11 @@
     "lng": 8.903817
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.258098,
+    "lng": 7.711524
+  },
+  {
     "name": "Shell",
     "lat": 50.044499,
     "lng": 8.202981
@@ -28115,9 +30100,19 @@
     "lng": 9.214739
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.694457,
+    "lng": 7.161843
+  },
+  {
     "name": "ED",
     "lat": 49.15369,
     "lng": 7.552806
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.058052,
+    "lng": 13.824475
   },
   {
     "name": "Avia",
@@ -28138,6 +30133,11 @@
     "name": "Esso",
     "lat": 50.0681109,
     "lng": 8.845993145
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.572904,
+    "lng": 7.235282
   },
   {
     "name": "Avia",
@@ -28208,6 +30208,11 @@
     "name": "Raiffeisen",
     "lat": 51.72495,
     "lng": 10.01898
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.254477,
+    "lng": 7.635161
   },
   {
     "name": "Shell",
@@ -28310,6 +30315,11 @@
     "lng": 11.12909
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.088748,
+    "lng": 8.477606
+  },
+  {
     "name": "Avia",
     "lat": 49.66336,
     "lng": 10.46027
@@ -28333,6 +30343,16 @@
     "name": "Shell",
     "lat": 50.309612,
     "lng": 8.160663
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.892799,
+    "lng": 12.667499
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.241371,
+    "lng": 10.354807
   },
   {
     "name": "Shell",
@@ -28390,6 +30410,11 @@
     "lng": 13.467417
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.54486,
+    "lng": 13.569022
+  },
+  {
     "name": "Shell",
     "lat": 49.550742,
     "lng": 8.352982
@@ -28428,6 +30453,16 @@
     "name": "Aral",
     "lat": 51.198578,
     "lng": 10.478381
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.48291,
+    "lng": 13.502177
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.921807,
+    "lng": 13.347471
   },
   {
     "name": "SB",
@@ -28470,9 +30505,24 @@
     "lng": 11.093269
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.942403,
+    "lng": 10.70066
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.975019,
+    "lng": 12.066033
+  },
+  {
     "name": "Score",
     "lat": 53.138536,
     "lng": 7.606188
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.57985,
+    "lng": 10.677402
   },
   {
     "name": "Avia",
@@ -28560,6 +30610,11 @@
     "lng": 11.288059
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.850548,
+    "lng": 6.076434
+  },
+  {
     "name": "Aral",
     "lat": 49.926197,
     "lng": 9.079335
@@ -28598,6 +30653,11 @@
     "name": "Aral",
     "lat": 50.99891,
     "lng": 6.912042
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.601225,
+    "lng": 11.391104
   },
   {
     "name": "Shell",
@@ -28813,6 +30873,11 @@
     "name": "BFT",
     "lat": 52.29542,
     "lng": 7.120079
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.4458,
+    "lng": 13.56179
   },
   {
     "name": "Shell",
@@ -29165,6 +31230,11 @@
     "lng": 12.959398
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.544184,
+    "lng": 12.29917
+  },
+  {
     "name": "Avia",
     "lat": 49.05381,
     "lng": 10.08204
@@ -29360,6 +31430,11 @@
     "lng": 7.38464
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.851696,
+    "lng": 13.703166
+  },
+  {
     "name": "Aral",
     "lat": 49.086426,
     "lng": 9.275176
@@ -29465,6 +31540,11 @@
     "lng": 10.75461
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.858249,
+    "lng": 9.722719
+  },
+  {
     "name": "Aral",
     "lat": 51.63106,
     "lng": 8.512723
@@ -29490,6 +31570,11 @@
     "lng": 11.1062964
   },
   {
+    "name": "TotalEnergies",
+    "lat": 47.855709,
+    "lng": 8.781561
+  },
+  {
     "name": "Shell",
     "lat": 51.711424,
     "lng": 8.730957
@@ -29498,6 +31583,11 @@
     "name": "Shell",
     "lat": 53.082718,
     "lng": 8.878073
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.492236,
+    "lng": 9.130931
   },
   {
     "name": "Avia",
@@ -29615,6 +31705,16 @@
     "lng": 11.829169
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.100367,
+    "lng": 8.902807
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.17816,
+    "lng": 11.572129
+  },
+  {
     "name": "Esso",
     "lat": 54.24210439,
     "lng": 10.0337989
@@ -29643,6 +31743,11 @@
     "name": "Markant",
     "lat": 50.60723,
     "lng": 6.30571
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.034381,
+    "lng": 6.687699
   },
   {
     "name": "Shell",
@@ -29693,6 +31798,11 @@
     "name": "Shell",
     "lat": 51.511779,
     "lng": 7.430413
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.160892,
+    "lng": 11.262227
   },
   {
     "name": "Esso",
@@ -29850,6 +31960,11 @@
     "lng": 9.10333
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.385874,
+    "lng": 7.437439
+  },
+  {
     "name": "Shell",
     "lat": 48.475258,
     "lng": 12.255638
@@ -29900,6 +32015,11 @@
     "lng": 9.100284
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.473037,
+    "lng": 9.846765
+  },
+  {
     "name": "Supol",
     "lat": 49.586984,
     "lng": 11.013236
@@ -29928,6 +32048,11 @@
     "name": "TS",
     "lat": 49.74484,
     "lng": 8.38747
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.445336,
+    "lng": 6.884433
   },
   {
     "name": "Aral",
@@ -29978,6 +32103,11 @@
     "name": "Aral",
     "lat": 49.74735,
     "lng": 11.5133457
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.596634,
+    "lng": 7.244881
   },
   {
     "name": "Shell",
@@ -30040,6 +32170,11 @@
     "lng": 7.251427
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.797332,
+    "lng": 7.865608
+  },
+  {
     "name": "Aral",
     "lat": 51.516624,
     "lng": 6.857246
@@ -30058,6 +32193,11 @@
     "name": "Jet",
     "lat": 53.8087,
     "lng": 12.1879
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.140622,
+    "lng": 11.105736
   },
   {
     "name": "BFT",
@@ -30165,6 +32305,11 @@
     "lng": 11.156254
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.360669,
+    "lng": 7.200787
+  },
+  {
     "name": "Shell",
     "lat": 48.567845,
     "lng": 12.736351
@@ -30198,6 +32343,11 @@
     "name": "Raiffeisen",
     "lat": 53.6767,
     "lng": 8.6822
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.92856,
+    "lng": 6.775694
   },
   {
     "name": "Q1",
@@ -30263,6 +32413,16 @@
     "name": "BFT",
     "lat": 48.900669,
     "lng": 8.729217
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.478785,
+    "lng": 7.735516
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.028819,
+    "lng": 14.20862
   },
   {
     "name": "Westfalen",
@@ -30440,6 +32600,11 @@
     "lng": 8.470857
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.215549,
+    "lng": 6.949858
+  },
+  {
     "name": "Esso",
     "lat": 51.096059,
     "lng": 6.834693
@@ -30458,6 +32623,11 @@
     "name": "Aral",
     "lat": 50.145992,
     "lng": 8.429585
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.476713,
+    "lng": 10.544206
   },
   {
     "name": "Hoyer",
@@ -30535,6 +32705,11 @@
     "lng": 7.306949
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.534217,
+    "lng": 13.365195
+  },
+  {
     "name": "Esso",
     "lat": 51.16631,
     "lng": 6.733911
@@ -30563,6 +32738,11 @@
     "name": "Esso",
     "lat": 52.255444,
     "lng": 10.550121
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.294434,
+    "lng": 8.51686
   },
   {
     "name": "Avia",
@@ -30628,6 +32808,11 @@
     "name": "Aral",
     "lat": 48.06795,
     "lng": 11.387237
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.362534,
+    "lng": 7.571578
   },
   {
     "name": "Sprint",
@@ -30725,9 +32910,24 @@
     "lng": 13.312
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.252338,
+    "lng": 10.434523
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.164898,
+    "lng": 7.50944
+  },
+  {
     "name": "Aral",
     "lat": 51.532104,
     "lng": 7.701102
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.712222,
+    "lng": 7.040556
   },
   {
     "name": "Shell",
@@ -30775,6 +32975,11 @@
     "lng": 11.4132
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.505747,
+    "lng": 11.079898
+  },
+  {
     "name": "Esso",
     "lat": 51.536745,
     "lng": 13.910841
@@ -30803,6 +33008,11 @@
     "name": "Esso",
     "lat": 53.57915598,
     "lng": 9.602656869
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.903827,
+    "lng": 11.278862
   },
   {
     "name": "Shell",
@@ -30995,6 +33205,11 @@
     "lng": 7.550969
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.565573,
+    "lng": 9.906537
+  },
+  {
     "name": "Raiffeisen",
     "lat": 51.87887,
     "lng": 9.087364
@@ -31008,6 +33223,11 @@
     "name": "SB",
     "lat": 53.49158,
     "lng": 8.598383
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.699649,
+    "lng": 12.939698
   },
   {
     "name": "Shell",
@@ -31085,6 +33305,16 @@
     "lng": 11.875797
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.295966,
+    "lng": 6.86676
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.443872,
+    "lng": 6.675952
+  },
+  {
     "name": "Aral",
     "lat": 48.406403,
     "lng": 9.996263
@@ -31138,6 +33368,11 @@
     "name": "Shell",
     "lat": 50.609732,
     "lng": 10.701216
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.181751,
+    "lng": 6.411782
   },
   {
     "name": "BFT",
@@ -31223,6 +33458,11 @@
     "name": "Sprint",
     "lat": 52.41,
     "lng": 13.666622
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.441791,
+    "lng": 7.224669
   },
   {
     "name": "Aral",
@@ -31315,6 +33555,11 @@
     "lng": 12.06340026855
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.946921,
+    "lng": 7.217666
+  },
+  {
     "name": "HEM",
     "lat": 52.376904,
     "lng": 11.983637
@@ -31360,6 +33605,11 @@
     "lng": 8.260127
   },
   {
+    "name": "TotalEnergies",
+    "lat": 47.953706,
+    "lng": 7.669774
+  },
+  {
     "name": "Avia",
     "lat": 49.02448,
     "lng": 12.17749
@@ -31393,6 +33643,11 @@
     "name": "Aral",
     "lat": 51.313477,
     "lng": 6.579583
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.537769,
+    "lng": 8.359031
   },
   {
     "name": "Avia",
@@ -31443,6 +33698,11 @@
     "name": "Esso",
     "lat": 51.451853,
     "lng": 7.399637
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.822199,
+    "lng": 6.461393
   },
   {
     "name": "BFT",
@@ -31690,6 +33950,11 @@
     "lng": 7.056714
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.819706,
+    "lng": 6.292115
+  },
+  {
     "name": "Aral",
     "lat": 51.6815071,
     "lng": 6.575394
@@ -31730,6 +33995,11 @@
     "lng": 13.994172
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.316973,
+    "lng": 7.087744
+  },
+  {
     "name": "Aral",
     "lat": 51.7546,
     "lng": 11.94881
@@ -31760,6 +34030,11 @@
     "lng": 13.2729
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.255816,
+    "lng": 7.01357
+  },
+  {
     "name": "Shell",
     "lat": 53.917973,
     "lng": 10.735852
@@ -31773,6 +34048,11 @@
     "name": "Shell",
     "lat": 49.925474,
     "lng": 9.07901
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.4581,
+    "lng": 12.614588
   },
   {
     "name": "TS",
@@ -31825,6 +34105,11 @@
     "lng": 8.65357
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.570851,
+    "lng": 7.820421
+  },
+  {
     "name": "OMV",
     "lat": 49.42363,
     "lng": 11.68646
@@ -31860,6 +34145,11 @@
     "lng": 12.76114
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.636672,
+    "lng": 8.746805
+  },
+  {
     "name": "BFT",
     "lat": 49.9399,
     "lng": 9.8573
@@ -31868,6 +34158,11 @@
     "name": "Aral",
     "lat": 50.26602,
     "lng": 11.4755793
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.407414,
+    "lng": 8.672251
   },
   {
     "name": "Oil!",
@@ -31903,6 +34198,11 @@
     "name": "Aral",
     "lat": 51.957283,
     "lng": 8.007975
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.695657,
+    "lng": 7.967105
   },
   {
     "name": "Aral",
@@ -31948,6 +34248,11 @@
     "name": "Esso",
     "lat": 48.718593,
     "lng": 8.738531
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.331399,
+    "lng": 9.455723
   },
   {
     "name": "Aral",
@@ -31998,6 +34303,11 @@
     "name": "Raiffeisen",
     "lat": 52.48931,
     "lng": 10.88432
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.101569,
+    "lng": 8.878291
   },
   {
     "name": "Shell",
@@ -32090,6 +34400,11 @@
     "lng": 6.419637
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.211288,
+    "lng": 11.670514
+  },
+  {
     "name": "Esso",
     "lat": 53.692476,
     "lng": 10.322486
@@ -32173,6 +34488,16 @@
     "name": "Aral",
     "lat": 51.021,
     "lng": 13.840501
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.451513,
+    "lng": 7.848464
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.554352,
+    "lng": 8.41254
   },
   {
     "name": "Raiffeisen",
@@ -32320,6 +34645,11 @@
     "lng": 7.95409
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.04624,
+    "lng": 11.042137
+  },
+  {
     "name": "BFT",
     "lat": 48.689154,
     "lng": 9.423327
@@ -32425,6 +34755,11 @@
     "lng": 8.66542
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.478518,
+    "lng": 11.996009
+  },
+  {
     "name": "SB",
     "lat": 50.787685,
     "lng": 6.211536
@@ -32495,6 +34830,11 @@
     "lng": 8.88775444031
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.522187,
+    "lng": 6.98437
+  },
+  {
     "name": "Aral",
     "lat": 49.482838,
     "lng": 7.730862
@@ -32530,6 +34870,11 @@
     "lng": 9.631542
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.435176,
+    "lng": 11.855584
+  },
+  {
     "name": "BFT",
     "lat": 51.482105,
     "lng": 9.612681
@@ -32555,6 +34900,11 @@
     "lng": 9.938323
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.997709,
+    "lng": 8.253618
+  },
+  {
     "name": "Esso",
     "lat": 50.920225,
     "lng": 6.353169
@@ -32563,6 +34913,11 @@
     "name": "Aral",
     "lat": 52.021725,
     "lng": 8.548129
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.343021,
+    "lng": 7.358553
   },
   {
     "name": "Star",
@@ -32628,6 +34983,11 @@
     "name": "Aral",
     "lat": 54.088684,
     "lng": 9.096075
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.103302,
+    "lng": 14.67016
   },
   {
     "name": "Aral",
@@ -32705,6 +35065,11 @@
     "lng": 10.1031
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.390854,
+    "lng": 12.844964
+  },
+  {
     "name": "Calpam",
     "lat": 50.632568359375,
     "lng": 8.0675296783447
@@ -32743,6 +35108,11 @@
     "name": "Raiffeisen",
     "lat": 48.958687,
     "lng": 8.64026
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.204063,
+    "lng": 7.696084
   },
   {
     "name": "Esso",
@@ -32805,6 +35175,11 @@
     "lng": 8.69426
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.59567,
+    "lng": 12.887093
+  },
+  {
     "name": "Avia",
     "lat": 48.8722,
     "lng": 11.07642
@@ -32863,6 +35238,11 @@
     "name": "BFT",
     "lat": 51.9917484,
     "lng": 7.1324059
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.289043,
+    "lng": 6.554007
   },
   {
     "name": "Shell",
@@ -33013,6 +35393,11 @@
     "name": "Esso",
     "lat": 48.42992,
     "lng": 13.33253
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.779397,
+    "lng": 9.230689
   },
   {
     "name": "Shell",
@@ -33175,6 +35560,11 @@
     "lng": 6.822315
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.051394,
+    "lng": 12.706932
+  },
+  {
     "name": "Shell",
     "lat": 54.033925,
     "lng": 10.742816
@@ -33328,6 +35718,11 @@
     "name": "Avia",
     "lat": 48.92759,
     "lng": 10.96465
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.488436,
+    "lng": 9.708009
   },
   {
     "name": "HEM",
@@ -33620,6 +36015,11 @@
     "lng": 7.826013
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.786077,
+    "lng": 14.066276
+  },
+  {
     "name": "Aral",
     "lat": 50.635387,
     "lng": 6.474189
@@ -33673,6 +36073,11 @@
     "name": "Shell",
     "lat": 48.045746,
     "lng": 8.232625
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.499297,
+    "lng": 7.276438
   },
   {
     "name": "Shell",
@@ -33765,6 +36170,11 @@
     "lng": 8.548546091
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.840243,
+    "lng": 12.542515
+  },
+  {
     "name": "Shell",
     "lat": 48.673517,
     "lng": 10.825181
@@ -33788,6 +36198,11 @@
     "name": "Esso",
     "lat": 49.45769348,
     "lng": 11.09112414
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 47.747856,
+    "lng": 11.565409
   },
   {
     "name": "Avia",
@@ -33875,6 +36290,11 @@
     "lng": 12.875201
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.922365,
+    "lng": 8.265815
+  },
+  {
     "name": "Esso",
     "lat": 54.907468,
     "lng": 8.308741
@@ -33903,6 +36323,11 @@
     "name": "Raiffeisen",
     "lat": 52.93551,
     "lng": 12.39863
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.094863,
+    "lng": 11.605684
   },
   {
     "name": "Aral",
@@ -33938,6 +36363,11 @@
     "name": "OMV",
     "lat": 48.82004,
     "lng": 9.79523
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.88303,
+    "lng": 13.70189
   },
   {
     "name": "Aral",
@@ -33995,6 +36425,11 @@
     "lng": 9.501942
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.088542,
+    "lng": 8.454397
+  },
+  {
     "name": "Total",
     "lat": 50.26744,
     "lng": 7.2266316
@@ -34003,6 +36438,11 @@
     "name": "Aral",
     "lat": 48.125935,
     "lng": 12.574169
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.16433,
+    "lng": 8.312604
   },
   {
     "name": "BFT",
@@ -34028,6 +36468,11 @@
     "name": "Westfalen",
     "lat": 52.15779,
     "lng": 8.84438
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.106472,
+    "lng": 9.718823
   },
   {
     "name": "Aral",
@@ -34115,6 +36560,11 @@
     "lng": 7.65296
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.949642,
+    "lng": 11.197185
+  },
+  {
     "name": "Nordoel",
     "lat": 54.37336,
     "lng": 10.13205
@@ -34173,6 +36623,11 @@
     "name": "BFT",
     "lat": 52.660642,
     "lng": 8.13522
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.635478,
+    "lng": 8.08809
   },
   {
     "name": "Raiffeisen",
@@ -34335,6 +36790,11 @@
     "lng": 7.167429
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.387774,
+    "lng": 13.630654
+  },
+  {
     "name": "ELAN",
     "lat": 48.303417,
     "lng": 11.355189
@@ -34370,6 +36830,11 @@
     "lng": 12.289121
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.554166,
+    "lng": 8.185635
+  },
+  {
     "name": "Esso",
     "lat": 49.491457,
     "lng": 8.364139
@@ -34400,6 +36865,11 @@
     "lng": 8.5887
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.640982,
+    "lng": 13.514269
+  },
+  {
     "name": "Q1",
     "lat": 52.2106,
     "lng": 8.03826
@@ -34410,9 +36880,19 @@
     "lng": 7.666316
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.008819,
+    "lng": 8.689436
+  },
+  {
     "name": "Esso",
     "lat": 48.956235,
     "lng": 10.182571
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.499488,
+    "lng": 8.983397
   },
   {
     "name": "Oil!",
@@ -34565,9 +37045,19 @@
     "lng": 8.81311
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.853187,
+    "lng": 14.406464
+  },
+  {
     "name": "Oil!",
     "lat": 51.0617,
     "lng": 9.92134
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.52988,
+    "lng": 14.37046
   },
   {
     "name": "Oil!",
@@ -34645,6 +37135,16 @@
     "lng": 9.496533
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.691981,
+    "lng": 9.94194
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.353473,
+    "lng": 12.724514
+  },
+  {
     "name": "Aral",
     "lat": 48.68924,
     "lng": 8.955691
@@ -34658,6 +37158,11 @@
     "name": "Globus",
     "lat": 49.58223,
     "lng": 8.35355
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.222036,
+    "lng": 13.219567
   },
   {
     "name": "Aral",
@@ -34678,6 +37183,11 @@
     "name": "Aral",
     "lat": 49.589256,
     "lng": 11.217015
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.898015,
+    "lng": 11.593384
   },
   {
     "name": "BFT",
@@ -34775,9 +37285,19 @@
     "lng": 10.108207
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.94014,
+    "lng": 8.486962
+  },
+  {
     "name": "HERM",
     "lat": 49.49763,
     "lng": 9.755
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.434059,
+    "lng": 9.863619
   },
   {
     "name": "Mundorf",
@@ -34845,6 +37365,11 @@
     "lng": 12.58476
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.963816,
+    "lng": 8.253473
+  },
+  {
     "name": "Shell",
     "lat": 48.533641,
     "lng": 9.295821
@@ -34860,6 +37385,11 @@
     "lng": 12.417393
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.477426,
+    "lng": 6.830007
+  },
+  {
     "name": "Avia",
     "lat": 52.95805,
     "lng": 7.450002
@@ -34868,6 +37398,11 @@
     "name": "Star",
     "lat": 51.770861,
     "lng": 6.187206
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.513342,
+    "lng": 8.484253
   },
   {
     "name": "BFT",
@@ -34908,6 +37443,16 @@
     "name": "Sprint",
     "lat": 51.328423,
     "lng": 12.30898
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.818268,
+    "lng": 13.100932
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.4256,
+    "lng": 10.41385
   },
   {
     "name": "Aral",
@@ -35035,6 +37580,11 @@
     "lng": 8.423943
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.413589,
+    "lng": 12.308158
+  },
+  {
     "name": "Sprint",
     "lat": 52.562302,
     "lng": 13.3279
@@ -35063,6 +37613,11 @@
     "name": "BFT",
     "lat": 50.70902,
     "lng": 13.42617
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.28186,
+    "lng": 8.137154
   },
   {
     "name": "Shell",
@@ -35155,6 +37710,11 @@
     "lng": 8.61797
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.873069,
+    "lng": 10.692185
+  },
+  {
     "name": "Raiffeisen",
     "lat": 49.51078,
     "lng": 12.53795
@@ -35173,6 +37733,11 @@
     "name": "Shell",
     "lat": 50.942083,
     "lng": 6.652027
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.184438,
+    "lng": 11.454165
   },
   {
     "name": "Shell",
@@ -35285,6 +37850,11 @@
     "lng": 6.780638
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.604014,
+    "lng": 12.347858
+  },
+  {
     "name": "Aral",
     "lat": 51.40322,
     "lng": 8.571145
@@ -35373,6 +37943,11 @@
     "name": "Jet",
     "lat": 50.7493,
     "lng": 8.27708
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.839854,
+    "lng": 10.955949
   },
   {
     "name": "Shell",
@@ -35510,6 +38085,11 @@
     "lng": 7.5922
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.678669,
+    "lng": 10.935988
+  },
+  {
     "name": "Oil!",
     "lat": 54.329,
     "lng": 10.1365
@@ -35560,6 +38140,11 @@
     "lng": 9.197897
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.047007,
+    "lng": 7.86346
+  },
+  {
     "name": "Shell",
     "lat": 50.96023,
     "lng": 6.893991
@@ -35580,6 +38165,11 @@
     "lng": 7.067179
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.502069,
+    "lng": 13.733866
+  },
+  {
     "name": "Aral",
     "lat": 52.240505,
     "lng": 10.537416
@@ -35598,6 +38188,11 @@
     "name": "Avia",
     "lat": 51.5316,
     "lng": 7.41736
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.421773,
+    "lng": 8.534002
   },
   {
     "name": "Oil!",
@@ -35650,6 +38245,11 @@
     "lng": 9.145284
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.1028,
+    "lng": 12.95808
+  },
+  {
     "name": "Shell",
     "lat": 53.602881,
     "lng": 9.961741
@@ -35658,6 +38258,11 @@
     "name": "Avia",
     "lat": 47.58308,
     "lng": 10.56474
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.846768,
+    "lng": 11.958524
   },
   {
     "name": "Shell",
@@ -35750,6 +38355,11 @@
     "lng": 8.284981
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.72531,
+    "lng": 14.12685
+  },
+  {
     "name": "Esso",
     "lat": 50.180862,
     "lng": 8.473086
@@ -35758,6 +38368,11 @@
     "name": "Total",
     "lat": 52.543564,
     "lng": 13.6893015
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.268721,
+    "lng": 11.978313
   },
   {
     "name": "Aral",
@@ -35803,6 +38418,11 @@
     "name": "Aral",
     "lat": 51.36455,
     "lng": 6.430604
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.677472,
+    "lng": 9.367057
   },
   {
     "name": "HEM",
@@ -35865,6 +38485,11 @@
     "lng": 11.1579
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.528899,
+    "lng": 13.41808
+  },
+  {
     "name": "Shell",
     "lat": 51.878623,
     "lng": 8.485685
@@ -35885,6 +38510,11 @@
     "lng": 8.773606
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.196435,
+    "lng": 8.666941
+  },
+  {
     "name": "Shell",
     "lat": 52.213143,
     "lng": 8.815046
@@ -35900,6 +38530,11 @@
     "lng": 7.078734
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.968002,
+    "lng": 13.105072
+  },
+  {
     "name": "SB",
     "lat": 51.427018,
     "lng": 7.045871
@@ -35913,6 +38548,16 @@
     "name": "Aral",
     "lat": 49.46425,
     "lng": 11.117947
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.949397,
+    "lng": 8.664782
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.777984,
+    "lng": 9.942717
   },
   {
     "name": "Shell",
@@ -35938,6 +38583,11 @@
     "name": "Oil!",
     "lat": 51.3331,
     "lng": 7.46988
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.465678,
+    "lng": 7.879933
   },
   {
     "name": "Raiffeisen",
@@ -35995,6 +38645,11 @@
     "lng": 6.626305
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.453111,
+    "lng": 13.456709
+  },
+  {
     "name": "Shell",
     "lat": 50.988556,
     "lng": 7.844472
@@ -36028,6 +38683,11 @@
     "name": "Hoyer",
     "lat": 53.09580230713,
     "lng": 8.76940345764
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.09538,
+    "lng": 12.08314
   },
   {
     "name": "Esso",
@@ -36115,6 +38775,11 @@
     "lng": 7.217425
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.605389,
+    "lng": 8.032417
+  },
+  {
     "name": "Raiffeisen",
     "lat": 51.87944,
     "lng": 9.618098
@@ -36148,6 +38813,11 @@
     "name": "Aral",
     "lat": 50.997967,
     "lng": 14.61652
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.037022,
+    "lng": 9.036114
   },
   {
     "name": "Avia",
@@ -36348,6 +39018,11 @@
     "name": "Shell",
     "lat": 50.333269,
     "lng": 8.541923
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.559459,
+    "lng": 10.413132
   },
   {
     "name": "Supol",
@@ -36570,6 +39245,11 @@
     "lng": 12.786807
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.513599,
+    "lng": 6.827426
+  },
+  {
     "name": "Shell",
     "lat": 49.893008,
     "lng": 8.543546
@@ -36603,6 +39283,11 @@
     "name": "ED",
     "lat": 50.37812,
     "lng": 7.617833
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.857879,
+    "lng": 13.319008
   },
   {
     "name": "Esso",
@@ -36648,6 +39333,11 @@
     "name": "Jet",
     "lat": 49.87432,
     "lng": 8.66921
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.653192,
+    "lng": 8.557544
   },
   {
     "name": "Jet",
@@ -36718,6 +39408,11 @@
     "name": "Jet",
     "lat": 52.59117,
     "lng": 14.26839
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.531904,
+    "lng": 12.357294
   },
   {
     "name": "Jet",
@@ -36803,6 +39498,11 @@
     "name": "Jet",
     "lat": 50.74007,
     "lng": 7.07599
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.874171,
+    "lng": 9.70514
   },
   {
     "name": "Jet",
@@ -37033,6 +39733,11 @@
     "name": "Jet",
     "lat": 52.32706,
     "lng": 9.79247
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.799247,
+    "lng": 7.509407
   },
   {
     "name": "Jet",
@@ -37550,9 +40255,19 @@
     "lng": 7.400291
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.483773,
+    "lng": 13.478669
+  },
+  {
     "name": "BFT",
     "lat": 51.151638,
     "lng": 11.81496
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.861316,
+    "lng": 8.239667
   },
   {
     "name": "Shell",
@@ -37588,6 +40303,11 @@
     "name": "Sprint",
     "lat": 51.393044,
     "lng": 12.875843
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.697164,
+    "lng": 13.251557
   },
   {
     "name": "Globus",
@@ -37643,6 +40363,11 @@
     "name": "SB",
     "lat": 51.759308,
     "lng": 7.879762
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.54346,
+    "lng": 8.574265
   },
   {
     "name": "Aral",
@@ -37825,6 +40550,11 @@
     "lng": 8.570688
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.499364,
+    "lng": 12.184555
+  },
+  {
     "name": "Shell",
     "lat": 51.84924,
     "lng": 8.323589
@@ -37945,6 +40675,11 @@
     "lng": 12.524314
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.806115,
+    "lng": 9.2324
+  },
+  {
     "name": "Shell",
     "lat": 53.488733,
     "lng": 10.316503
@@ -37973,6 +40708,11 @@
     "name": "Aral",
     "lat": 50.578194,
     "lng": 8.564324
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.889796,
+    "lng": 11.471355
   },
   {
     "name": "Avia",
@@ -38060,6 +40800,11 @@
     "lng": 8.90458
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.150539,
+    "lng": 12.600528
+  },
+  {
     "name": "Avia",
     "lat": 51.9129,
     "lng": 8.65258
@@ -38105,6 +40850,11 @@
     "lng": 14.265841
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.3753,
+    "lng": 13.008198
+  },
+  {
     "name": "Aral",
     "lat": 54.239376,
     "lng": 12.407908
@@ -38113,6 +40863,11 @@
     "name": "Avia",
     "lat": 50.25494,
     "lng": 10.19731
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.691042,
+    "lng": 7.869494
   },
   {
     "name": "Oil!",
@@ -38143,6 +40898,11 @@
     "name": "ED",
     "lat": 50.502743,
     "lng": 8.019405
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.55652,
+    "lng": 9.350362
   },
   {
     "name": "Markant",
@@ -38560,6 +41320,11 @@
     "lng": 9.759168
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.254486,
+    "lng": 7.745862
+  },
+  {
     "name": "Shell",
     "lat": 47.934931,
     "lng": 8.719004
@@ -38703,6 +41468,11 @@
     "name": "Avia",
     "lat": 50.37445,
     "lng": 7.264921
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.950335,
+    "lng": 8.840426
   },
   {
     "name": "Aral",
@@ -38905,6 +41675,11 @@
     "lng": 12.15085
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.522241,
+    "lng": 7.159934
+  },
+  {
     "name": "Jet",
     "lat": 53.59392,
     "lng": 9.42299
@@ -38963,6 +41738,11 @@
     "name": "Aral",
     "lat": 51.34761,
     "lng": 12.175212
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.717743,
+    "lng": 9.937974
   },
   {
     "name": "Aral",
@@ -39125,6 +41905,11 @@
     "lng": 7.87401
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.901788,
+    "lng": 10.56649
+  },
+  {
     "name": "Raiffeisen",
     "lat": 51.684,
     "lng": 10.2161
@@ -39153,6 +41938,11 @@
     "name": "Raiffeisen",
     "lat": 52.77177,
     "lng": 10.03627
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.337856,
+    "lng": 8.429663
   },
   {
     "name": "Avia",
@@ -39235,6 +42025,11 @@
     "lng": 9.594575
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.530831,
+    "lng": 13.440946
+  },
+  {
     "name": "Esso",
     "lat": 49.220455,
     "lng": 8.62746
@@ -39243,6 +42038,11 @@
     "name": "Westfalen",
     "lat": 51.84332,
     "lng": 7.29439
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.818873,
+    "lng": 6.282095
   },
   {
     "name": "Esso",
@@ -39370,9 +42170,19 @@
     "lng": 8.45109
   },
   {
+    "name": "TotalEnergies",
+    "lat": 54.07774,
+    "lng": 12.367252
+  },
+  {
     "name": "Globus",
     "lat": 51.42897,
     "lng": 14.23936
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.98318,
+    "lng": 8.170831
   },
   {
     "name": "Esso",
@@ -39398,6 +42208,11 @@
     "name": "Avia",
     "lat": 51.5021,
     "lng": 7.58558
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.050333,
+    "lng": 8.654466
   },
   {
     "name": "Aral",
@@ -39545,6 +42360,11 @@
     "lng": 9.63107
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.240977,
+    "lng": 7.001475
+  },
+  {
     "name": "Aral",
     "lat": 51.386463,
     "lng": 7.477907
@@ -39580,9 +42400,19 @@
     "lng": 8.387662
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.600596,
+    "lng": 6.914389
+  },
+  {
     "name": "Gulf",
     "lat": 51.5473,
     "lng": 9.89279
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.722452,
+    "lng": 9.95847
   },
   {
     "name": "Bell",
@@ -39628,6 +42458,16 @@
     "name": "Aral",
     "lat": 48.119205,
     "lng": 11.607772
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.480994,
+    "lng": 12.421106
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.638696,
+    "lng": 11.404074
   },
   {
     "name": "Shell",
@@ -39760,6 +42600,11 @@
     "lng": 8.203897
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.704717,
+    "lng": 8.331842
+  },
+  {
     "name": "Sprint",
     "lat": 52.81144,
     "lng": 13.223471
@@ -39840,6 +42685,11 @@
     "lng": 6.07702
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.419154,
+    "lng": 13.319371
+  },
+  {
     "name": "Shell",
     "lat": 53.002923,
     "lng": 11.718846
@@ -39900,6 +42750,11 @@
     "lng": 12.110519
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.810155,
+    "lng": 12.965084
+  },
+  {
     "name": "Aral",
     "lat": 49.445286,
     "lng": 8.58033
@@ -39928,6 +42783,11 @@
     "name": "Score",
     "lat": 53.574577,
     "lng": 7.774848
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.537115,
+    "lng": 7.149212
   },
   {
     "name": "Avia",
@@ -40075,6 +42935,11 @@
     "lng": 11.59002
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.576415,
+    "lng": 13.314502
+  },
+  {
     "name": "Aral",
     "lat": 49.914555,
     "lng": 9.121742
@@ -40160,6 +43025,11 @@
     "lng": 10.95132262
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.566174,
+    "lng": 6.964711
+  },
+  {
     "name": "ED",
     "lat": 49.267509,
     "lng": 6.796919
@@ -40185,9 +43055,19 @@
     "lng": 7.94034
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.463125,
+    "lng": 11.055666
+  },
+  {
     "name": "Shell",
     "lat": 52.458362,
     "lng": 13.33886
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.283479,
+    "lng": 8.686314
   },
   {
     "name": "Esso",
@@ -40220,6 +43100,11 @@
     "lng": 11.514247
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.497207,
+    "lng": 8.488092
+  },
+  {
     "name": "Esso",
     "lat": 49.49067,
     "lng": 9.77938
@@ -40243,6 +43128,11 @@
     "name": "Esso",
     "lat": 53.77317,
     "lng": 12.165912
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.358706,
+    "lng": 6.687479
   },
   {
     "name": "Aral",
@@ -40325,6 +43215,11 @@
     "lng": 7.633
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.470368,
+    "lng": 12.264311
+  },
+  {
     "name": "Shell",
     "lat": 52.253936,
     "lng": 10.807546
@@ -40338,6 +43233,11 @@
     "name": "Shell",
     "lat": 51.943742,
     "lng": 8.427707
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.076621,
+    "lng": 12.119421
   },
   {
     "name": "Esso",
@@ -40450,6 +43350,11 @@
     "lng": 10.069837
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.421944,
+    "lng": 6.998477
+  },
+  {
     "name": "Mundorf",
     "lat": 50.797986,
     "lng": 7.052417
@@ -40500,6 +43405,16 @@
     "lng": 7.779861
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.147081,
+    "lng": 8.612149
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.583495,
+    "lng": 10.339036
+  },
+  {
     "name": "Esso",
     "lat": 53.609147,
     "lng": 10.635618
@@ -40545,6 +43460,11 @@
     "lng": 9.075339
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.785438,
+    "lng": 11.04411
+  },
+  {
     "name": "Aral",
     "lat": 53.84122,
     "lng": 10.707904
@@ -40565,9 +43485,19 @@
     "lng": 8.361785
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.475355,
+    "lng": 10.556442
+  },
+  {
     "name": "Esso",
     "lat": 48.60872,
     "lng": 12.71482
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.125293,
+    "lng": 8.408952
   },
   {
     "name": "Aral",
@@ -40583,6 +43513,11 @@
     "name": "Aral",
     "lat": 50.61818,
     "lng": 8.192196
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.594035,
+    "lng": 12.338528
   },
   {
     "name": "SB",
@@ -40650,6 +43585,11 @@
     "lng": 12.961661
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.370735,
+    "lng": 9.633336
+  },
+  {
     "name": "Aral",
     "lat": 51.477264,
     "lng": 10.808441
@@ -40658,6 +43598,11 @@
     "name": "Aral",
     "lat": 49.54836,
     "lng": 8.353849
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.631785,
+    "lng": 13.347598
   },
   {
     "name": "Esso",
@@ -40700,6 +43645,11 @@
     "lng": 6.643382
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.52743,
+    "lng": 7.187499
+  },
+  {
     "name": "Aral",
     "lat": 50.799606,
     "lng": 8.788718
@@ -40740,6 +43690,11 @@
     "lng": 11.99156
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.855365,
+    "lng": 7.492069
+  },
+  {
     "name": "Shell",
     "lat": 50.548012,
     "lng": 12.772717
@@ -40753,6 +43708,16 @@
     "name": "Shell",
     "lat": 49.896879,
     "lng": 8.611612
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.977556,
+    "lng": 13.589563
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.313024,
+    "lng": 12.414926
   },
   {
     "name": "Aral",
@@ -40935,9 +43900,19 @@
     "lng": 10.15838
   },
   {
+    "name": "TotalEnergies",
+    "lat": 54.046696,
+    "lng": 13.752053
+  },
+  {
     "name": "Aral",
     "lat": 47.74336,
     "lng": 12.154207
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.972397,
+    "lng": 10.972779
   },
   {
     "name": "Westfalen",
@@ -41040,9 +44015,19 @@
     "lng": 9.224244
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.371183,
+    "lng": 7.369739
+  },
+  {
     "name": "Shell",
     "lat": 47.898714,
     "lng": 10.644375
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.061286,
+    "lng": 13.693845
   },
   {
     "name": "Q1",
@@ -41065,6 +44050,11 @@
     "lng": 12.59377
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.17856,
+    "lng": 11.629122
+  },
+  {
     "name": "Raiffeisen",
     "lat": 50.95968,
     "lng": 8.026056
@@ -41083,6 +44073,16 @@
     "name": "Esso",
     "lat": 49.19831,
     "lng": 12.05695
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.962734,
+    "lng": 10.861101
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.245303,
+    "lng": 7.523955
   },
   {
     "name": "Tankpoint",
@@ -41110,6 +44110,11 @@
     "lng": 13.5897
   },
   {
+    "name": "TotalEnergies",
+    "lat": 54.170135,
+    "lng": 10.435575
+  },
+  {
     "name": "Sprint",
     "lat": 52.394814,
     "lng": 13.400066
@@ -41118,6 +44123,11 @@
     "name": "Aral",
     "lat": 53.374187,
     "lng": 10.550394
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.527265,
+    "lng": 11.312678
   },
   {
     "name": "Westfalen",
@@ -41175,6 +44185,11 @@
     "lng": 7.647413
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.796132,
+    "lng": 6.063573
+  },
+  {
     "name": "Pludra",
     "lat": 52.0269,
     "lng": 7.1054
@@ -41183,6 +44198,11 @@
     "name": "Raiffeisen",
     "lat": 53.48473,
     "lng": 9.159883
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.072199,
+    "lng": 13.184588
   },
   {
     "name": "Avia",
@@ -41270,6 +44290,11 @@
     "lng": 12.89499
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.493333,
+    "lng": 7.114444
+  },
+  {
     "name": "Aral",
     "lat": 49.60933,
     "lng": 7.328758
@@ -41315,9 +44340,19 @@
     "lng": 5.95629
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.962852,
+    "lng": 11.033377
+  },
+  {
     "name": "BFT",
     "lat": 49.15265,
     "lng": 8.57709
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.208558,
+    "lng": 6.28083
   },
   {
     "name": "Shell",
@@ -41333,6 +44368,11 @@
     "name": "Avia",
     "lat": 47.75969,
     "lng": 9.310085
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.939078,
+    "lng": 8.448889
   },
   {
     "name": "Esso",
@@ -41360,9 +44400,19 @@
     "lng": 8.462745
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.852901,
+    "lng": 9.296984
+  },
+  {
     "name": "BFT",
     "lat": 48.034952,
     "lng": 8.53352
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.029399,
+    "lng": 13.790689
   },
   {
     "name": "Aral",
@@ -41435,6 +44485,11 @@
     "lng": 9.183389
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.788633,
+    "lng": 9.763438
+  },
+  {
     "name": "Felta",
     "lat": 52.7245,
     "lng": 7.94273
@@ -41468,6 +44523,11 @@
     "name": "Aral",
     "lat": 52.84865,
     "lng": 11.16287
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.564806,
+    "lng": 7.856711
   },
   {
     "name": "Oil!",
@@ -41675,6 +44735,11 @@
     "lng": 10.65696
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.995278,
+    "lng": 7.109758
+  },
+  {
     "name": "Shell",
     "lat": 51.636651,
     "lng": 13.73876
@@ -41850,6 +44915,11 @@
     "lng": 7.2804
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.369542,
+    "lng": 6.779052
+  },
+  {
     "name": "Aral",
     "lat": 48.061268,
     "lng": 12.209808
@@ -41888,6 +44958,11 @@
     "name": "Aral",
     "lat": 51.62978,
     "lng": 7.526579
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.396756,
+    "lng": 7.35186
   },
   {
     "name": "Esso",
@@ -41945,6 +45020,16 @@
     "lng": 10.026086
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.05498,
+    "lng": 13.538353
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.273381,
+    "lng": 11.872191
+  },
+  {
     "name": "Shell",
     "lat": 53.225511,
     "lng": 8.593532
@@ -41978,6 +45063,11 @@
     "name": "Q1",
     "lat": 50.6297,
     "lng": 12.5198
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.548447,
+    "lng": 8.563832
   },
   {
     "name": "Shell",
@@ -42150,6 +45240,11 @@
     "lng": 13.283202
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.7003,
+    "lng": 13.229295
+  },
+  {
     "name": "Esso",
     "lat": 52.088745,
     "lng": 9.631907
@@ -42180,6 +45275,11 @@
     "lng": 6.273859
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.708401,
+    "lng": 12.464761
+  },
+  {
     "name": "Esso",
     "lat": 48.7047,
     "lng": 9.2487
@@ -42203,6 +45303,11 @@
     "name": "Avia",
     "lat": 48.3055,
     "lng": 8.9225
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.622226,
+    "lng": 9.884988
   },
   {
     "name": "BFT",
@@ -42240,9 +45345,19 @@
     "lng": 10.3712
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.376899,
+    "lng": 14.071393
+  },
+  {
     "name": "Aral",
     "lat": 48.723648,
     "lng": 9.377717
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.852942,
+    "lng": 8.582141
   },
   {
     "name": "OMV",
@@ -42345,6 +45460,16 @@
     "lng": 9.027333
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.245212,
+    "lng": 11.448775
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.195576,
+    "lng": 7.773943
+  },
+  {
     "name": "Aral",
     "lat": 49.87767,
     "lng": 10.884029
@@ -42385,6 +45510,11 @@
     "lng": 11.620232
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.486026,
+    "lng": 11.308634
+  },
+  {
     "name": "Aral",
     "lat": 51.102165,
     "lng": 9.349691
@@ -42410,6 +45540,11 @@
     "lng": 13.14909
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.370372,
+    "lng": 13.527195
+  },
+  {
     "name": "Calpam",
     "lat": 49.66722869873,
     "lng": 9.5147590637207
@@ -42420,9 +45555,19 @@
     "lng": 8.4201
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.30892,
+    "lng": 12.389452
+  },
+  {
     "name": "Esso",
     "lat": 49.501684,
     "lng": 10.424544
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.116658,
+    "lng": 8.928875
   },
   {
     "name": "Esso",
@@ -42443,6 +45588,16 @@
     "name": "Aral",
     "lat": 52.91808,
     "lng": 9.219863
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.405597,
+    "lng": 10.03808
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.645934,
+    "lng": 7.842771
   },
   {
     "name": "Avia",
@@ -42585,6 +45740,11 @@
     "lng": 6.873567
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.661553,
+    "lng": 13.330302
+  },
+  {
     "name": "Gulf",
     "lat": 50.9509,
     "lng": 13.3472
@@ -42700,6 +45860,11 @@
     "lng": 13.334517
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.271852,
+    "lng": 6.816438
+  },
+  {
     "name": "Aral",
     "lat": 52.258366,
     "lng": 14.426741
@@ -42733,6 +45898,11 @@
     "name": "Aral",
     "lat": 50.617237,
     "lng": 11.42804
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.645703,
+    "lng": 11.382095
   },
   {
     "name": "Shell",
@@ -42793,6 +45963,16 @@
     "name": "Shell",
     "lat": 49.323661,
     "lng": 11.039737
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.287222,
+    "lng": 9.276944
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.082701,
+    "lng": 11.858818
   },
   {
     "name": "Q1",
@@ -42950,6 +46130,11 @@
     "lng": 11.64723
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.184418,
+    "lng": 7.509619
+  },
+  {
     "name": "Nordoel",
     "lat": 53.5005156,
     "lng": 10.4915809
@@ -42993,6 +46178,11 @@
     "name": "Esso",
     "lat": 50.448033,
     "lng": 7.851099
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.752958,
+    "lng": 11.451818
   },
   {
     "name": "Westfalen",
@@ -43105,6 +46295,11 @@
     "lng": 7.768829
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.186099,
+    "lng": 11.384181
+  },
+  {
     "name": "Oil!",
     "lat": 51.386,
     "lng": 6.65409
@@ -43165,9 +46360,19 @@
     "lng": 11.162817
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.375599,
+    "lng": 13.749588
+  },
+  {
     "name": "Shell",
     "lat": 48.872496,
     "lng": 9.387013
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.985794,
+    "lng": 9.135177
   },
   {
     "name": "Shell",
@@ -43203,6 +46408,11 @@
     "name": "Esso",
     "lat": 47.782738302251,
     "lng": 11.834378242493
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.526759,
+    "lng": 7.69485
   },
   {
     "name": "Esso",
@@ -43283,6 +46493,11 @@
     "name": "Westfalen",
     "lat": 52.80445,
     "lng": 8.64733
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.299267,
+    "lng": 8.410588
   },
   {
     "name": "Shell",
@@ -43440,6 +46655,11 @@
     "lng": 13.749163
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.545202,
+    "lng": 11.029889
+  },
+  {
     "name": "Raiffeisen",
     "lat": 51.760033,
     "lng": 7.4266186
@@ -43503,6 +46723,11 @@
     "name": "Westfalen",
     "lat": 51.28954,
     "lng": 7.30228
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.729394,
+    "lng": 11.690909
   },
   {
     "name": "Aral",
@@ -43600,6 +46825,11 @@
     "lng": 10.33994
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.283339,
+    "lng": 8.193928
+  },
+  {
     "name": "Aral",
     "lat": 49.499207,
     "lng": 7.772772
@@ -43660,6 +46890,11 @@
     "lng": 7.63763
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.002242,
+    "lng": 11.002569
+  },
+  {
     "name": "Esso",
     "lat": 49.545442,
     "lng": 8.353803
@@ -43688,6 +46923,11 @@
     "name": "BFT",
     "lat": 52.674785,
     "lng": 7.48151
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.455578,
+    "lng": 13.367255
   },
   {
     "name": "OMV",
@@ -43733,6 +46973,16 @@
     "name": "SB",
     "lat": 51.573498,
     "lng": 8.32016
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.038298,
+    "lng": 8.289295
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.986245,
+    "lng": 11.038236
   },
   {
     "name": "Aral",
@@ -43800,6 +47050,11 @@
     "lng": 8.1494
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.764379,
+    "lng": 6.217243
+  },
+  {
     "name": "Esso",
     "lat": 49.98428,
     "lng": 10.66891
@@ -43840,6 +47095,11 @@
     "lng": 11.34954
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.947035,
+    "lng": 10.597012
+  },
+  {
     "name": "Esso",
     "lat": 51.00541,
     "lng": 13.806669
@@ -43848,6 +47108,11 @@
     "name": "Aral",
     "lat": 51.513927,
     "lng": 6.741863
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.762397,
+    "lng": 6.975811
   },
   {
     "name": "Shell",
@@ -43883,6 +47148,16 @@
     "name": "Aral",
     "lat": 49.31136,
     "lng": 11.002243
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.463548,
+    "lng": 6.773462
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.536691,
+    "lng": 13.51541
   },
   {
     "name": "Westfalen",
@@ -43928,6 +47203,11 @@
     "name": "Avia",
     "lat": 49.82006509,
     "lng": 9.59842671
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.200071,
+    "lng": 6.767971
   },
   {
     "name": "Raiffeisen",
@@ -44045,6 +47325,11 @@
     "lng": 8.92517
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.884422,
+    "lng": 7.186394
+  },
+  {
     "name": "Aral",
     "lat": 51.9037,
     "lng": 7.18728
@@ -44055,9 +47340,24 @@
     "lng": 8.603513
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.53323,
+    "lng": 13.0607
+  },
+  {
     "name": "Oil!",
     "lat": 51.2642,
     "lng": 14.5979
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.638912,
+    "lng": 8.909811
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.691333,
+    "lng": 10.904988
   },
   {
     "name": "BFT",
@@ -44078,6 +47378,11 @@
     "name": "SB",
     "lat": 51.486857,
     "lng": 7.215705
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.102355,
+    "lng": 8.68212
   },
   {
     "name": "Esso",
@@ -44135,6 +47440,11 @@
     "lng": 7.05344
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.68094,
+    "lng": 7.922804
+  },
+  {
     "name": "Sprint",
     "lat": 50.967075,
     "lng": 14.710695
@@ -44143,6 +47453,11 @@
     "name": "Esso",
     "lat": 48.434115,
     "lng": 11.842232
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.438264,
+    "lng": 11.984794
   },
   {
     "name": "Shell",
@@ -44233,6 +47548,11 @@
     "name": "Esso",
     "lat": 48.171821,
     "lng": 11.507127
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.099613,
+    "lng": 12.177267
   },
   {
     "name": "Aral",
@@ -44350,6 +47670,11 @@
     "lng": 7.522258
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.396448,
+    "lng": 6.657844
+  },
+  {
     "name": "Aral",
     "lat": 48.8900146,
     "lng": 9.168827
@@ -44455,6 +47780,11 @@
     "lng": 12.46517222
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.122806,
+    "lng": 9.195898
+  },
+  {
     "name": "Aral",
     "lat": 51.705444,
     "lng": 8.340492
@@ -44463,6 +47793,11 @@
     "name": "Avia",
     "lat": 49.02842,
     "lng": 12.10762
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.423994,
+    "lng": 7.236086
   },
   {
     "name": "PM",
@@ -44520,6 +47855,11 @@
     "lng": 7.467548
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.436134,
+    "lng": 13.26584
+  },
+  {
     "name": "Shell",
     "lat": 52.265157,
     "lng": 8.898725
@@ -44553,6 +47893,11 @@
     "name": "Esso",
     "lat": 50.23082308,
     "lng": 8.770869602
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.805717,
+    "lng": 9.508026
   },
   {
     "name": "Hoyer",
@@ -44623,6 +47968,11 @@
     "name": "Aral",
     "lat": 52.762714,
     "lng": 9.583025
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.535715,
+    "lng": 7.474473
   },
   {
     "name": "Aral",
@@ -44755,6 +48105,11 @@
     "lng": 13.394627
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.52028,
+    "lng": 7.078772
+  },
+  {
     "name": "Shell",
     "lat": 52.127569,
     "lng": 10.051298
@@ -44788,6 +48143,11 @@
     "name": "Shell",
     "lat": 49.469022,
     "lng": 11.129632
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.164699,
+    "lng": 6.917088
   },
   {
     "name": "Esso",
@@ -44873,6 +48233,11 @@
     "name": "Oil!",
     "lat": 53.1912,
     "lng": 8.5586
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.093524,
+    "lng": 12.115502
   },
   {
     "name": "Globus",
@@ -45010,6 +48375,11 @@
     "lng": 10.908607
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.725941,
+    "lng": 10.261293
+  },
+  {
     "name": "Esso",
     "lat": 51.517312,
     "lng": 7.272723
@@ -45018,6 +48388,11 @@
     "name": "Avia",
     "lat": 51.90343,
     "lng": 6.857343
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.159478,
+    "lng": 6.415267
   },
   {
     "name": "Shell",
@@ -45088,6 +48463,11 @@
     "name": "Esso",
     "lat": 50.534999,
     "lng": 7.049053
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.366603,
+    "lng": 8.981484
   },
   {
     "name": "Shell",
@@ -45183,6 +48563,11 @@
     "name": "Oil!",
     "lat": 51.5958,
     "lng": 7.44184
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.343383,
+    "lng": 8.663085
   },
   {
     "name": "Shell",
@@ -45343,6 +48728,11 @@
     "name": "Shell",
     "lat": 48.607335,
     "lng": 9.630822
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.263299,
+    "lng": 14.116393
   },
   {
     "name": "Aral",
@@ -45600,6 +48990,11 @@
     "lng": 9.80239391327
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.158335,
+    "lng": 6.938557
+  },
+  {
     "name": "Oil!",
     "lat": 53.4467,
     "lng": 8.59486
@@ -45625,6 +49020,11 @@
     "lng": 12.633873
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.59744,
+    "lng": 8.118027
+  },
+  {
     "name": "Q1",
     "lat": 50.9017,
     "lng": 14.8177
@@ -45648,6 +49048,11 @@
     "name": "Aral",
     "lat": 47.90727,
     "lng": 11.7173357
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.515299,
+    "lng": 7.258893
   },
   {
     "name": "Aral",
@@ -45760,6 +49165,11 @@
     "lng": 9.532842
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.398852,
+    "lng": 7.473292
+  },
+  {
     "name": "Tankpoint",
     "lat": 52.4542,
     "lng": 9.72793
@@ -45788,6 +49198,11 @@
     "name": "PM",
     "lat": 50.8858566,
     "lng": 6.109047
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.525299,
+    "lng": 11.223612
   },
   {
     "name": "Esso",
@@ -45955,6 +49370,11 @@
     "lng": 10.5538
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.634353,
+    "lng": 12.794047
+  },
+  {
     "name": "Aral",
     "lat": 52.050865,
     "lng": 8.376857
@@ -46005,6 +49425,11 @@
     "lng": 8.114908
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.874529,
+    "lng": 6.949756
+  },
+  {
     "name": "ELAN",
     "lat": 47.91729,
     "lng": 8.20623
@@ -46018,6 +49443,11 @@
     "name": "Aral",
     "lat": 50.81657,
     "lng": 10.729292
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.419552,
+    "lng": 7.083555
   },
   {
     "name": "OMV",
@@ -46083,6 +49513,11 @@
     "name": "Shell",
     "lat": 51.332941,
     "lng": 12.405758
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.562493,
+    "lng": 13.459476
   },
   {
     "name": "Bell",
@@ -46360,6 +49795,11 @@
     "lng": 9.891427
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.003447,
+    "lng": 9.104392
+  },
+  {
     "name": "BFT",
     "lat": 48.374768,
     "lng": 8.94359
@@ -46403,6 +49843,11 @@
     "name": "Orlen",
     "lat": 52.159333,
     "lng": 13.651289
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.046448,
+    "lng": 8.273192
   },
   {
     "name": "Orlen",
@@ -46475,6 +49920,11 @@
     "lng": 10.430993
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.209499,
+    "lng": 6.963703
+  },
+  {
     "name": "Shell",
     "lat": 51.149599,
     "lng": 6.894037
@@ -46498,6 +49948,11 @@
     "name": "Aral",
     "lat": 50.962032,
     "lng": 7.1483
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.748786,
+    "lng": 6.490989
   },
   {
     "name": "Aral",
@@ -46595,6 +50050,11 @@
     "lng": 11.053788
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.698549,
+    "lng": 7.673591
+  },
+  {
     "name": "Avia",
     "lat": 53.26419,
     "lng": 7.383077
@@ -46620,6 +50080,11 @@
     "lng": 12.89472
   },
   {
+    "name": "TotalEnergies",
+    "lat": 47.98714,
+    "lng": 7.83847
+  },
+  {
     "name": "ELAN",
     "lat": 53.184403,
     "lng": 8.578332
@@ -46628,6 +50093,11 @@
     "name": "Shell",
     "lat": 48.692939,
     "lng": 9.305063
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.410373,
+    "lng": 11.544802
   },
   {
     "name": "Shell",
@@ -46755,6 +50225,11 @@
     "lng": 10.142306
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.657124,
+    "lng": 11.495127
+  },
+  {
     "name": "BFT",
     "lat": 50.57548,
     "lng": 8.66188
@@ -46768,6 +50243,11 @@
     "name": "Aral",
     "lat": 51.090614,
     "lng": 13.675574
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.52744,
+    "lng": 13.457798
   },
   {
     "name": "Shell",
@@ -46843,6 +50323,11 @@
     "name": "Aral",
     "lat": 49.921677,
     "lng": 8.472126
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.37781,
+    "lng": 9.618669
   },
   {
     "name": "Aral",
@@ -47020,6 +50505,11 @@
     "lng": 8.34279
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.478273,
+    "lng": 7.12671
+  },
+  {
     "name": "Shell",
     "lat": 48.076094,
     "lng": 8.623957
@@ -47135,9 +50625,19 @@
     "lng": 6.574608
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.424057,
+    "lng": 8.638456
+  },
+  {
     "name": "Shell",
     "lat": 47.565505,
     "lng": 11.141005
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.99568,
+    "lng": 12.235221
   },
   {
     "name": "Aral",
@@ -47158,6 +50658,11 @@
     "name": "Esso",
     "lat": 50.096322,
     "lng": 8.351786
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.395213,
+    "lng": 12.540529
   },
   {
     "name": "Aral",
@@ -47265,6 +50770,11 @@
     "lng": 6.204854
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.915282,
+    "lng": 10.805329
+  },
+  {
     "name": "Shell",
     "lat": 51.833714,
     "lng": 12.258461
@@ -47343,6 +50853,11 @@
     "name": "ELAN",
     "lat": 48.124087,
     "lng": 8.338129
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.354444,
+    "lng": 12.395
   },
   {
     "name": "Aral",
@@ -47473,6 +50988,11 @@
     "name": "Shell",
     "lat": 50.090962,
     "lng": 8.662414
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.290829,
+    "lng": 12.444689
   },
   {
     "name": "Aral",
@@ -47650,6 +51170,11 @@
     "lng": 9.32184
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.584499,
+    "lng": 12.592266
+  },
+  {
     "name": "Aral",
     "lat": 51.477486,
     "lng": 7.227767
@@ -47815,6 +51340,11 @@
     "lng": 12.117918
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.653899,
+    "lng": 13.204295
+  },
+  {
     "name": "HEM",
     "lat": 48.58070555,
     "lng": 8.67996944
@@ -47838,6 +51368,11 @@
     "name": "Shell",
     "lat": 54.081005,
     "lng": 12.213424
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.186555,
+    "lng": 11.975332
   },
   {
     "name": "Shell",
@@ -47955,9 +51490,19 @@
     "lng": 8.042467
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.414343,
+    "lng": 13.572973
+  },
+  {
     "name": "Aral",
     "lat": 51.352974,
     "lng": 8.281412
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.19145,
+    "lng": 7.170787
   },
   {
     "name": "Shell",
@@ -48090,6 +51635,11 @@
     "lng": 7.333623
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.560818,
+    "lng": 7.231214
+  },
+  {
     "name": "Aral",
     "lat": 50.44011,
     "lng": 7.830385
@@ -48160,6 +51710,11 @@
     "lng": 8.499941
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.876417,
+    "lng": 8.039582
+  },
+  {
     "name": "GO",
     "lat": 51.65186,
     "lng": 12.264166
@@ -48193,6 +51748,11 @@
     "name": "Albers",
     "lat": 53.59353,
     "lng": 7.34114
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.389149,
+    "lng": 10.881633
   },
   {
     "name": "Shell",
@@ -48240,6 +51800,11 @@
     "lng": 12.592826
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.57352,
+    "lng": 7.04802
+  },
+  {
     "name": "Shell",
     "lat": 51.138673,
     "lng": 7.170751
@@ -48248,6 +51813,11 @@
     "name": "Aral",
     "lat": 50.52972,
     "lng": 6.262684
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.365715,
+    "lng": 11.143276
   },
   {
     "name": "Aral",
@@ -48285,6 +51855,11 @@
     "lng": 8.63663
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.465195,
+    "lng": 11.152628
+  },
+  {
     "name": "BFT",
     "lat": 51.06365,
     "lng": 12.13784
@@ -48318,6 +51893,11 @@
     "name": "Aral",
     "lat": 49.897438,
     "lng": 10.067211
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.940555,
+    "lng": 11.418087
   },
   {
     "name": "ELAN",
@@ -48380,6 +51960,11 @@
     "lng": 10.830318
   },
   {
+    "name": "TotalEnergies",
+    "lat": 54.144871,
+    "lng": 11.735626
+  },
+  {
     "name": "HEM",
     "lat": 52.991261,
     "lng": 10.079998
@@ -48408,6 +51993,11 @@
     "name": "Allguth",
     "lat": 48.097958,
     "lng": 11.511889
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.508046,
+    "lng": 12.158484
   },
   {
     "name": "Bergler",
@@ -48685,6 +52275,11 @@
     "lng": 8.519232
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.569706,
+    "lng": 7.286899
+  },
+  {
     "name": "Raiffeisen",
     "lat": 51.051044464111,
     "lng": 9.2756423950195
@@ -48778,6 +52373,11 @@
     "name": "Shell",
     "lat": 50.904033,
     "lng": 7.410534
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.990655,
+    "lng": 9.775772
   },
   {
     "name": "Aral",
@@ -48920,6 +52520,11 @@
     "lng": 8.567403
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.370873,
+    "lng": 8.08469
+  },
+  {
     "name": "Esso",
     "lat": 49.987566,
     "lng": 8.327974
@@ -48930,9 +52535,19 @@
     "lng": 9.925332
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.32266,
+    "lng": 12.3319
+  },
+  {
     "name": "Oil!",
     "lat": 49.9692,
     "lng": 9.15033
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.980113,
+    "lng": 11.043543
   },
   {
     "name": "Bergler",
@@ -49040,6 +52655,11 @@
     "lng": 9.686299
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.311699,
+    "lng": 13.292083
+  },
+  {
     "name": "Jet",
     "lat": 48.52739,
     "lng": 9.20473
@@ -49070,6 +52690,11 @@
     "lng": 13.584005
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.832897,
+    "lng": 12.873383
+  },
+  {
     "name": "BFT",
     "lat": 51.7613,
     "lng": 7.88988
@@ -49078,6 +52703,11 @@
     "name": "Shell",
     "lat": 51.377733,
     "lng": 7.71151
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.868746,
+    "lng": 13.413132
   },
   {
     "name": "BFT",
@@ -49135,6 +52765,11 @@
     "lng": 11.961337
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.157499,
+    "lng": 11.543893
+  },
+  {
     "name": "Aral",
     "lat": 52.42122,
     "lng": 9.595494
@@ -49163,6 +52798,16 @@
     "name": "Pinoil",
     "lat": 48.73356,
     "lng": 11.167111
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.368975,
+    "lng": 7.47524
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.158288,
+    "lng": 8.291456
   },
   {
     "name": "Shell",
@@ -49385,6 +53030,11 @@
     "lng": 11.601109
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.92171,
+    "lng": 9.512394
+  },
+  {
     "name": "Globus",
     "lat": 48.249927,
     "lng": 12.504
@@ -49510,6 +53160,11 @@
     "lng": 9.890986
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.021233,
+    "lng": 8.527893
+  },
+  {
     "name": "Aral",
     "lat": 53.390644,
     "lng": 10.045243
@@ -49543,6 +53198,11 @@
     "name": "BFT",
     "lat": 50.90611,
     "lng": 6.18767
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.83787,
+    "lng": 10.794663
   },
   {
     "name": "Aral",
@@ -49650,6 +53310,11 @@
     "lng": 9.31509
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.159048,
+    "lng": 10.82816
+  },
+  {
     "name": "Aral",
     "lat": 51.86883,
     "lng": 10.5594349
@@ -49713,6 +53378,11 @@
     "name": "Albers",
     "lat": 53.025701,
     "lng": 7.327062
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.013299,
+    "lng": 8.440977
   },
   {
     "name": "BFT",
@@ -49780,6 +53450,11 @@
     "lng": 9.68572
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.284905,
+    "lng": 12.394645
+  },
+  {
     "name": "OMV",
     "lat": 48.2549,
     "lng": 12.42156
@@ -49798,6 +53473,11 @@
     "name": "Esso",
     "lat": 50.880495,
     "lng": 7.625753
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.289983,
+    "lng": 13.290608
   },
   {
     "name": "HEM",
@@ -49870,6 +53550,11 @@
     "lng": 10.041591
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.394992,
+    "lng": 12.34057
+  },
+  {
     "name": "Aral",
     "lat": 50.619164,
     "lng": 7.990604
@@ -49923,6 +53608,11 @@
     "name": "Aral",
     "lat": 51.47933,
     "lng": 7.20471
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.516812,
+    "lng": 13.180058
   },
   {
     "name": "HEM",
@@ -50098,6 +53788,11 @@
     "name": "Honsel",
     "lat": 51.211078643799,
     "lng": 10.325516700745
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.902002,
+    "lng": 8.310792
   },
   {
     "name": "Esso",
@@ -50370,6 +54065,11 @@
     "lng": 7.794322
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.030304,
+    "lng": 7.862799
+  },
+  {
     "name": "Star",
     "lat": 53.029241,
     "lng": 10.409246
@@ -50563,6 +54263,11 @@
     "name": "Esso",
     "lat": 48.45764,
     "lng": 11.65221
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.649859,
+    "lng": 13.156392
   },
   {
     "name": "Raiffeisen",
@@ -50830,6 +54535,11 @@
     "lng": 6.552423
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.294494,
+    "lng": 13.736175
+  },
+  {
     "name": "Aral",
     "lat": 53.61555,
     "lng": 9.951808
@@ -51038,6 +54748,11 @@
     "name": "Avia",
     "lat": 53.216793,
     "lng": 7.7576423
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.370697,
+    "lng": 10.900372
   },
   {
     "name": "Aral",
@@ -54040,6 +57755,11 @@
     "lng": 7.75962
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.534034,
+    "lng": 6.580905
+  },
+  {
     "name": "BFT",
     "lat": 49.83159,
     "lng": 8.05323
@@ -54215,6 +57935,11 @@
     "lng": 7.26547
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.695014,
+    "lng": 8.465266
+  },
+  {
     "name": "BFT",
     "lat": 51.1748,
     "lng": 7.16105
@@ -54280,6 +58005,16 @@
     "lng": 12.1779
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.272919,
+    "lng": 12.550472
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.517282,
+    "lng": 9.89025
+  },
+  {
     "name": "SB",
     "lat": 51.1799,
     "lng": 6.82738
@@ -54343,6 +58078,11 @@
     "name": "SB",
     "lat": 50.356328,
     "lng": 7.588334
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.033492,
+    "lng": 8.61077
   },
   {
     "name": "SB",
@@ -54470,9 +58210,19 @@
     "lng": 7.56576
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.881844,
+    "lng": 7.113107
+  },
+  {
     "name": "Jet",
     "lat": 48.46587,
     "lng": 9.94748
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.860782,
+    "lng": 10.502197
   },
   {
     "name": "SB",
@@ -54483,6 +58233,21 @@
     "name": "SB",
     "lat": 51.23879,
     "lng": 6.84889
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.88358,
+    "lng": 10.476118
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.508358,
+    "lng": 13.260575
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.710815,
+    "lng": 10.787838
   },
   {
     "name": "HEM",
@@ -54555,6 +58320,11 @@
     "lng": 9.14961
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.547993,
+    "lng": 12.13178
+  },
+  {
     "name": "Raiffeisen",
     "lat": 52.57811,
     "lng": 9.415665
@@ -54583,6 +58353,11 @@
     "name": "Avia",
     "lat": 48.4271,
     "lng": 7.8121
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.980904,
+    "lng": 9.275372
   },
   {
     "name": "Avex",
@@ -54980,6 +58755,11 @@
     "lng": 12.30058
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.754974,
+    "lng": 10.328288
+  },
+  {
     "name": "Aral",
     "lat": 48.241776,
     "lng": 12.519261
@@ -55010,9 +58790,19 @@
     "lng": 9.970989
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.013185,
+    "lng": 12.139661
+  },
+  {
     "name": "Agip",
     "lat": 49.479513,
     "lng": 11.225268
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.596535,
+    "lng": 12.707197
   },
   {
     "name": "BFT",
@@ -55143,6 +58933,11 @@
     "name": "ELAN",
     "lat": 52.040844,
     "lng": 8.572319
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.422046,
+    "lng": 7.028408
   },
   {
     "name": "Jet",
@@ -55320,14 +59115,34 @@
     "lng": 6.83232
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.47251,
+    "lng": 7.927314
+  },
+  {
     "name": "Aral",
     "lat": 51.364132,
     "lng": 7.55335
   },
   {
+    "name": "TotalEnergies",
+    "lat": 47.7643,
+    "lng": 12.1973
+  },
+  {
     "name": "Sprint",
     "lat": 50.64358,
     "lng": 11.457051
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.395753,
+    "lng": 12.766098
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.256443,
+    "lng": 12.533697
   },
   {
     "name": "Raiffeisen",
@@ -55340,14 +59155,34 @@
     "lng": 11.815757
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.24572,
+    "lng": 12.510453
+  },
+  {
     "name": "Jet",
     "lat": 51.75005,
     "lng": 14.26052
   },
   {
+    "name": "TotalEnergies",
+    "lat": 47.66748,
+    "lng": 12.16909
+  },
+  {
     "name": "Jet",
     "lat": 52.93084,
     "lng": 12.80548
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.190295,
+    "lng": 11.848462
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.048764,
+    "lng": 10.245451
   },
   {
     "name": "Rolfes",
@@ -55358,6 +59193,11 @@
     "name": "Jet",
     "lat": 53.19227,
     "lng": 9.28816
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.186452,
+    "lng": 11.556034
   },
   {
     "name": "Raiffeisen",
@@ -55418,6 +59258,11 @@
     "name": "Score",
     "lat": 53.384503,
     "lng": 8.057383
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.001488,
+    "lng": 10.144712
   },
   {
     "name": "Jet",
@@ -55555,6 +59400,11 @@
     "lng": 9.26805
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.406848,
+    "lng": 7.478127
+  },
+  {
     "name": "Aral",
     "lat": 51.400124,
     "lng": 7.697009
@@ -55578,6 +59428,11 @@
     "name": "Esso",
     "lat": 50.8707019,
     "lng": 11.8485484
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.641057,
+    "lng": 12.463258
   },
   {
     "name": "HEM",
@@ -55755,6 +59610,11 @@
     "lng": 10.747839
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.470148,
+    "lng": 13.371984
+  },
+  {
     "name": "Avia",
     "lat": 48.96275,
     "lng": 9.846802
@@ -55843,6 +59703,11 @@
     "name": "BFT",
     "lat": 47.69669,
     "lng": 13.04714
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.811141,
+    "lng": 11.479088
   },
   {
     "name": "Jet",
@@ -55960,9 +59825,19 @@
     "lng": 13.527143
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.03026,
+    "lng": 8.775624
+  },
+  {
     "name": "Jet",
     "lat": 50.92733,
     "lng": 7.06034
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 47.736601,
+    "lng": 8.788061
   },
   {
     "name": "Classic",
@@ -56023,6 +59898,11 @@
     "name": "Access",
     "lat": 50.912509,
     "lng": 8.007419
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.277443,
+    "lng": 10.161049
   },
   {
     "name": "Aral",
@@ -56130,6 +60010,11 @@
     "lng": 13.491732
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.207642,
+    "lng": 12.417865
+  },
+  {
     "name": "SB",
     "lat": 51.173188,
     "lng": 14.471163
@@ -56138,6 +60023,11 @@
     "name": "SB",
     "lat": 49.502212,
     "lng": 8.471017
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.18267,
+    "lng": 11.553935
   },
   {
     "name": "Star",
@@ -56163,6 +60053,16 @@
     "name": "Star",
     "lat": 51.626662,
     "lng": 13.581862
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 54.300851,
+    "lng": 13.094701
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.53613,
+    "lng": 10.236988
   },
   {
     "name": "Star",
@@ -56245,6 +60145,11 @@
     "lng": 12.63145
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.53168,
+    "lng": 8.143343
+  },
+  {
     "name": "team",
     "lat": 52.1866,
     "lng": 10.3391
@@ -56305,9 +60210,19 @@
     "lng": 10.171154
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.874866,
+    "lng": 9.343257
+  },
+  {
     "name": "Esso",
     "lat": 51.32524,
     "lng": 6.180125
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.522372,
+    "lng": 8.091551
   },
   {
     "name": "HEM",
@@ -56350,6 +60265,11 @@
     "lng": 8.650596
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.544789,
+    "lng": 12.01427
+  },
+  {
     "name": "Avia",
     "lat": 48.0834,
     "lng": 12.05992
@@ -56373,6 +60293,11 @@
     "name": "Rolfes",
     "lat": 53.1398,
     "lng": 7.567326
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.416506,
+    "lng": 10.101096
   },
   {
     "name": "Star",
@@ -56468,6 +60393,11 @@
     "name": "Oil!",
     "lat": 50.6403,
     "lng": 9.41035
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.55424,
+    "lng": 13.207408
   },
   {
     "name": "SB",
@@ -56775,6 +60705,11 @@
     "lng": 8.866111
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.233714,
+    "lng": 8.83337
+  },
+  {
     "name": "Aral",
     "lat": 52.517838,
     "lng": 11.412474
@@ -56915,6 +60850,11 @@
     "lng": 9.16531562805
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.766781,
+    "lng": 10.075597
+  },
+  {
     "name": "Avia",
     "lat": 49.69184,
     "lng": 11.00408
@@ -57000,6 +60940,11 @@
     "lng": 12.226
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.265174,
+    "lng": 11.593216
+  },
+  {
     "name": "SB",
     "lat": 52.85321,
     "lng": 7.93144
@@ -57028,6 +60973,11 @@
     "name": "BFT",
     "lat": 51.1929,
     "lng": 10.0354
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.985913,
+    "lng": 8.447617
   },
   {
     "name": "Jet",
@@ -57080,6 +61030,11 @@
     "lng": 10.813799475684
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.711855,
+    "lng": 7.067163
+  },
+  {
     "name": "Jet",
     "lat": 50.68533,
     "lng": 6.98126
@@ -57108,6 +61063,11 @@
     "name": "team",
     "lat": 51.9881,
     "lng": 6.90132
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.587929,
+    "lng": 10.052757
   },
   {
     "name": "Aral",
@@ -57170,6 +61130,11 @@
     "lng": 11.266046
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.59843,
+    "lng": 10.840531
+  },
+  {
     "name": "Esso",
     "lat": 51.4041748,
     "lng": 10.4168272
@@ -57208,6 +61173,11 @@
     "name": "Jet",
     "lat": 50.05457,
     "lng": 8.51439
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.305362,
+    "lng": 13.297559
   },
   {
     "name": "Shell",
@@ -57340,6 +61310,11 @@
     "lng": 7.893176
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.709459,
+    "lng": 7.054805
+  },
+  {
     "name": "Avia",
     "lat": 50.04801,
     "lng": 10.30696
@@ -57350,9 +61325,19 @@
     "lng": 6.301969
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.969769,
+    "lng": 8.949254
+  },
+  {
     "name": "Avia",
     "lat": 48.58273597,
     "lng": 8.00626299
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.274934,
+    "lng": 7.786951
   },
   {
     "name": "Avia",
@@ -57380,6 +61365,11 @@
     "lng": 10.014874458313
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.091008,
+    "lng": 11.888473
+  },
+  {
     "name": "Raiffeisen",
     "lat": 52.7706,
     "lng": 9.607592
@@ -57393,6 +61383,11 @@
     "name": "Avia",
     "lat": 49.02948,
     "lng": 8.342968
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.4341,
+    "lng": 8.374491
   },
   {
     "name": "Avia",
@@ -57450,6 +61445,11 @@
     "lng": 8.195841
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.5966,
+    "lng": 8.73165
+  },
+  {
     "name": "Shell",
     "lat": 51.710532,
     "lng": 7.761298
@@ -57483,6 +61483,11 @@
     "name": "Hoyer",
     "lat": 53.37254,
     "lng": 10.23533
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.034886,
+    "lng": 8.887201
   },
   {
     "name": "Globus",
@@ -57693,6 +61698,11 @@
     "name": "Oil!",
     "lat": 51.7623,
     "lng": 12.6395
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.827153,
+    "lng": 8.000313
   },
   {
     "name": "Avia",
@@ -58190,6 +62200,11 @@
     "lng": 9.7087601
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.162543,
+    "lng": 11.716105
+  },
+  {
     "name": "Raiffeisen",
     "lat": 53.77854,
     "lng": 9.322071
@@ -58288,6 +62303,11 @@
     "name": "Total",
     "lat": 48.4120522,
     "lng": 10.9127779
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.888638,
+    "lng": 12.403536
   },
   {
     "name": "Esso",
@@ -58395,6 +62415,11 @@
     "lng": 11.1365
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.058803,
+    "lng": 8.929957
+  },
+  {
     "name": "Total",
     "lat": 51.608163,
     "lng": 12.186959
@@ -58488,6 +62513,11 @@
     "name": "PM",
     "lat": 50.754875,
     "lng": 6.488765
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.8413,
+    "lng": 11.623888
   },
   {
     "name": "PM",
@@ -58645,6 +62675,11 @@
     "lng": 8.0259
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.804243,
+    "lng": 8.583557
+  },
+  {
     "name": "Raiffeisen",
     "lat": 52.9638,
     "lng": 7.26214
@@ -58668,6 +62703,11 @@
     "name": "PM",
     "lat": 50.732377,
     "lng": 7.076646
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.230603,
+    "lng": 9.342874
   },
   {
     "name": "Shell",
@@ -58725,6 +62765,11 @@
     "lng": 9.630822
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.124502,
+    "lng": 11.757973
+  },
+  {
     "name": "Esso",
     "lat": 48.69332,
     "lng": 12.6736422
@@ -58748,6 +62793,11 @@
     "name": "OMV",
     "lat": 49.27042,
     "lng": 11.60252
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.070138,
+    "lng": 7.720078
   },
   {
     "name": "Shell",
@@ -58785,6 +62835,11 @@
     "lng": 10.84657
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.205814,
+    "lng": 8.62513
+  },
+  {
     "name": "Esso",
     "lat": 49.2729802,
     "lng": 11.5996628
@@ -58793,6 +62848,11 @@
     "name": "OMV",
     "lat": 49.58264,
     "lng": 10.92685
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.548508,
+    "lng": 8.13312
   },
   {
     "name": "Shell",
@@ -58915,6 +62975,11 @@
     "lng": 10.021016
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.424365,
+    "lng": 9.96279
+  },
+  {
     "name": "Star",
     "lat": 50.131974,
     "lng": 9.134606
@@ -58943,6 +63008,11 @@
     "name": "Sprint",
     "lat": 51.796463,
     "lng": 12.943407
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.999029,
+    "lng": 9.180263
   },
   {
     "name": "Shell",
@@ -59005,9 +63075,19 @@
     "lng": 8.894619
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.551535,
+    "lng": 8.348149
+  },
+  {
     "name": "Shell",
     "lat": 48.555673,
     "lng": 12.137587
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.048264,
+    "lng": 9.38995
   },
   {
     "name": "Shell",
@@ -59033,6 +63113,11 @@
     "name": "Shell",
     "lat": 52.542948,
     "lng": 13.689905
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.690358,
+    "lng": 10.21323
   },
   {
     "name": "Aral",
@@ -59260,6 +63345,11 @@
     "lng": 6.84608
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.512352,
+    "lng": 10.088851
+  },
+  {
     "name": "Raiffeisen",
     "lat": 52.3541,
     "lng": 14.0833
@@ -59268,6 +63358,11 @@
     "name": "Raiffeisen",
     "lat": 52.3548,
     "lng": 14.0865
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.590251,
+    "lng": 13.094014
   },
   {
     "name": "Esso",
@@ -59290,6 +63385,11 @@
     "lng": 6.190632
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.265847,
+    "lng": 7.964142
+  },
+  {
     "name": "HEM",
     "lat": 49.4384904,
     "lng": 12.0524908
@@ -59308,6 +63408,11 @@
     "name": "Jet",
     "lat": 50.81636,
     "lng": 9.01228
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.75044,
+    "lng": 9.325976
   },
   {
     "name": "Westfalen",
@@ -59460,6 +63565,16 @@
     "lng": 11.61124
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.749645,
+    "lng": 11.510718
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.412052,
+    "lng": 10.912778
+  },
+  {
     "name": "PM",
     "lat": 50.790995,
     "lng": 6.231248
@@ -59478,6 +63593,11 @@
     "name": "Hoyer",
     "lat": 51.83165740967,
     "lng": 13.91741085052
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.247771,
+    "lng": 12.249149
   },
   {
     "name": "Esso",
@@ -59650,6 +63770,11 @@
     "lng": 7.836687
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.004658,
+    "lng": 8.438732
+  },
+  {
     "name": "Aral",
     "lat": 48.74275,
     "lng": 11.182427
@@ -59658,6 +63783,11 @@
     "name": "Avia",
     "lat": 49.5495,
     "lng": 8.457
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.692904,
+    "lng": 9.30493
   },
   {
     "name": "Raiffeisen",
@@ -59688,6 +63818,11 @@
     "name": "Classic",
     "lat": 50.9376,
     "lng": 8.3195
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.295903,
+    "lng": 9.978714
   },
   {
     "name": "Sprint",
@@ -59778,6 +63913,11 @@
     "name": "Classic",
     "lat": 51.7443,
     "lng": 7.8819
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.84,
+    "lng": 10.0183
   },
   {
     "name": "BFT",
@@ -59985,6 +64125,11 @@
     "lng": 6.6716442108154
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.28614,
+    "lng": 8.578105
+  },
+  {
     "name": "Agip",
     "lat": 48.291949,
     "lng": 12.851656
@@ -60085,6 +64230,11 @@
     "lng": 10.86241
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.944133,
+    "lng": 7.573788
+  },
+  {
     "name": "Access",
     "lat": 52.317781,
     "lng": 9.966101
@@ -60140,9 +64290,19 @@
     "lng": 10.249441
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.770979,
+    "lng": 9.58841
+  },
+  {
     "name": "OMV",
     "lat": 48.80704,
     "lng": 8.94216
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.174726,
+    "lng": 13.854034
   },
   {
     "name": "Oil!",
@@ -60450,6 +64610,11 @@
     "lng": 7.0024266243
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.814119,
+    "lng": 9.369072
+  },
+  {
     "name": "Raiffeisen",
     "lat": 52,
     "lng": 7
@@ -60473,6 +64638,16 @@
     "name": "Total",
     "lat": 49.7103764,
     "lng": 6.5884347
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 47.897428,
+    "lng": 8.274385
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.289255,
+    "lng": 8.461242
   },
   {
     "name": "Shell",
@@ -60578,6 +64753,11 @@
     "name": "Aral",
     "lat": 48.50676,
     "lng": 8.83585
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.882447,
+    "lng": 9.38669
   },
   {
     "name": "Oil!",
@@ -60693,6 +64873,11 @@
     "name": "Agip",
     "lat": 51.7163,
     "lng": 14.615
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.905021,
+    "lng": 12.747645
   },
   {
     "name": "Gulf",
@@ -60890,6 +65075,11 @@
     "lng": 8.327749
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.047652,
+    "lng": 8.231238
+  },
+  {
     "name": "Avia",
     "lat": 48.5641264,
     "lng": 8.78847058
@@ -60898,6 +65088,11 @@
     "name": "Avia",
     "lat": 48.4147,
     "lng": 8.8945
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.09555,
+    "lng": 9.779523
   },
   {
     "name": "BFT",
@@ -61200,6 +65395,11 @@
     "lng": 6.8044
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.884919,
+    "lng": 8.269204
+  },
+  {
     "name": "Avia",
     "lat": 49.0826,
     "lng": 8.2633
@@ -61375,6 +65575,11 @@
     "lng": 7.57503569
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.42136,
+    "lng": 10.34902
+  },
+  {
     "name": "Raiffeisen",
     "lat": 48.18775,
     "lng": 7.766139
@@ -61450,6 +65655,11 @@
     "lng": 8.8335008621216
   },
   {
+    "name": "TotalEnergies",
+    "lat": 52.303398,
+    "lng": 12.971039
+  },
+  {
     "name": "Elo",
     "lat": 49.594731,
     "lng": 11.092034
@@ -61500,6 +65710,11 @@
     "lng": 7.286264
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.147824,
+    "lng": 11.78818
+  },
+  {
     "name": "Bell",
     "lat": 50.771065,
     "lng": 7.295923
@@ -61510,6 +65725,11 @@
     "lng": 11.408073
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.699668,
+    "lng": 12.766919
+  },
+  {
     "name": "Jet",
     "lat": 48.47027,
     "lng": 10.28383
@@ -61518,6 +65738,11 @@
     "name": "Jet",
     "lat": 51.8245,
     "lng": 12.21501
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 48.219785,
+    "lng": 10.127472
   },
   {
     "name": "Raiffeisen",
@@ -61940,6 +66165,11 @@
     "lng": 10.6682463
   },
   {
+    "name": "TotalEnergies",
+    "lat": 49.783495,
+    "lng": 9.169957
+  },
+  {
     "name": "Raiffeisen",
     "lat": 50.822575,
     "lng": 8.943964
@@ -62080,6 +66310,11 @@
     "lng": 7.4584
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.438855,
+    "lng": 10.212878
+  },
+  {
     "name": "Avia",
     "lat": 51.7049576,
     "lng": 8.482459
@@ -62170,6 +66405,11 @@
     "lng": 11.45699
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.898507,
+    "lng": 8.725048
+  },
+  {
     "name": "Jet",
     "lat": 53.28737,
     "lng": 9.50719
@@ -62240,6 +66480,11 @@
     "lng": 8.70954
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.340664,
+    "lng": 7.226658
+  },
+  {
     "name": "Shell",
     "lat": 52.079169,
     "lng": 8.249416
@@ -62273,6 +66518,11 @@
     "name": "Agip",
     "lat": 49.224447,
     "lng": 11.539705
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.242309,
+    "lng": 10.606141
   },
   {
     "name": "team",
@@ -62373,6 +66623,11 @@
     "name": "Raiffeisen",
     "lat": 52.7007,
     "lng": 8.49093
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 47.618627,
+    "lng": 12.198598
   },
   {
     "name": "PM",
@@ -62805,6 +67060,16 @@
     "lng": 9.63789
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.401904,
+    "lng": 12.18128
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.401904,
+    "lng": 12.18128
+  },
+  {
     "name": "Access",
     "lat": 53.420253,
     "lng": 7.744699
@@ -62958,6 +67223,11 @@
     "name": "Orlen",
     "lat": 48.66837,
     "lng": 7.94552
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.839838,
+    "lng": 8.142344
   },
   {
     "name": "Avia",
@@ -63335,6 +67605,11 @@
     "lng": 6.3784273
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.081935,
+    "lng": 11.66452
+  },
+  {
     "name": "Access",
     "lat": 51.753051,
     "lng": 14.297501
@@ -63575,6 +67850,11 @@
     "lng": 9.2989
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.488649,
+    "lng": 9.007158
+  },
+  {
     "name": "Raiffeisen",
     "lat": 50.76294,
     "lng": 9.40501
@@ -63660,9 +67940,19 @@
     "lng": 9.791924
   },
   {
+    "name": "TotalEnergies",
+    "lat": 50.202822,
+    "lng": 11.777938
+  },
+  {
     "name": "Agip",
     "lat": 50.824047,
     "lng": 7.940189
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 49.181849,
+    "lng": 10.069355
   },
   {
     "name": "SB",
@@ -63745,6 +68035,11 @@
     "lng": 7.078734
   },
   {
+    "name": "TotalEnergies",
+    "lat": 53.856587,
+    "lng": 13.334721
+  },
+  {
     "name": "Agip",
     "lat": 51.636367,
     "lng": 6.745025
@@ -63790,6 +68085,11 @@
     "lng": 10.243354
   },
   {
+    "name": "TotalEnergies",
+    "lat": 48.960316,
+    "lng": 12.047976
+  },
+  {
     "name": "Avia",
     "lat": 48.77969,
     "lng": 9.13077
@@ -63818,6 +68118,11 @@
     "name": "Oil!",
     "lat": 53.676384,
     "lng": 10.000108
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 50.876892,
+    "lng": 7.948204
   },
   {
     "name": "SB",
@@ -64105,6 +68410,11 @@
     "lng": 10.847018
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.772063,
+    "lng": 7.1752
+  },
+  {
     "name": "Aral",
     "lat": 51.198627,
     "lng": 14.328277
@@ -64178,6 +68488,16 @@
     "name": "Shell",
     "lat": 49.346257,
     "lng": 7.310698
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 53.161598,
+    "lng": 10.062042
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 51.48713,
+    "lng": 10.742406
   },
   {
     "name": "Markant",
@@ -64530,6 +68850,11 @@
     "lng": 12.73962
   },
   {
+    "name": "TotalEnergies",
+    "lat": 51.344427,
+    "lng": 6.628332
+  },
+  {
     "name": "BFT",
     "lat": 48.693351745605,
     "lng": 9.4670400619507
@@ -64783,6 +69108,11 @@
     "name": "BFT",
     "lat": 48.638835906982,
     "lng": 8.0650205612183
+  },
+  {
+    "name": "TotalEnergies",
+    "lat": 52.415027,
+    "lng": 13.224053
   },
   {
     "name": "Calpam",

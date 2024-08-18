@@ -60,6 +60,7 @@ const brands = [
   'TAS',
   'team',
   'Total',
+  'TotalEnergies',
   'TS',
   'Westfalen',
 ];
