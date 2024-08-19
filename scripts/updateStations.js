@@ -82,13 +82,13 @@ const brands = [
 // Relaxed bounding box
 // https://en.wikipedia.org/wiki/Geography_of_Germany#Area
 const germany = {
-  lat: {
-    min: 46,
-    max: 56,
+  min: {
+    lat: 47.2701114,
+    lng: 5.8663153,
   },
-  lng: {
-    min: 4,
-    max: 17,
+  max: {
+    lat: 55.099161,
+    lng: 15.0419319,
   },
 };
 
@@ -101,10 +101,10 @@ async function readCsv(file, options = { headers: true }) {
         item.lat = parseFloat(item.lat);
         item.lng = parseFloat(item.lng);
         if (
-          item.lat >= germany.lat.min &&
-          item.lat <= germany.lat.max &&
-          item.lng >= germany.lng.min &&
-          item.lng <= germany.lng.max
+          item.lat >= germany.min.lat &&
+          item.lng >= germany.min.lng &&
+          item.lat <= germany.max.lat &&
+          item.lng <= germany.max.lng
         ) {
           data.push(item);
         }
