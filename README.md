@@ -2,4 +2,4 @@
 Points of interest.
 
 ## Data
-- Station data based on https://github.com/gustavz/tankerkoenig_dataset
+- Gas station data based on https://github.com/gustavz/tankerkoenig_dataset
