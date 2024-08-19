@@ -95,7 +95,7 @@ onMounted(() => {
         map.getZoom(),
         stops[0][0],
         stops[1][0],
-        1 / (2 * stops[1][1]),
+        1 / 32,
         1,
       )})`;
     };
