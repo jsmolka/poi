@@ -79,8 +79,6 @@ const brands = [
   { key: 'wiro', value: 'Wiro' },
 ];
 
-// Relaxed bounding box
-// https://en.wikipedia.org/wiki/Geography_of_Germany#Area
 const germany = {
   min: {
     lat: 47.2701114,
