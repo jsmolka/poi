@@ -119,7 +119,7 @@ function relative(...paths) {
 }
 
 async function main() {
-  const data = await readCsv(relative('stations.csv'), {
+  const data = await readCsv(relative('gasStations.csv'), {
     headers: (headers) =>
       headers.map((header) => {
         switch (header) {
@@ -151,7 +151,7 @@ async function main() {
   }
 
   writeFileSync(
-    relative('../src/data/stations.json'),
+    relative('../src/data/gasStations.json'),
     JSON.stringify(
       data
         .filter((item) => brands.some(({ value }) => item.brand === value))

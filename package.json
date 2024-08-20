@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "update": "npm i -g npm-check-updates && ncu -u && npm i && npm audit fix",
-    "update-stations": "node scripts/updateStations.js"
+    "scrape-cemeteries": "node scripts/scrapeCemeteries.js",
+    "update-gas-stations": "node scripts/updateGasStations.js"
   },
   "prettier": {
     "singleQuote": true
