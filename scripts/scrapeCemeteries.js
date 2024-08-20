@@ -65,10 +65,10 @@ class ScrapeClient {
 
   async searchNearby(parameters = {}) {
     this.interceptDataRequest(
-      // [Google Maps](https://developers.google.com/maps/documentation/places/web-service/nearby-search)
+      // https://developers.google.com/maps/documentation/places/web-service/nearby-search
       _.merge(
         {
-          // [Google Maps](https://developers.google.com/maps/documentation/places/web-service/nearby-search#locationrestriction)
+          // https://developers.google.com/maps/documentation/places/web-service/nearby-search#locationrestriction
           locationRestriction: {
             circle: {
               center: {
@@ -78,23 +78,23 @@ class ScrapeClient {
               radius: null, // 0 - 50000
             },
           },
-          // [Google Maps](https://developers.google.com/maps/documentation/places/web-service/nearby-search#includedtypesexcludedtypes,-includedprimarytypesexcludedprimarytypes)
-          // [Google Maps](https://developers.google.com/maps/documentation/places/web-service/place-types#table-a)
+          // https://developers.google.com/maps/documentation/places/web-service/nearby-search#includedtypesexcludedtypes,-includedprimarytypesexcludedprimarytypes
+          // https://developers.google.com/maps/documentation/places/web-service/place-types#table-a
           excludedPrimaryTypes: [],
           excludedTypes: [],
           includedPrimaryTypes: [],
           includedTypes: [],
-          // [Google Maps](https://developers.google.com/maps/documentation/places/web-service/nearby-search#languagecode)
-          // [Google Maps](https://developers.google.com/maps/faq#languagesupport)
+          // https://developers.google.com/maps/documentation/places/web-service/nearby-search#languagecode
+          // https://developers.google.com/maps/faq#languagesupport
           languageCode: null,
-          // [Google Maps](https://developers.google.com/maps/documentation/places/web-service/nearby-search#maxresultcount)
+          // https://developers.google.com/maps/documentation/places/web-service/nearby-search#maxresultcount
           // 1 - 2
           maxResultCount: null,
-          // [Google Maps](https://developers.google.com/maps/documentation/places/web-service/nearby-search#rankpreference)
+          // https://developers.google.com/maps/documentation/places/web-service/nearby-search#rankpreference
           // 'DISTANCE' | 'POPULARITY'
           rankPreference: null,
-          // [Google Maps](https://developers.google.com/maps/documentation/places/web-service/nearby-search#regioncode)
-          // [Territory-Language Information](https://www.unicode.org/cldr/charts/45/supplemental/territory_language_information.html)
+          // https://developers.google.com/maps/documentation/places/web-service/nearby-search#regioncode
+          // https://www.unicode.org/cldr/charts/45/supplemental/territory_language_information.html
           regionCode: null,
         },
         parameters,
@@ -111,6 +111,29 @@ function relative(...paths) {
   return resolve(cwd, ...paths);
 }
 
+const germany = {
+  min: {
+    lat: 47.2701114,
+    lng: 5.8663153,
+  },
+  max: {
+    lat: 55.099161,
+    lng: 15.0419319,
+  },
+};
+
+// SN, ST, TH
+const federalStates = {
+  min: {
+    lat: 50.17140289225376,
+    lng: 10.560559830845426,
+  },
+  max: {
+    lat: 53.04188377888388,
+    lng: 15.0419319,
+  },
+};
+
 async function main() {
   const file = relative('cemeteries.json');
   const cemeteries = JSON.parse(readFileSync(file));
@@ -118,29 +141,6 @@ async function main() {
   for (const cemetery of cemeteries) {
     cemeterySet.add(cemetery.id);
   }
-
-  const germany = {
-    min: {
-      lat: 47.2701114,
-      lng: 5.8663153,
-    },
-    max: {
-      lat: 55.099161,
-      lng: 15.0419319,
-    },
-  };
-
-  // SN, ST, TH
-  const federalStates = {
-    min: {
-      lat: 50.17140289225376,
-      lng: 10.560559830845426,
-    },
-    max: {
-      lat: 53.04188377888388,
-      lng: 15.0419319,
-    },
-  };
 
   const gridSize = 4;
   const grid = pointGrid(
@@ -155,7 +155,7 @@ async function main() {
   let i = 0;
   let terminate = false;
   const threads = [];
-  for (let thread = 0; thread < 1; thread++) {
+  for (let thread = 0; thread < 10; thread++) {
     const work = async () => {
       let index = -1;
       const browser = await puppeteer.launch();
@@ -182,7 +182,7 @@ async function main() {
             rankPreference: 'DISTANCE',
           });
 
-          console.log(`${i}: ${response.places.length} at ${coordinates}`);
+          console.log(`${i}: ${response.places.length} places at ${coordinates}`);
           for (const cemetery in response.places) {
             if (cemeterySet.has(cemetery.id)) {
               continue;

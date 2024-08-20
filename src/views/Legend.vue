@@ -10,7 +10,7 @@
     </div>
     <div class="flex items-center gap-2">
       <div class="size-2 bg-red rounded-full" />
-      <div>Graveyard</div>
+      <div>Cemeteries</div>
     </div>
   </div>
 </template>

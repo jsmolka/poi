@@ -4,8 +4,8 @@
 
 <script setup>
 import { mapboxAccessToken } from '@/common/mapboxAccessToken';
-import graveyards from '@/data/graveyards.json';
-import stations from '@/data/stations.json';
+import cemeteries from '@/data/cemeteries.json';
+import gasStations from '@/data/gasStations.json';
 import { colors } from '@/utils/colors';
 import { scale } from '@/utils/scale';
 import Legend from '@/views/Legend.vue';
@@ -30,13 +30,13 @@ const location = computed(() => {
   };
 });
 
+const leipzig = {
+  lat: 51.34482272560187,
+  lng: 12.381337332992878,
+};
+
 const center = computed(() => {
-  return (
-    location.value ?? {
-      lat: 51.34482272560187,
-      lng: 12.381337332992878,
-    }
-  );
+  return location.value ?? leipzig;
 });
 
 let map = null;
@@ -104,25 +104,25 @@ onMounted(() => {
   });
 
   map.on('load', () => {
-    const createSource = (locations) => ({
+    const createSource = (places) => ({
       type: 'geojson',
       data: {
         type: 'FeatureCollection',
-        features: locations.map((location) => ({
+        features: places.map((place) => ({
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [location.lng, location.lat],
+            coordinates: [place.lng, place.lat],
           },
           properties: {
-            location,
+            place,
           },
         })),
       },
     });
 
-    map.addSource('stations', createSource(stations));
-    map.addSource('graveyards', createSource(graveyards));
+    map.addSource('gasStations', createSource(gasStations));
+    map.addSource('cemeteries', createSource(cemeteries));
 
     const createLayer = (id, color) => ({
       id,
@@ -134,10 +134,10 @@ onMounted(() => {
       },
     });
 
-    map.addLayer(createLayer('stations', colors.shade2.hex));
-    map.addLayer(createLayer('graveyards', colors.red.hex));
+    map.addLayer(createLayer('gasStations', colors.shade2.hex));
+    map.addLayer(createLayer('cemeteries', colors.red.hex));
 
-    const layers = ['stations', 'graveyards'];
+    const layers = ['gasStations', 'cemeteries'];
 
     map.on('mouseenter', layers, () => {
       map.getCanvas().style.cursor = 'pointer';
@@ -149,11 +149,11 @@ onMounted(() => {
 
     map.on('click', layers, (event) => {
       const coordinates = event.features[0].geometry.coordinates;
-      const location = JSON.parse(event.features[0].properties.location);
+      const place = JSON.parse(event.features[0].properties.place);
 
       const popup = new Popup({ closeButton: false });
       popup.setLngLat(coordinates);
-      popup.setHTML(location.name);
+      popup.setHTML(place.name);
       popup.addTo(map);
     });
   });
