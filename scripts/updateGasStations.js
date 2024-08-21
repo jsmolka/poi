@@ -1,7 +1,4 @@
-import csv from 'fast-csv';
-import { writeFileSync } from 'fs';
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
+import { readCsv, writeJson } from './common.js';
 
 const brands = [
   { key: 'access', value: 'Access' },
@@ -9,25 +6,30 @@ const brands = [
   { key: 'albers', value: 'Albers' },
   { key: 'allguth', value: 'Allguth' },
   { key: 'aral', value: 'Aral' },
-  { key: 'avex', value: 'Avex' },
+  { key: 'avex', value: 'AVEX' },
   { key: 'avia', value: 'Avia' },
-  { key: 'bavaria', value: 'Bavaria' },
-  { key: 'bell', value: 'Bell' },
+  { key: 'bavaria', value: 'BAVARIA petrol' },
+  { key: 'bell', value: 'BELL Oil' },
   { key: 'bergler', value: 'Bergler' },
+  { key: 'bft-freie', value: 'BFT' },
+  { key: 'bft-station', value: 'BFT' },
+  { key: 'bft-tankstelle', value: 'BFT' },
+  { key: 'bft-walther', value: 'BFT' },
+  { key: 'bft-willer', value: 'BFT' },
   { key: 'bft', value: 'BFT' },
+  { key: 'bk-tankstelle', value: 'BK' },
   { key: 'bk', value: 'BK' },
   { key: 'bremer', value: 'BMÖ' },
   { key: 'calpam', value: 'Calpam' },
-  { key: 'classic', value: 'Classic' },
+  { key: 'classic', value: 'CLASSIC' },
   { key: 'cleancar', value: 'CleanCar' },
   { key: 'ed', value: 'ED' },
   { key: 'elan', value: 'ELAN' },
-  { key: 'elo', value: 'Elo' },
-  { key: 'eni', value: 'Eni' },
-  { key: 'esso', value: 'Esso' },
-  { key: 'familia', value: 'Familia' },
-  { key: 'felta', value: 'Felta' },
-  { key: 'globus', value: 'Globus' },
+  { key: 'elo', value: 'ELO' },
+  { key: 'eni', value: 'Agip' },
+  { key: 'esso', value: 'ESSO' },
+  { key: 'felta', value: 'FELTA' },
+  { key: 'globus', value: 'GLOBUS' },
   { key: 'go', value: 'GO' },
   { key: 'greenline', value: 'Greenline' },
   { key: 'gulf', value: 'Gulf' },
@@ -36,18 +38,16 @@ const brands = [
   { key: 'hessol', value: 'Hessol' },
   { key: 'honsel', value: 'Honsel' },
   { key: 'hoyer', value: 'Hoyer' },
-  { key: 'jet', value: 'Jet' },
   { key: 'jantzon', value: 'Jantzon' },
+  { key: 'jet', value: 'JET' },
   { key: 'joiss', value: 'Joiss' },
-  { key: 'jtg', value: 'LTG' },
-  { key: 'kaiser', value: 'Kaiser' },
   { key: 'm1', value: 'M1' },
   { key: 'markant', value: 'Markant' },
   { key: 'mundorf', value: 'Mundorf' },
-  { key: 'nordoel', value: 'Nordoel' },
-  { key: 'oil!', value: 'Oil!' },
+  { key: 'nordoel', value: 'NORDOEL' },
+  { key: 'oil!', value: 'OIL!' },
   { key: 'omv', value: 'OMV' },
-  { key: 'orlen', value: 'Orlen' },
+  { key: 'orlen', value: 'ORLEN' },
   { key: 'pin', value: 'PIN' },
   { key: 'pinoil', value: 'PIN' },
   { key: 'pludra', value: 'Pludra' },
@@ -56,16 +56,17 @@ const brands = [
   { key: 'raiffeisen', value: 'Raiffeisen' },
   { key: 'ran', value: 'RAN' },
   { key: 'rolfes', value: 'Rolfes' },
-  { key: 'roth', value: 'ROTH' },
+  { key: 'sb-markttankstelle', value: 'SB' },
   { key: 'sb', value: 'SB' },
-  { key: 'score', value: 'Score' },
+  { key: 'score', value: 'SCORE' },
   { key: 'shell', value: 'Shell' },
   { key: 'sprint', value: 'Sprint' },
   { key: 'star', value: 'star' },
-  { key: 'supol', value: 'Supol' },
+  { key: 'supol', value: 'SUPOL' },
+  { key: 'svg-nordrhein', value: 'SVG' },
   { key: 'svg', value: 'SVG' },
-  { key: 'tamoil', value: 'Tamoil' },
-  { key: 'tankpoint', value: 'Tankpoint' },
+  { key: 'tamoil', value: 'TAMOIL' },
+  { key: 'tankpoint', value: 'tankpoint' },
   { key: 'tap', value: 'TAP' },
   { key: 'tas', value: 'TAS' },
   { key: 'team', value: 'team' },
@@ -73,53 +74,24 @@ const brands = [
   { key: 'total', value: 'TotalEnergies' },
   { key: 'totalenergies', value: 'TotalEnergies' },
   { key: 'ts', value: 'TS' },
-  { key: 'walther', value: 'BFT' },
   { key: 'westfalen', value: 'Westfalen' },
-  { key: 'willer', value: 'BFT' },
-  { key: 'wiro', value: 'Wiro' },
+  { key: 'wiro', value: 'wiro' },
 ];
 
-const germany = {
-  min: {
-    lat: 47.2701114,
-    lng: 5.8663153,
-  },
-  max: {
-    lat: 55.099161,
-    lng: 15.0419319,
-  },
-};
-
-async function readCsv(file, options = { headers: true }) {
-  const data = [];
-  return new Promise((resolve) => {
-    csv
-      .parseFile(file, options)
-      .on('data', (item) => {
-        item.lat = parseFloat(item.lat);
-        item.lng = parseFloat(item.lng);
-        if (
-          item.lat >= germany.min.lat &&
-          item.lng >= germany.min.lng &&
-          item.lat <= germany.max.lat &&
-          item.lng <= germany.max.lng
-        ) {
-          data.push(item);
-        }
-      })
-      .on('end', () => {
-        resolve(data);
-      });
-  });
-}
-
-function relative(...paths) {
-  const cwd = dirname(fileURLToPath(import.meta.url));
-  return resolve(cwd, ...paths);
+function guessBrand(item) {
+  const words = (item.brand || item.name).toLowerCase().split(' ');
+  for (const { key, value } of brands) {
+    for (const word of words) {
+      if (word === key) {
+        return value;
+      }
+    }
+  }
+  return null;
 }
 
 async function main() {
-  const data = await readCsv(relative('gasStations.csv'), {
+  const data = await readCsv('gasStations.csv', {
     headers: (headers) =>
       headers.map((header) => {
         switch (header) {
@@ -133,36 +105,35 @@ async function main() {
       }),
   });
 
-  // Normalize brand names
   for (const item of data) {
-    const words = (item.brand || item.name)
-      .toLowerCase()
-      .replace(/(\(|\))/g, '')
-      .split(/(\s|-)/g);
-
-    brandsLoop: for (const { key, value } of brands) {
-      for (const word of words) {
-        if (word === key) {
-          item.brand = value;
-          break brandsLoop;
-        }
-      }
-    }
+    item.brand = guessBrand(item);
+    item.lat = parseFloat(item.lat);
+    item.lng = parseFloat(item.lng);
   }
 
-  writeFileSync(
-    relative('../src/data/gasStations.json'),
-    JSON.stringify(
-      data
-        .filter((item) => brands.some(({ value }) => item.brand === value))
-        .map((item) => ({
-          name: item.brand,
-          lat: item.lat,
-          lng: item.lng,
-        })),
-      null,
-      2,
-    ),
+  const germany = {
+    min: {
+      lat: 47.2701114,
+      lng: 5.8663153,
+    },
+    max: {
+      lat: 55.099161,
+      lng: 15.0419319,
+    },
+  };
+
+  writeJson(
+    '../src/data/gasStations.json',
+    data
+      .filter(
+        (item) =>
+          item.brand != null &&
+          item.lat >= germany.min.lat &&
+          item.lng >= germany.min.lng &&
+          item.lat <= germany.max.lat &&
+          item.lng <= germany.max.lng,
+      )
+      .map((item) => ({ name: item.brand, lat: item.lat, lng: item.lng })),
   );
 }
 
