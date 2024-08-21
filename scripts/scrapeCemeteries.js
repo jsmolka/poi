@@ -1,9 +1,11 @@
-import { pointGrid } from '@turf/point-grid';
+import * as turf from '@turf/turf';
 import { readFileSync, writeFileSync } from 'fs';
 import _ from 'lodash';
 import { dirname, resolve } from 'path';
 import puppeteer from 'puppeteer';
 import { fileURLToPath } from 'url';
+import { inspect } from 'util';
+import yargs from 'yargs/yargs';
 
 const dataApi = /.*\/api\/data/;
 
@@ -111,6 +113,11 @@ function relative(...paths) {
   return resolve(cwd, ...paths);
 }
 
+const leipzig = {
+  lat: 51.34482272560187,
+  lng: 12.381337332992878,
+};
+
 const germany = {
   min: {
     lat: 47.2701114,
@@ -122,19 +129,57 @@ const germany = {
   },
 };
 
-// SN, ST, TH
-const federalStates = {
-  min: {
-    lat: 50.17140289225376,
-    lng: 10.560559830845426,
-  },
-  max: {
-    lat: 53.04188377888388,
-    lng: 15.0419319,
-  },
-};
+async function main(argv) {
+  argv.index = Math.max(argv.index || 0, 0);
+  argv.limit = Math.max(argv.limit || 0, 1);
+  argv.threads = Math.max(argv.threads || 0, 1);
 
-async function main() {
+  let coordinates;
+  let coordinateDistanceKm = 4;
+
+  switch (argv.target) {
+    case 'germany': {
+      // prettier-ignore
+      coordinates = turf.pointGrid(
+        [
+          germany.min.lng,
+          germany.min.lat,
+          germany.max.lng,
+          germany.max.lat,
+        ],
+        coordinateDistanceKm,
+        { units: 'kilometers' },
+      );
+      break;
+    }
+
+    case 'leipzig': {
+      const circle = turf.circle([leipzig.lng, leipzig.lat], 150, {
+        units: 'kilometers',
+        steps: 256,
+      });
+      coordinates = turf.pointGrid(turf.bbox(circle), coordinateDistanceKm, {
+        units: 'kilometers',
+      });
+      coordinates.features = coordinates.features.filter((point) =>
+        turf.booleanPointInPolygon(point, circle),
+      );
+      break;
+    }
+
+    default: {
+      console.error('Bad target', argv.target);
+      return;
+    }
+  }
+
+  coordinates = coordinates.features.map((point) => ({
+    lat: point.geometry.coordinates[1],
+    lng: point.geometry.coordinates[0],
+  }));
+
+  console.log('Coordinates:', coordinates.length);
+
   const file = relative('cemeteries.json');
   const cemeteries = JSON.parse(readFileSync(file));
   const cemeterySet = new Set();
@@ -142,23 +187,16 @@ async function main() {
     cemeterySet.add(cemetery.id);
   }
 
-  const gridSize = 4;
-  const grid = pointGrid(
-    [federalStates.min.lng, federalStates.min.lat, federalStates.max.lng, federalStates.max.lat],
-    gridSize,
-    { units: 'kilometers' },
-  ).features.map((point) => ({
-    lat: point.geometry.coordinates[1],
-    lng: point.geometry.coordinates[0],
-  }));
-
-  let i = 0;
+  let i = argv.index;
+  let iLimit = argv.index + argv.limit;
   let terminate = false;
   const threads = [];
-  for (let thread = 0; thread < 10; thread++) {
-    const work = async () => {
+  for (let thread = 0; thread < argv.threads; thread++) {
+    const run = async () => {
       let index = -1;
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch({
+        args: ['--incognito'],
+      });
       try {
         const page = await browser.newPage();
         const client = new ScrapeClient(page);
@@ -166,15 +204,23 @@ async function main() {
 
         while (!terminate) {
           index = i++;
-          const coordinates = grid[index];
+          if (i >= iLimit) {
+            terminate = true;
+          }
+
+          const latLng = coordinates[index];
+          if (latLng == null) {
+            return;
+          }
+
           const response = await client.searchNearby({
             locationRestriction: {
               circle: {
                 center: {
-                  latitude: coordinates.lat,
-                  longitude: coordinates.lng,
+                  latitude: latLng.lat,
+                  longitude: latLng.lng,
                 },
-                radius: gridSize / Math.sqrt(2),
+                radius: (1000 * coordinateDistanceKm) / Math.sqrt(2),
               },
             },
             includedPrimaryTypes: ['cemetery'],
@@ -182,28 +228,63 @@ async function main() {
             rankPreference: 'DISTANCE',
           });
 
-          console.log(`${i}: ${response.places.length} places at ${coordinates}`);
-          for (const cemetery in response.places) {
+          const places = response.places ?? [];
+          console.log(`${index}: ${places.length} places at ${inspect(latLng)}`);
+          for (const cemetery of places) {
             if (cemeterySet.has(cemetery.id)) {
               continue;
             }
             cemeterySet.add(cemetery.id);
+            delete cemetery.accessibilityOptions;
+            delete cemetery.adrFormatAddress;
+            delete cemetery.businessStatus;
+            delete cemetery.currentOpeningHours;
+            delete cemetery.googleMapsUri;
+            delete cemetery.iconBackgroundColor;
+            delete cemetery.iconMaskBaseUri;
+            delete cemetery.name;
+            delete cemetery.photos;
+            delete cemetery.plusCode;
+            delete cemetery.rating;
+            delete cemetery.regularOpeningHours?.openNow;
+            delete cemetery.reviews;
+            delete cemetery.userRating;
+            delete cemetery.userRatingCount;
+            delete cemetery.utcOffsetMinutes;
+            delete cemetery.viewport;
             cemeteries.push(cemetery);
           }
         }
       } catch (error) {
         terminate = true;
-        console.error(`Error in thread ${thread} at index ${index}`, error);
+        console.error(
+          `Error in thread ${thread} at index ${index}`,
+          inspect(error, false, null, true),
+        );
       } finally {
         await browser.close();
       }
     };
-    threads.push(work());
+    threads.push(run());
   }
 
-  await Promise.all(threads);
-
-  writeFileSync(file, JSON.stringify(cemeteries, undefined, 2));
+  try {
+    await Promise.all(threads);
+  } finally {
+    console.log('Save');
+    writeFileSync(file, JSON.stringify(cemeteries, undefined, 2));
+  }
 }
 
-main();
+main(
+  yargs(process.argv.slice(2))
+    .string('target')
+    .default('target', 'germany')
+    .number('index')
+    .default('index', 0)
+    .number('limit')
+    .default('limit', 1500)
+    .number('threads')
+    .default('threads', 1)
+    .parse(),
+);
