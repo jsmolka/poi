@@ -38,24 +38,3 @@ export function write(path, data) {
 export function writeJson(path, data) {
   write(path, JSON.stringify(data, undefined, 2));
 }
-
-export async function parallelize(threadCount, callback) {
-  let terminated = false;
-
-  const terminate = () => {
-    terminated = true;
-  };
-
-  const isTerminated = () => {
-    return terminated;
-  };
-
-  const threads = [];
-  for (let thread = 0; thread < threadCount; thread++) {
-    const job = async () => {
-      return await callback({ thread, terminate, isTerminated });
-    };
-    threads.push(job());
-  }
-  return await Promise.all(threads);
-}

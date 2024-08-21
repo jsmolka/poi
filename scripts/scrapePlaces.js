@@ -2,7 +2,7 @@ import * as turf from '@turf/turf';
 import _ from 'lodash';
 import puppeteer from 'puppeteer';
 import yargs from 'yargs/yargs';
-import { inspect, parallelize, readJson, writeJson } from './common.js';
+import { inspect, readJson, writeJson } from './common.js';
 
 const dataApi = /.*\/api\/data/;
 
@@ -169,6 +169,27 @@ function createCoordinates(area) {
     lat: point.geometry.coordinates[1],
     lng: point.geometry.coordinates[0],
   }));
+}
+
+async function parallelize(threadCount, callback) {
+  let terminated = false;
+
+  const terminate = () => {
+    terminated = true;
+  };
+
+  const isTerminated = () => {
+    return terminated;
+  };
+
+  const threads = [];
+  for (let thread = 0; thread < threadCount; thread++) {
+    const job = async () => {
+      return await callback({ thread, terminate, isTerminated });
+    };
+    threads.push(job());
+  }
+  return await Promise.all(threads);
 }
 
 async function rasterize(center, sizeKm, callback) {
