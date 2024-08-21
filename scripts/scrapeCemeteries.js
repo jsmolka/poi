@@ -220,7 +220,7 @@ async function main(argv) {
                   latitude: latLng.lat,
                   longitude: latLng.lng,
                 },
-                radius: (1000 * coordinateDistanceKm) / Math.sqrt(2),
+                radius: 50000, // Use max radius to get as many results as possible, duplicates are discarded anyway
               },
             },
             includedPrimaryTypes: ['cemetery'],
