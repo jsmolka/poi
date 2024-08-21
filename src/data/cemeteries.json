@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:790183086451d848148023458f25bb1337c805d224d9a97cb1b914f33a5fa346
-size 329
+[
+  {
+    "name": "Cemetary Kleingörschen",
+    "lat": 51.221791326649665,
+    "lng": 12.18611574053318
+  },
+  {
+    "name": "Cemetary Leiha",
+    "lat": 51.262460928669505,
+    "lng": 11.874903850471627
+  },
+  {
+    "name": "Cemetary Ramsdorf",
+    "lat": 51.0928251316323,
+    "lng": 12.377495829906103
+  }
+]
