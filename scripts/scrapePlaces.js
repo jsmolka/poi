@@ -121,9 +121,10 @@ const leipzig = {
   lng: 12.381337332992878,
 };
 
+const coordinateDistanceKm = 8;
+
 function createCoordinates(area) {
   let coordinates;
-  let coordinateDistanceKm = 4;
   switch (area) {
     case 'germany': {
       // prettier-ignore
@@ -170,6 +171,30 @@ function createCoordinates(area) {
   }));
 }
 
+async function rasterize(center, sizeKm, callback) {
+  const centers = Array.isArray(center) ? center : [center];
+  for (const center of centers) {
+    if (await callback(center, sizeKm)) {
+      continue;
+    }
+
+    const newSizeKm = sizeKm / 2;
+    const bbox = turf.bbox(
+      turf.circle([center.lng, center.lat], newSizeKm, { units: 'kilometers' }),
+    );
+    await rasterize(
+      [
+        { lat: bbox[1], lng: bbox[0] },
+        { lat: bbox[3], lng: bbox[0] },
+        { lat: bbox[3], lng: bbox[2] },
+        { lat: bbox[1], lng: bbox[2] },
+      ],
+      newSizeKm,
+      callback,
+    );
+  }
+}
+
 async function main(argv) {
   const places = readJson(argv.file);
   const placeSet = new Set(places.map((place) => place.id));
@@ -178,6 +203,7 @@ async function main(argv) {
   const coordinates = createCoordinates(argv.area);
   console.log('Coordinates:', coordinates.length);
 
+  let r = 0;
   let i = argv.index;
   try {
     await parallelize(argv.threads, async ({ thread, terminate, isTerminated }) => {
@@ -190,57 +216,68 @@ async function main(argv) {
 
           while (!isTerminated()) {
             index = i++;
-            if (index >= argv.index + argv.limit) {
-              return;
-            }
-
             const center = coordinates[index];
             if (center == null) {
               return;
             }
 
-            const response = await client.searchNearby({
-              locationRestriction: {
-                circle: {
-                  center: {
-                    latitude: center.lat,
-                    longitude: center.lng,
+            let ri = 0;
+            await rasterize(center, coordinateDistanceKm, async (center, sizeKm) => {
+              const maxResultCount = 20;
+              const response = await client.searchNearby({
+                locationRestriction: {
+                  circle: {
+                    center: {
+                      latitude: center.lat,
+                      longitude: center.lng,
+                    },
+                    radius: sizeKm / Math.SQRT2,
                   },
-                  radius: 50_000, // Use max radius to get as many results as possible, duplicates are discarded anyway
                 },
-              },
-              includedPrimaryTypes: [argv.primaryType],
-              maxResultCount: 20,
-              rankPreference: 'DISTANCE',
-            });
+                includedPrimaryTypes: [argv.primaryType],
+                maxResultCount,
+                rankPreference: 'DISTANCE',
+              });
 
-            const nearbyPlaces = response.places ?? [];
-            console.log(`${index}: ${nearbyPlaces.length} places at`, center);
-            for (const place of nearbyPlaces) {
-              if (placeSet.has(place.id)) {
-                continue;
+              r++;
+              ri++;
+              if (r >= argv.limit) {
+                terminate();
               }
 
-              placeSet.add(place.id);
-              delete place.accessibilityOptions;
-              delete place.adrFormatAddress;
-              delete place.businessStatus;
-              delete place.currentOpeningHours;
-              delete place.googleMapsUri;
-              delete place.iconBackgroundColor;
-              delete place.iconMaskBaseUri;
-              delete place.name;
-              delete place.photos;
-              delete place.plusCode;
-              delete place.rating;
-              delete place.regularOpeningHours?.openNow;
-              delete place.reviews;
-              delete place.userRating;
-              delete place.userRatingCount;
-              delete place.utcOffsetMinutes;
-              delete place.viewport;
-              places.push(place);
-            }
+              const nearbyPlaces = response.places ?? [];
+              console.log(
+                `${index}: request ${r}, size ${size}, ${nearbyPlaces.length} places, center`,
+                center,
+              );
+              for (const place of nearbyPlaces) {
+                if (placeSet.has(place.id)) {
+                  continue;
+                }
+
+                placeSet.add(place.id);
+                delete place.accessibilityOptions;
+                delete place.adrFormatAddress;
+                delete place.businessStatus;
+                delete place.currentOpeningHours;
+                delete place.googleMapsUri;
+                delete place.iconBackgroundColor;
+                delete place.iconMaskBaseUri;
+                delete place.name;
+                delete place.photos;
+                delete place.plusCode;
+                delete place.rating;
+                delete place.regularOpeningHours?.openNow;
+                delete place.reviews;
+                delete place.userRating;
+                delete place.userRatingCount;
+                delete place.utcOffsetMinutes;
+                delete place.viewport;
+                places.push(place);
+              }
+              return nearbyPlaces.length < maxResultCount;
+            });
+            console.log(`${index}: done in ${ri} requests`);
           }
         } catch (error) {
           terminate();
