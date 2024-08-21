@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "update": "npm i -g npm-check-updates && ncu -u && npm i && npm audit fix",
-    "scrape-cemeteries": "node scripts/scrapeCemeteries.js",
+    "scrape-cemeteries": "node scripts/scrapePlaces.js --file cemeteries.json --primaryType cemetery",
     "update-gas-stations": "node scripts/updateGasStations.js"
   },
   "prettier": {
