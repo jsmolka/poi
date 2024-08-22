@@ -49,11 +49,15 @@ class ScrapeClient {
       const intercept = async (response) => {
         if (dataApi.test(response.url())) {
           this.page.off('response', intercept);
-          const json = await response.json();
-          if (response.status() === 200) {
-            resolve(json);
-          } else {
-            reject(json);
+          try {
+            const json = await response.json();
+            if (response.status() === 200) {
+              resolve(json);
+            } else {
+              reject(json);
+            }
+          } catch (error) {
+            reject(error);
           }
         }
       };
@@ -242,6 +246,7 @@ async function main(argv) {
             }
 
             let ri = 0;
+            let nearbyPlacesCount = 0;
             await rasterize(center, argv.raster, async (center, rasterKm) => {
               const maxResultCount = 20;
               const response = await client.searchNearby({
@@ -267,8 +272,7 @@ async function main(argv) {
 
               const nearbyPlaces = response.places ?? [];
               console.log(
-                `${index}: request ${r}, index request ${ri}, raster ${rasterKm}, ${nearbyPlaces.length} places, center`,
-                center,
+                `${index}: request ${r}, raster ${rasterKm}, ${nearbyPlaces.length} places`,
               );
               for (const place of nearbyPlaces) {
                 if (placeSet.has(place.id)) {
@@ -295,9 +299,15 @@ async function main(argv) {
                 delete place.viewport;
                 places.push(place);
               }
-              return nearbyPlaces.length < maxResultCount;
+
+              if (nearbyPlaces.length < maxResultCount) {
+                nearbyPlacesCount += nearbyPlaces.length;
+                return true;
+              } else {
+                return false;
+              }
             });
-            console.log(`${index}: done in ${ri} requests`);
+            console.log(`${index}: ${nearbyPlacesCount} places in ${ri} requests`);
           }
         } catch (error) {
           terminate();
@@ -307,7 +317,7 @@ async function main(argv) {
     });
   } finally {
     writeJson(argv.file, places);
-    console.log(`Added ${places.length - placeCount} new places`);
+    console.log(`Added ${places.length - placeCount} places`);
   }
 }
 
