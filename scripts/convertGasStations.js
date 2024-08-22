@@ -1,3 +1,5 @@
+import * as turf from '@turf/turf';
+import _ from 'lodash';
 import { readCsv, writeJson } from './common.js';
 
 const brands = [
@@ -133,17 +135,23 @@ async function main() {
   };
 
   writeJson(
-    '../src/data/gasStations.json',
-    data
-      .filter(
-        (item) =>
-          item.brand != null &&
-          item.lat >= germany.min.lat &&
-          item.lng >= germany.min.lng &&
-          item.lat <= germany.max.lat &&
-          item.lng <= germany.max.lng,
-      )
-      .map((item) => ({ name: item.brand, lat: item.lat, lng: item.lng })),
+    '../src/assets/geojson/gasStations.geojson',
+    turf.featureCollection(
+      data
+        .filter(
+          (item) =>
+            item.brand != null &&
+            item.lat >= germany.min.lat &&
+            item.lng >= germany.min.lng &&
+            item.lat <= germany.max.lat &&
+            item.lng <= germany.max.lng,
+        )
+        .map((item) =>
+          turf.point([_.round(item.lng, 6), _.round(item.lat, 6)], {
+            name: item.brand,
+          }),
+        ),
+    ),
   );
 }
 

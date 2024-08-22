@@ -28,7 +28,7 @@
       ]
     },
     {
-      "source": "/(.*)\\.(js|css|woff2)",
+      "source": "/(.*)\\.(js|css|woff2|geojson)",
       "headers": [
         {
           "key": "Cache-Control",

@@ -3,9 +3,9 @@
 </template>
 
 <script setup>
+import cemeteriesUrl from '@/assets/geojson/cemeteries.geojson?url';
+import gasStationsUrl from '@/assets/geojson/gasStations.geojson?url';
 import { mapboxAccessToken } from '@/common/mapboxAccessToken';
-import cemeteries from '@/data/cemeteries.json';
-import gasStations from '@/data/gasStations.json';
 import { colors } from '@/utils/colors';
 import { scale } from '@/utils/scale';
 import Legend from '@/views/Legend.vue';
@@ -104,25 +104,8 @@ onMounted(() => {
   });
 
   map.on('load', () => {
-    const createSource = (places) => ({
-      type: 'geojson',
-      data: {
-        type: 'FeatureCollection',
-        features: places.map((place) => ({
-          type: 'Feature',
-          geometry: {
-            type: 'Point',
-            coordinates: [place.lng, place.lat],
-          },
-          properties: {
-            place,
-          },
-        })),
-      },
-    });
-
-    map.addSource('gasStations', createSource(gasStations));
-    map.addSource('cemeteries', createSource(cemeteries));
+    map.addSource('cemeteries', { type: 'geojson', data: cemeteriesUrl });
+    map.addSource('gasStations', { type: 'geojson', data: gasStationsUrl });
 
     const createLayer = (id, color) => ({
       id,
@@ -134,10 +117,10 @@ onMounted(() => {
       },
     });
 
-    map.addLayer(createLayer('gasStations', colors.shade2.hex));
     map.addLayer(createLayer('cemeteries', colors.red.hex));
+    map.addLayer(createLayer('gasStations', colors.shade2.hex));
 
-    const layers = ['gasStations', 'cemeteries'];
+    const layers = ['cemeteries', 'gasStations'];
 
     map.on('mouseenter', layers, () => {
       map.getCanvas().style.cursor = 'pointer';
@@ -149,11 +132,11 @@ onMounted(() => {
 
     map.on('click', layers, (event) => {
       const coordinates = event.features[0].geometry.coordinates;
-      const place = JSON.parse(event.features[0].properties.place);
+      const properties = event.features[0].properties;
 
       const popup = new Popup({ closeButton: false });
       popup.setLngLat(coordinates);
-      popup.setHTML(place.name);
+      popup.setHTML(properties.name);
       popup.addTo(map);
     });
   });

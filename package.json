@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "update": "npm i -g npm-check-updates && ncu -u && npm i && npm audit fix",
-    "convert-cemeteries": "node scripts/convertPlaces.js --inputFile cemeteries.json --outputFile ../src/data/cemeteries.json",
+    "convert-cemeteries": "node scripts/convertCemeteries.js",
     "convert-gas-stations": "node scripts/convertGasStations.js",
     "scrape-cemeteries": "node scripts/scrapePlaces.js --file cemeteries.json --primaryType cemetery"
   },
