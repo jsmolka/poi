@@ -55,10 +55,11 @@ onMounted(() => {
     style: 'mapbox://styles/juliansmolka/clzwx15zy002n01qs7yrr9zsr',
     center: center.value,
     zoom: 10,
+    dragRotate: false,
+    touchZoomRotate: false,
+    pitchWithRotate: false,
+    touchPitch: false,
   });
-
-  map.dragRotate.disable();
-  map.touchZoomRotate.disableRotation();
 
   map.addControl(
     {
