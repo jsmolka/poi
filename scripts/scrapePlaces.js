@@ -121,9 +121,7 @@ const leipzig = {
   lng: 12.381337332992878,
 };
 
-const coordinateDistanceKm = 8;
-
-function createCoordinates(area) {
+function createCoordinates(area, rasterKm) {
   let coordinates;
   switch (area) {
     case 'germany': {
@@ -135,7 +133,7 @@ function createCoordinates(area) {
           germany.max.lng,
           germany.max.lat
         ],
-        coordinateDistanceKm,
+        rasterKm,
         { units: 'kilometers' },
       );
       break;
@@ -151,7 +149,7 @@ function createCoordinates(area) {
       // prettier-ignore
       coordinates = turf.pointGrid(
         turf.bbox(circle),
-        coordinateDistanceKm,
+        rasterKm,
         { units: 'kilometers' },
       );
       coordinates.features = coordinates.features.filter((point) =>
@@ -192,16 +190,16 @@ async function parallelize(threadCount, callback) {
   return await Promise.all(threads);
 }
 
-async function rasterize(center, sizeKm, callback) {
+async function rasterize(center, rasterKm, callback) {
   const centers = Array.isArray(center) ? center : [center];
   for (const center of centers) {
-    if (await callback(center, sizeKm)) {
+    if (await callback(center, rasterKm)) {
       continue;
     }
 
-    const newSizeKm = sizeKm / 2;
+    const newRasterKm = rasterKm / 2;
     const bbox = turf.bbox(
-      turf.circle([center.lng, center.lat], newSizeKm, { units: 'kilometers' }),
+      turf.circle([center.lng, center.lat], newRasterKm, { units: 'kilometers' }),
     );
     await rasterize(
       [
@@ -210,7 +208,7 @@ async function rasterize(center, sizeKm, callback) {
         { lat: bbox[3], lng: bbox[2] },
         { lat: bbox[1], lng: bbox[2] },
       ],
-      newSizeKm,
+      newRasterKm,
       callback,
     );
   }
@@ -218,10 +216,11 @@ async function rasterize(center, sizeKm, callback) {
 
 async function main(argv) {
   const places = readJson(argv.file);
+  const placeCount = places.length;
   const placeSet = new Set(places.map((place) => place.id));
   console.assert(places.length === placeSet.size);
 
-  const coordinates = createCoordinates(argv.area);
+  const coordinates = createCoordinates(argv.area, argv.raster);
   console.log('Coordinates:', coordinates.length);
 
   let r = 0;
@@ -243,7 +242,7 @@ async function main(argv) {
             }
 
             let ri = 0;
-            await rasterize(center, coordinateDistanceKm, async (center, sizeKm) => {
+            await rasterize(center, argv.raster, async (center, rasterKm) => {
               const maxResultCount = 20;
               const response = await client.searchNearby({
                 locationRestriction: {
@@ -252,7 +251,7 @@ async function main(argv) {
                       latitude: center.lat,
                       longitude: center.lng,
                     },
-                    radius: sizeKm / Math.SQRT2,
+                    radius: (1000 * rasterKm) / Math.SQRT2,
                   },
                 },
                 includedPrimaryTypes: [argv.primaryType],
@@ -308,7 +307,7 @@ async function main(argv) {
     });
   } finally {
     writeJson(argv.file, places);
-    console.log('Saved to', argv.file);
+    console.log(`Added ${places.length - placeCount} new places`);
   }
 }
 
@@ -325,6 +324,10 @@ main(
     .option('area', {
       type: 'string',
       default: 'germany',
+    })
+    .option('raster', {
+      type: 'number',
+      default: 8,
     })
     .option('index', {
       type: 'number',
