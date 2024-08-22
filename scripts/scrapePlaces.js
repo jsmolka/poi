@@ -267,7 +267,7 @@ async function main(argv) {
 
               const nearbyPlaces = response.places ?? [];
               console.log(
-                `${index}: request ${r}, index request ${ri}, size ${size}, ${nearbyPlaces.length} places, center`,
+                `${index}: request ${r}, index request ${ri}, raster ${rasterKm}, ${nearbyPlaces.length} places, center`,
                 center,
               );
               for (const place of nearbyPlaces) {
