@@ -118,7 +118,7 @@ onMounted(() => {
       },
     });
 
-    map.addLayer(createLayer('cemeteries', colors.red.hex));
+    map.addLayer(createLayer('cemeteries', colors.shade3.hex));
     map.addLayer(createLayer('gasStations', colors.shade2.hex));
 
     const layers = ['cemeteries', 'gasStations'];
