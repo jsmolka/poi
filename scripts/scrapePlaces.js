@@ -84,7 +84,7 @@ class ScrapeClient {
           excludedTypes: [],
           includedPrimaryTypes: [],
           includedTypes: [],
-          languageCode: null,
+          languageCode: 'de',
           maxResultCount: null,
           rankPreference: null,
           regionCode: null,
@@ -259,7 +259,7 @@ async function main(argv) {
                     radius: (1000 * rasterKm) / Math.SQRT2,
                   },
                 },
-                includedPrimaryTypes: [argv.primaryType],
+                includedPrimaryTypes: argv.primaryTypes,
                 maxResultCount,
                 rankPreference: 'DISTANCE',
               });
@@ -323,13 +323,13 @@ async function main(argv) {
 
 main(
   yargs(process.argv.slice(2))
+    .option('primaryTypes', {
+      type: 'array',
+      demandOption: true,
+    })
     .option('file', {
       type: 'string',
-      requiresArg: true,
-    })
-    .option('primaryType', {
-      type: 'string',
-      requiresArg: true,
+      default: 'places.json',
     })
     .option('area', {
       type: 'string',
