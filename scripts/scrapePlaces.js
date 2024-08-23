@@ -315,11 +315,9 @@ async function main(argv) {
         }
       });
     });
-  } catch (error) {
-    console.log('Parallelize error:', error);
   } finally {
     writeJson(argv.file, places);
-    console.log(`Added ${places.length - placeCount} places`);
+    console.log(`Added ${places.length - placeCount} places in ${r} requests`);
   }
 }
 
