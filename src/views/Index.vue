@@ -4,6 +4,7 @@
 
 <script setup>
 import cemeteriesUrl from '@/assets/geojson/cemeteries.geojson?url';
+import cemeteriesVisitedUrl from '@/assets/geojson/cemeteriesVisited.geojson?url';
 import gasStationsUrl from '@/assets/geojson/gasStations.geojson?url';
 import { mapboxAccessToken } from '@/common/mapboxAccessToken';
 import { colors } from '@/utils/colors';
@@ -106,6 +107,7 @@ onMounted(() => {
 
   map.on('load', () => {
     map.addSource('cemeteries', { type: 'geojson', data: cemeteriesUrl });
+    map.addSource('cemeteriesVisited', { type: 'geojson', data: cemeteriesVisitedUrl });
     map.addSource('gasStations', { type: 'geojson', data: gasStationsUrl });
 
     const createLayer = (id, color) => ({
@@ -118,10 +120,11 @@ onMounted(() => {
       },
     });
 
-    map.addLayer(createLayer('cemeteries', colors.shade3.hex));
+    map.addLayer(createLayer('cemeteries', '#bf616a'));
+    map.addLayer(createLayer('cemeteriesVisited', '#d08770'));
     map.addLayer(createLayer('gasStations', colors.shade2.hex));
 
-    const layers = ['cemeteries', 'gasStations'];
+    const layers = ['cemeteries', 'cemeteriesVisited', 'gasStations'];
 
     map.on('mouseenter', layers, () => {
       map.getCanvas().style.cursor = 'pointer';

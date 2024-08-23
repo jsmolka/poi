@@ -1,0 +1,35 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Friedhof Kleingörschen"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [12.185838, 51.221733]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Friedhof Leiha"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [11.874923, 51.262418]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Friedhof Ramsdorf"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [12.377645, 51.092859]
+      }
+    }
+  ]
+}
