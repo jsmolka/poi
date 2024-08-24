@@ -84,7 +84,7 @@ class ScrapeClient {
           excludedTypes: [],
           includedPrimaryTypes: [],
           includedTypes: [],
-          languageCode: 'de',
+          languageCode: null,
           maxResultCount: null,
           rankPreference: null,
           regionCode: null,
@@ -317,6 +317,7 @@ async function main(argv) {
     });
   } finally {
     writeJson(argv.file, places);
+    console.log('Stopped at index', i);
     console.log(`Added ${places.length - placeCount} places in ${r} requests`);
   }
 }
