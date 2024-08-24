@@ -280,24 +280,21 @@ async function main(argv) {
                 }
 
                 placeSet.add(place.id);
-                delete place.accessibilityOptions;
-                delete place.adrFormatAddress;
-                delete place.businessStatus;
-                delete place.currentOpeningHours;
-                delete place.googleMapsUri;
-                delete place.iconBackgroundColor;
-                delete place.iconMaskBaseUri;
-                delete place.name;
-                delete place.photos;
-                delete place.plusCode;
-                delete place.rating;
-                delete place.regularOpeningHours?.openNow;
-                delete place.reviews;
-                delete place.userRating;
-                delete place.userRatingCount;
-                delete place.utcOffsetMinutes;
-                delete place.viewport;
-                places.push(place);
+
+                const newPlace = {
+                  id: place.id ?? null,
+                  displayName: place.displayName ?? null,
+                  primaryType: place.primaryType ?? null,
+                  primaryTypeDisplayName: place.primaryTypeDisplayName ?? null,
+                  types: place.types ?? null,
+                  formattedAddress: place.formattedAddress ?? null,
+                  shortFormattedAddress: place.shortFormattedAddress ?? null,
+                  addressComponents: place.addressComponents ?? null,
+                  location: place.location ?? null,
+                  regularOpeningHours: place.regularOpeningHours ?? null,
+                };
+                delete newPlace.regularOpeningHours?.openNow;
+                places.push(newPlace);
               }
 
               if (nearbyPlaces.length < maxResultCount) {
