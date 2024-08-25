@@ -7,7 +7,10 @@ async function main() {
     '../src/assets/geojson/cemeteries.geojson',
     turf.featureCollection(
       places.map((place) =>
-        turf.point([place.center.lon, place.center.lat], { name: place.tags.name || 'Cemetery' }),
+        turf.point([place.center.lon, place.center.lat], {
+          name: place.tags.name ?? 'Cemetery',
+          openingHours: place.tags.opening_hours,
+        }),
       ),
     ),
   );

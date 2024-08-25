@@ -5,9 +5,9 @@
 <script setup>
 import cemeteriesUrl from '@/assets/geojson/cemeteries.geojson?url';
 import confectioneriesUrl from '@/assets/geojson/confectioneries.geojson?url';
-import supermarketsUrl from '@/assets/geojson/supermarkets.geojson?url';
-import cemeteriesVisitedUrl from '@/assets/geojson/cemeteriesVisited.geojson?url';
 import gasStationsUrl from '@/assets/geojson/gasStations.geojson?url';
+import supermarketsUrl from '@/assets/geojson/supermarkets.geojson?url';
+import waterUrl from '@/assets/geojson/water.geojson?url';
 import { mapboxAccessToken } from '@/common/mapboxAccessToken';
 import { colors } from '@/utils/colors';
 import { scale } from '@/utils/scale';
@@ -108,11 +108,11 @@ onMounted(() => {
   });
 
   map.on('load', () => {
-    map.addSource('cemeteries', { type: 'geojson', data: cemeteriesUrl });
-    map.addSource('cemeteriesVisited', { type: 'geojson', data: cemeteriesVisitedUrl });
-    map.addSource('confectioneries', { type: 'geojson', data: confectioneriesUrl });
     map.addSource('gasStations', { type: 'geojson', data: gasStationsUrl });
     map.addSource('supermarkets', { type: 'geojson', data: supermarketsUrl });
+    map.addSource('confectioneries', { type: 'geojson', data: confectioneriesUrl });
+    map.addSource('cemeteries', { type: 'geojson', data: cemeteriesUrl });
+    map.addSource('water', { type: 'geojson', data: waterUrl });
 
     const createLayer = (id, color) => ({
       id,
@@ -125,19 +125,13 @@ onMounted(() => {
     });
 
     const symbolId = map.getStyle().layers.find((layer) => layer.type === 'symbol')?.id;
-    map.addLayer(createLayer('cemeteries', colors.red.hex), symbolId);
-    map.addLayer(createLayer('cemeteriesVisited', colors.orange.hex), symbolId);
-    map.addLayer(createLayer('confectioneries', colors.yellow.hex), symbolId);
     map.addLayer(createLayer('gasStations', colors.shade2.hex), symbolId);
-    map.addLayer(createLayer('supermarkets', colors.green.hex), symbolId);
+    map.addLayer(createLayer('supermarkets', colors.red.hex), symbolId);
+    map.addLayer(createLayer('confectioneries', colors.yellow.hex), symbolId);
+    map.addLayer(createLayer('cemeteries', colors.green.hex), symbolId);
+    map.addLayer(createLayer('water', colors.brand3.hex), symbolId);
 
-    const layers = [
-      'cemeteries',
-      'cemeteriesVisited',
-      'confectioneries',
-      'gasStations',
-      'supermarkets',
-    ];
+    const layers = ['gasStations', 'supermarkets', 'confectioneries', 'cemeteries', 'water'];
 
     map.on('mouseenter', layers, () => {
       map.getCanvas().style.cursor = 'pointer';
