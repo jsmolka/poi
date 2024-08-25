@@ -38,3 +38,12 @@ export function write(path, data) {
 export function writeJson(path, data) {
   write(path, JSON.stringify(data, undefined, 2));
 }
+
+export function isGermanPlace(place) {
+  for (const component of place.addressComponents) {
+    if (component.types.includes('country')) {
+      return component.shortText === 'DE' || component.longText === 'Germany';
+    }
+  }
+  return false;
+}

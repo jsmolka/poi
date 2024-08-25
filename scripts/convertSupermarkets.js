@@ -1,27 +1,21 @@
 import * as turf from '@turf/turf';
 import _ from 'lodash';
-import { readJson, writeJson } from './common.js';
+import { isGermanPlace, readJson, writeJson } from './common.js';
 
 function main() {
-  const supermarkets = readJson('places.json')
+  const places = readJson('places.json')
     .filter((place) => ['grocery_store', 'supermarket'].includes(place.primaryType))
-    .filter((supermarket) => {
-      return true;
-      for (const component of supermarket.addressComponents) {
-        if (component.types.includes('country')) {
-          return component.shortText === 'DE' || component.longText === 'Germany';
-        }
-      }
-      return false;
-    });
+    .filter((place) => isGermanPlace(place));
 
   writeJson(
     '../src/assets/geojson/supermarkets.geojson',
     turf.featureCollection(
-      supermarkets.map((supermarket) => {
+      places.map((place) => {
         return turf.point(
-          [_.round(supermarket.location.longitude, 6), _.round(supermarket.location.latitude, 6)],
-          { name: supermarket.displayName.text },
+          [place.location.longitude, place.location.latitude].map((coordinate) =>
+            _.round(coordinate, 6),
+          ),
+          { name: place.displayName.text },
         );
       }),
     ),

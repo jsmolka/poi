@@ -2,7 +2,7 @@ import * as turf from '@turf/turf';
 import * as geokdbush from 'geokdbush';
 import KDBush from 'kdbush';
 import _ from 'lodash';
-import { readJson, writeJson } from './common.js';
+import { isGermanPlace, readJson, writeJson } from './common.js';
 
 function groupNearbyPlaces(places, distanceKm) {
   const index = new KDBush(places.length);
@@ -41,19 +41,11 @@ function groupNearbyPlaces(places, distanceKm) {
 }
 
 function main() {
-  const cemeteries = readJson('places.json')
+  const places = readJson('places.json')
     .filter((place) => place.primaryType === 'cemetery')
-    .filter((cemetery) => {
-      return true;
-      for (const component of cemetery.addressComponents) {
-        if (component.types.includes('country')) {
-          return component.shortText === 'DE' || component.longText === 'Germany';
-        }
-      }
-      return false;
-    });
+    .filter((place) => isGermanPlace(place));
 
-  const groups = groupNearbyPlaces(cemeteries, 0.5);
+  const groups = groupNearbyPlaces(places, 0.5);
   for (const group of groups) {
     group.sort((a, b) => {
       const rank = (text) => {
@@ -89,9 +81,7 @@ function main() {
       groups.map((group) => {
         const center = turf.centroid(
           turf.featureCollection(
-            group.map((cemetery) =>
-              turf.point([cemetery.location.longitude, cemetery.location.latitude]),
-            ),
+            group.map((place) => turf.point([place.location.longitude, place.location.latitude])),
           ),
         );
         return turf.point(

@@ -8,8 +8,11 @@
     "dev": "vite",
     "build": "vite build",
     "update": "npm i -g npm-check-updates && ncu -u && npm i && npm audit fix",
+    "convert": "npm run convert-cemeteries && npm run convert-confectioneries && npm run convert-gas-stations && npm run convert-supermarkets",
     "convert-cemeteries": "node scripts/convertCemeteries.js",
+    "convert-confectioneries": "node scripts/convertConfectioneries.js",
     "convert-gas-stations": "node scripts/convertGasStations.js",
+    "convert-supermarkets": "node scripts/convertSupermarkets.js",
     "scrape-places": "node scripts/scrapePlaces.js"
   },
   "prettier": {

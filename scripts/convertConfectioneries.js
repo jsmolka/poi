@@ -1,30 +1,21 @@
 import * as turf from '@turf/turf';
 import _ from 'lodash';
-import { readJson, writeJson } from './common.js';
+import { isGermanPlace, readJson, writeJson } from './common.js';
 
 function main() {
-  const confectioneries = readJson('places.json')
+  const places = readJson('places.json')
     .filter((place) => ['bakery', 'cafe', 'ice_cream_shop'].includes(place.primaryType))
-    .filter((confectionary) => {
-      return true;
-      for (const component of confectionary.addressComponents) {
-        if (component.types.includes('country')) {
-          return component.shortText === 'DE' || component.longText === 'Germany';
-        }
-      }
-      return false;
-    });
+    .filter((place) => isGermanPlace(place));
 
   writeJson(
     '../src/assets/geojson/confectioneries.geojson',
     turf.featureCollection(
-      confectioneries.map((confectionary) => {
+      places.map((place) => {
         return turf.point(
-          [
-            _.round(confectionary.location.longitude, 6),
-            _.round(confectionary.location.latitude, 6),
-          ],
-          { name: confectionary.displayName.text },
+          [place.location.longitude, place.location.latitude].map((coordinate) =>
+            _.round(coordinate, 6),
+          ),
+          { name: place.displayName.text },
         );
       }),
     ),

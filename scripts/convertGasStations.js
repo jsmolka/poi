@@ -147,9 +147,10 @@ async function main() {
             item.lng <= germany.max.lng,
         )
         .map((item) =>
-          turf.point([_.round(item.lng, 6), _.round(item.lat, 6)], {
-            name: item.brand,
-          }),
+          turf.point(
+            [item.lng, item.lat].map((coordinate) => _.round(coordinate, 6)),
+            { name: item.brand },
+          ),
         ),
     ),
   );
