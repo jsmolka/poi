@@ -38,7 +38,6 @@
     "lodash": "^4.17.21",
     "mapbox-gl": "^3.6.0",
     "notyf": "^3.10.0",
-    "opening_hours": "^3.8.0",
     "radix-vue": "^1.9.4",
     "tailwind-merge": "^2.5.2",
     "vue": "^3.4.38",

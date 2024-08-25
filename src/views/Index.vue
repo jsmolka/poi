@@ -151,9 +151,9 @@ onMounted(() => {
       const coordinates = event.features[0].geometry.coordinates;
       const properties = event.features[0].properties;
 
-      const popup = new Popup({ closeButton: false });
+      const popup = new Popup({ maxWidth: Infinity, closeButton: false });
       popup.setLngLat(coordinates);
-      popup.setHTML(properties.name);
+      popup.setHTML([properties.name, properties.openingHours].filter(Boolean).join('<br>'));
       popup.addTo(map);
     });
   });
