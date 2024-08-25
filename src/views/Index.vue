@@ -5,9 +5,9 @@
 <script setup>
 import cemeteriesUrl from '@/assets/geojson/cemeteries.geojson?url';
 import confectioneriesUrl from '@/assets/geojson/confectioneries.geojson?url';
+import drinkingWaterUrl from '@/assets/geojson/drinkingWater.geojson?url';
 import gasStationsUrl from '@/assets/geojson/gasStations.geojson?url';
 import supermarketsUrl from '@/assets/geojson/supermarkets.geojson?url';
-import waterUrl from '@/assets/geojson/water.geojson?url';
 import { mapboxAccessToken } from '@/common/mapboxAccessToken';
 import { colors } from '@/utils/colors';
 import { scale } from '@/utils/scale';
@@ -112,7 +112,7 @@ onMounted(() => {
     map.addSource('supermarkets', { type: 'geojson', data: supermarketsUrl });
     map.addSource('confectioneries', { type: 'geojson', data: confectioneriesUrl });
     map.addSource('cemeteries', { type: 'geojson', data: cemeteriesUrl });
-    map.addSource('water', { type: 'geojson', data: waterUrl });
+    map.addSource('drinkingWater', { type: 'geojson', data: drinkingWaterUrl });
 
     const createLayer = (id, color) => ({
       id,
@@ -129,9 +129,15 @@ onMounted(() => {
     map.addLayer(createLayer('supermarkets', colors.red.hex), symbolId);
     map.addLayer(createLayer('confectioneries', colors.yellow.hex), symbolId);
     map.addLayer(createLayer('cemeteries', colors.green.hex), symbolId);
-    map.addLayer(createLayer('water', colors.brand3.hex), symbolId);
+    map.addLayer(createLayer('drinkingWater', colors.brand3.hex), symbolId);
 
-    const layers = ['gasStations', 'supermarkets', 'confectioneries', 'cemeteries', 'water'];
+    const layers = [
+      'gasStations',
+      'supermarkets',
+      'confectioneries',
+      'cemeteries',
+      'drinkingWater',
+    ];
 
     map.on('mouseenter', layers, () => {
       map.getCanvas().style.cursor = 'pointer';

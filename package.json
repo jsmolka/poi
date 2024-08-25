@@ -11,9 +11,9 @@
     "fetch": "npm run fetch-cemeteries && npm run fetch-confectioneries && npm run fetch-gas-stations && npm run fetch-supermarkets && npm run fetch-water",
     "fetch-cemeteries": "node scripts/fetchCemeteries.js",
     "fetch-confectioneries": "node scripts/fetchConfectioneries.js",
+    "fetch-drinking-water": "node scripts/fetchDrinkingWater.js",
     "fetch-gas-stations": "node scripts/fetchGasStations.js",
-    "fetch-supermarkets": "node scripts/fetchSupermarkets.js",
-    "fetch-water": "node scripts/fetchWater.js"
+    "fetch-supermarkets": "node scripts/fetchSupermarkets.js"
   },
   "prettier": {
     "singleQuote": true
@@ -38,6 +38,7 @@
     "lodash": "^4.17.21",
     "mapbox-gl": "^3.6.0",
     "notyf": "^3.10.0",
+    "opening_hours": "^3.8.0",
     "radix-vue": "^1.9.4",
     "tailwind-merge": "^2.5.2",
     "vue": "^3.4.38",
