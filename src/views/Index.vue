@@ -10,7 +10,7 @@ import { useSettingsStore } from '@/stores/settings';
 import Legend from '@/views/Legend.vue';
 import LocationMarker from '@/views/LocationMarker.vue';
 import Toolbar from '@/views/Toolbar.vue';
-import { whenever } from '@vueuse/core';
+import { watchOnce } from '@vueuse/core';
 import { Map, Marker, Popup, ScaleControl } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
 import { createApp, onMounted, watch } from 'vue';
@@ -67,7 +67,7 @@ onMounted(() => {
   );
   map.addControl(new ScaleControl());
 
-  whenever(
+  watchOnce(
     location,
     (latLng) => {
       map.setCenter(latLng);
@@ -80,7 +80,7 @@ onMounted(() => {
         marker.setLngLat(latLng);
       });
     },
-    { once: true },
+    { immediate: location.value != null },
   );
 
   map.on('load', () => {
