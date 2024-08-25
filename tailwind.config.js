@@ -3,6 +3,7 @@ import colors from 'tailwindcss/colors';
 
 export default {
   content: ['./index.html', './src/**/*.{js,vue}'],
+  important: true,
   theme: {
     colors: {
       shade: {

@@ -3,43 +3,25 @@
 </template>
 
 <script setup>
-import cemeteriesUrl from '@/assets/geojson/cemeteries.geojson?url';
-import confectioneriesUrl from '@/assets/geojson/confectioneries.geojson?url';
-import drinkingWaterUrl from '@/assets/geojson/drinkingWater.geojson?url';
-import gasStationsUrl from '@/assets/geojson/gasStations.geojson?url';
-import supermarketsUrl from '@/assets/geojson/supermarkets.geojson?url';
 import { mapboxAccessToken } from '@/common/mapboxAccessToken';
-import { colors } from '@/utils/colors';
+import { useLocation } from '@/composables/useLocation';
+import { layers } from '@/modules/layers';
+import { useSettingsStore } from '@/stores/settings';
 import Legend from '@/views/Legend.vue';
 import LocationMarker from '@/views/LocationMarker.vue';
-import { useGeolocation, watchOnce } from '@vueuse/core';
+import Toolbar from '@/views/Toolbar.vue';
+import { watchOnce } from '@vueuse/core';
 import { Map, Marker, Popup, ScaleControl } from 'mapbox-gl';
-import { computed, createApp, onMounted, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import { createApp, onMounted, watch } from 'vue';
 
-const { coords, isSupported } = useGeolocation();
-
-const location = computed(() => {
-  if (!isSupported.value) {
-    return null;
-  }
-  const { latitude, longitude } = coords.value;
-  if (latitude == null || latitude == Infinity || longitude == null || longitude == Infinity) {
-    return null;
-  }
-  return {
-    lat: latitude,
-    lng: longitude,
-  };
-});
+const { settings } = storeToRefs(useSettingsStore());
+const { location } = useLocation();
 
 const leipzig = {
   lat: 51.34482272560187,
   lng: 12.381337332992878,
 };
-
-const center = computed(() => {
-  return location.value ?? leipzig;
-});
 
 let map = null;
 
@@ -55,7 +37,7 @@ onMounted(() => {
     accessToken: mapboxAccessToken,
     container: 'map',
     style: 'mapbox://styles/juliansmolka/clzwx15zy002n01qs7yrr9zsr',
-    center: center.value,
+    center: location.value ?? leipzig,
     zoom: 10,
   });
 
@@ -63,6 +45,16 @@ onMounted(() => {
   map.touchZoomRotate.disableRotation();
   map.touchPitch.disable();
 
+  map.addControl(
+    {
+      onAdd(map) {
+        const div = mount(Toolbar, { map });
+        div.className = 'mapboxgl-ctrl';
+        return div;
+      },
+    },
+    'top-left',
+  );
   map.addControl(
     {
       onAdd() {
@@ -88,59 +80,56 @@ onMounted(() => {
   });
 
   map.on('load', () => {
-    map.addSource('gasStations', { type: 'geojson', data: gasStationsUrl });
-    map.addSource('supermarkets', { type: 'geojson', data: supermarketsUrl });
-    map.addSource('confectioneries', { type: 'geojson', data: confectioneriesUrl });
-    map.addSource('cemeteries', { type: 'geojson', data: cemeteriesUrl });
-    map.addSource('drinkingWater', { type: 'geojson', data: drinkingWaterUrl });
-
-    const createLayer = (id, color) => ({
-      id,
-      type: 'circle',
-      source: id,
-      paint: {
-        'circle-color': color,
-        'circle-radius': {
-          stops: [
-            [6, 1],
-            [18, 16],
-          ],
+    for (const layer of layers) {
+      map.addSource(layer.key, { type: 'geojson', data: layer.url });
+      map.addLayer(
+        {
+          id: layer.key,
+          type: 'circle',
+          source: layer.key,
+          paint: {
+            'circle-color': layer.color,
+            'circle-radius': {
+              stops: [
+                [6, 1],
+                [18, 16],
+              ],
+            },
+          },
         },
-      },
-    });
+        map.getStyle().layers.find((layer) => layer.type === 'symbol')?.id,
+      );
+    }
 
-    const symbolId = map.getStyle().layers.find((layer) => layer.type === 'symbol')?.id;
-    map.addLayer(createLayer('gasStations', colors.shade2.hex), symbolId);
-    map.addLayer(createLayer('supermarkets', colors.red.hex), symbolId);
-    map.addLayer(createLayer('confectioneries', colors.yellow.hex), symbolId);
-    map.addLayer(createLayer('cemeteries', colors.green.hex), symbolId);
-    map.addLayer(createLayer('drinkingWater', colors.brand3.hex), symbolId);
+    const layerIds = layers.map((layer) => layer.key);
 
-    const layers = [
-      'gasStations',
-      'supermarkets',
-      'confectioneries',
-      'cemeteries',
-      'drinkingWater',
-    ];
-
-    map.on('mouseenter', layers, () => {
+    map.on('mouseenter', layerIds, () => {
       map.getCanvas().style.cursor = 'pointer';
     });
 
-    map.on('mouseleave', layers, () => {
+    map.on('mouseleave', layerIds, () => {
       map.getCanvas().style.cursor = '';
     });
 
-    map.on('click', layers, (event) => {
-      const coordinates = event.features[0].geometry.coordinates;
-      const properties = event.features[0].properties;
-
+    map.on('click', layerIds, (event) => {
+      const feature = event.features[0];
       const popup = new Popup({ maxWidth: Infinity, closeButton: false });
-      popup.setLngLat(coordinates);
-      popup.setHTML([properties.name, properties.openingHours].filter(Boolean).join('<br>'));
+      popup.setLngLat(feature.geometry.coordinates);
+      popup.setHTML(
+        [feature.properties.name, feature.properties.openingHours].filter(Boolean).join('<br>'),
+      );
       popup.addTo(map);
     });
+
+    const updateLayerVisibilities = () => {
+      for (const layerId of layerIds) {
+        map.setLayoutProperty(layerId, 'visibility', settings.value[layerId] ? 'visible' : 'none');
+      }
+    };
+
+    watch(settings, updateLayerVisibilities, { deep: true });
+
+    updateLayerVisibilities();
   });
 });
 </script>
@@ -151,6 +140,18 @@ onMounted(() => {
   @apply text-shade-2;
   @apply border-none;
   @apply rounded-sm;
+}
+
+.mapboxgl-control-container {
+  @apply z-10;
+}
+
+.mapboxgl-ctrl-bottom-left,
+.mapboxgl-ctrl-bottom-right,
+.mapboxgl-ctrl-top-left,
+.mapboxgl-ctrl-top-right {
+  @apply pointer-events-auto;
+  @apply z-10;
 }
 
 .mapboxgl-popup-content {
