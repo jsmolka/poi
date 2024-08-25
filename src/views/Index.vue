@@ -67,17 +67,21 @@ onMounted(() => {
   );
   map.addControl(new ScaleControl());
 
-  watchOnce(location, (latLng) => {
-    map.setCenter(latLng);
+  watchOnce(
+    location,
+    (latLng) => {
+      map.setCenter(latLng);
 
-    const marker = new Marker(mount(LocationMarker));
-    marker.setLngLat(latLng);
-    marker.addTo(map);
-
-    watch(location, (latLng) => {
+      const marker = new Marker(mount(LocationMarker));
       marker.setLngLat(latLng);
-    });
-  });
+      marker.addTo(map);
+
+      watch(location, (latLng) => {
+        marker.setLngLat(latLng);
+      });
+    },
+    { immediate: location.value != null },
+  );
 
   map.on('load', () => {
     const symbolLayer = map.getStyle().layers.find(({ type }) => type === 'symbol');
