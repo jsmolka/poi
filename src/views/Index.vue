@@ -80,13 +80,13 @@ onMounted(() => {
   });
 
   map.on('load', () => {
-    for (const layer of layers) {
-      map.addSource(layer.key, { type: 'geojson', data: layer.url });
+    for (const [id, layer] of Object.entries(layers)) {
+      map.addSource(id, { type: 'geojson', data: layer.url });
       map.addLayer(
         {
-          id: layer.key,
+          id: id,
           type: 'circle',
-          source: layer.key,
+          source: id,
           paint: {
             'circle-color': layer.color,
             'circle-radius': {
@@ -101,7 +101,7 @@ onMounted(() => {
       );
     }
 
-    const layerIds = layers.map((layer) => layer.key);
+    const layerIds = Object.keys(layers);
 
     map.on('mouseenter', layerIds, () => {
       map.getCanvas().style.cursor = 'pointer';
@@ -112,11 +112,20 @@ onMounted(() => {
     });
 
     map.on('click', layerIds, (event) => {
-      const feature = event.features[0];
+      const props = event.features[0].properties;
+      const layer = layers[event.features[0].layer.id];
+
       const popup = new Popup({ maxWidth: Infinity, closeButton: false });
-      popup.setLngLat(feature.geometry.coordinates);
+      popup.setLngLat(event.features[0].geometry.coordinates);
       popup.setHTML(
-        [feature.properties.name, feature.properties.openingHours].filter(Boolean).join('<br>'),
+        [
+          props.name ?? layer.textSingular,
+          props.id ? `ID: ${props.id}` : '',
+          props.openingHours ? `Opening hours: ${props.openingHours}` : '',
+          props.tested ? 'Place has been tested' : '',
+        ]
+          .filter(Boolean)
+          .join('<br>'),
       );
       popup.addTo(map);
     });

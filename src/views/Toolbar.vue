@@ -1,17 +1,17 @@
 <template>
   <div class="flex items-center gap-2 p-2 bg-shade-8 border rounded-sm">
     <Button variant="ghost" size="icon" :disabled="location == null" title="Locate" @click="locate">
-      <LocateFixed class="size-5" />
+      <LocateFixed class="size-4" />
     </Button>
     <Button variant="ghost" size="icon" title="Upload GPX" @click="uploadRoute">
-      <RouteIcon class="size-5" />
+      <RouteIcon class="size-4" />
     </Button>
     <Toggle
-      v-for="layer of layers"
+      v-for="[key, layer] in Object.entries(layers)"
       variant="ghost"
       size="icon"
-      v-model="settings[layer.key]"
-      :title="layer.title"
+      v-model="settings[key]"
+      :title="layer.textPlural"
     >
       <div class="size-4 rounded-full" :style="{ background: layer.color }" />
     </Toggle>

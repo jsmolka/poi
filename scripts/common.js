@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { writeFileSync } from 'fs';
+import _ from 'lodash';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -36,6 +37,8 @@ export async function queryOverpassApi(query) {
           lon: element.lon,
         };
       }
+      element.center.lat = _.round(element.center.lat, 6);
+      element.center.lon = _.round(element.center.lon, 6);
       return element;
     });
 }

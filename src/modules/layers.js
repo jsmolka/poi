@@ -5,35 +5,39 @@ import gasStationsUrl from '@/assets/geojson/gasStations.geojson?url';
 import supermarketsUrl from '@/assets/geojson/supermarkets.geojson?url';
 import { colors } from '@/utils/colors';
 
-export const layers = [
-  {
-    key: 'gasStations',
+export const layers = {
+  gasStations: {
     url: gasStationsUrl,
-    title: 'Gas stations',
     color: colors.shade2.hex,
+    textSingular: 'Gas station',
+    textPlural: 'Gas stations',
   },
-  {
-    key: 'supermarkets',
+
+  supermarkets: {
     url: supermarketsUrl,
-    title: 'Supermarkets',
     color: colors.red.hex,
+    textSingular: 'Supermarket',
+    textPlural: 'Supermarkets',
   },
-  {
-    key: 'confectioneries',
+
+  confectioneries: {
     url: confectioneriesUrl,
-    title: 'Confectioneries',
     color: colors.yellow.hex,
+    textSingular: 'Confectionary',
+    textPlural: 'Confectioneries',
   },
-  {
-    key: 'cemeteries',
+
+  cemeteries: {
     url: cemeteriesUrl,
-    title: 'Cemeteries',
     color: colors.green.hex,
+    textSingular: 'Cemetery',
+    textPlural: 'Cemeteries',
   },
-  {
-    key: 'drinkingWater',
+
+  drinkingWater: {
     url: drinkingWaterUrl,
-    title: 'Drinking water',
     color: colors.brand3.hex,
+    textSingular: 'Drinking water',
+    textPlural: 'Drinking water',
   },
-];
+};
