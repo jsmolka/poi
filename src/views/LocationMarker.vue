@@ -1,5 +1,7 @@
 <template>
-  <div class="relative size-8 bg-brand-3 rounded-full">
-    <div class="absolute size-full bg-brand-3 rounded-full animate-ping" />
-  </div>
+  <MapPin class="size-8 text-shade-8 fill-shade-2" />
 </template>
+
+<script setup>
+import { MapPin } from 'lucide-vue-next';
+</script>

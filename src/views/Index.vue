@@ -10,7 +10,6 @@ import gasStationsUrl from '@/assets/geojson/gasStations.geojson?url';
 import supermarketsUrl from '@/assets/geojson/supermarkets.geojson?url';
 import { mapboxAccessToken } from '@/common/mapboxAccessToken';
 import { colors } from '@/utils/colors';
-import { scale } from '@/utils/scale';
 import Legend from '@/views/Legend.vue';
 import LocationMarker from '@/views/LocationMarker.vue';
 import { useGeolocation, watchOnce } from '@vueuse/core';
@@ -76,11 +75,6 @@ onMounted(() => {
   );
   map.addControl(new ScaleControl());
 
-  const stops = [
-    [6, 1],
-    [18, 16],
-  ];
-
   watchOnce(location, (latLng) => {
     map.setCenter(latLng);
 
@@ -91,20 +85,6 @@ onMounted(() => {
     watch(location, (latLng) => {
       marker.setLngLat(latLng);
     });
-
-    const scaleMarker = () => {
-      const element = marker.getElement().children[0];
-      element.style.transformOrigin = 'center';
-      element.style.transform = `scale(${scale(
-        map.getZoom(),
-        stops[0][0],
-        stops[1][0],
-        1 / 32,
-        1,
-      )})`;
-    };
-    scaleMarker();
-    map.on('zoom', scaleMarker);
   });
 
   map.on('load', () => {
@@ -120,7 +100,12 @@ onMounted(() => {
       source: id,
       paint: {
         'circle-color': color,
-        'circle-radius': { stops },
+        'circle-radius': {
+          stops: [
+            [6, 1],
+            [18, 16],
+          ],
+        },
       },
     });
 
