@@ -41,5 +41,8 @@
     "tailwind-merge": "^2.5.2",
     "vue": "^3.4.38",
     "vue-router": "^4.4.3"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.21.0"
   }
 }
