@@ -1,2 +1,2 @@
-# points-of-interest
+# poi
 Points of interest.
