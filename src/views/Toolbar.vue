@@ -3,7 +3,7 @@
     <Button variant="ghost" size="icon" :disabled="location == null" title="Locate" @click="locate">
       <LocateFixed class="size-4" />
     </Button>
-    <Button variant="ghost" size="icon" title="Upload GPX" @click="uploadRoute">
+    <Button variant="ghost" size="icon" title="Upload route" @click="uploadRoute">
       <RouteIcon class="size-4" />
     </Button>
     <Toggle
@@ -53,6 +53,7 @@ const uploadRoute = async () => {
 
   const content = await readAsText(await selectFile('gpx'));
   const geojson = toGeoJSON.gpx(new DOMParser().parseFromString(content, 'text/xml'));
+
   map.addSource(id, {
     type: 'geojson',
     data: geojson,
@@ -72,10 +73,3 @@ const uploadRoute = async () => {
   });
 };
 </script>
-
-<style scoped>
-.circle {
-  @apply size-4;
-  @apply rounded-full;
-}
-</style>

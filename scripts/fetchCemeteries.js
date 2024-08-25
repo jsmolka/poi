@@ -1,7 +1,7 @@
 import * as turf from '@turf/turf';
 import { queryOverpassApi, writeJson } from './common.js';
 
-const tested = [
+const testedIds = [
   2837558, // Ramsdorf
   180118850, // Kleingörschen
 ];
@@ -16,7 +16,7 @@ async function main() {
           id: place.id,
           name: place.tags.name,
           openingHours: place.tags.opening_hours,
-          tested: tested.includes(place.id) ? true : undefined,
+          tested: testedIds.includes(place.id) ? true : undefined,
         }),
       ),
     ),

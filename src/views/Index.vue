@@ -80,6 +80,7 @@ onMounted(() => {
   });
 
   map.on('load', () => {
+    const symbolLayer = map.getStyle().layers.find(({ type }) => type === 'symbol');
     for (const [id, layer] of Object.entries(layers)) {
       map.addSource(id, { type: 'geojson', data: layer.url });
       map.addLayer(
@@ -97,7 +98,7 @@ onMounted(() => {
             },
           },
         },
-        map.getStyle().layers.find((layer) => layer.type === 'symbol')?.id,
+        symbolLayer?.id,
       );
     }
 
@@ -112,11 +113,12 @@ onMounted(() => {
     });
 
     map.on('click', layerIds, (event) => {
-      const props = event.features[0].properties;
-      const layer = layers[event.features[0].layer.id];
+      const feats = event.features[0];
+      const layer = layers[feats.layer.id];
+      const props = feats.properties;
 
       const popup = new Popup({ maxWidth: Infinity, closeButton: false });
-      popup.setLngLat(event.features[0].geometry.coordinates);
+      popup.setLngLat(feats.geometry.coordinates);
       popup.setHTML(
         [
           props.name ?? layer.textSingular,
@@ -131,14 +133,12 @@ onMounted(() => {
     });
 
     const updateLayerVisibilities = () => {
-      for (const layerId of layerIds) {
-        map.setLayoutProperty(layerId, 'visibility', settings.value[layerId] ? 'visible' : 'none');
+      for (const id of layerIds) {
+        map.setLayoutProperty(id, 'visibility', settings.value[id] ? 'visible' : 'none');
       }
     };
 
-    watch(settings, updateLayerVisibilities, { deep: true });
-
-    updateLayerVisibilities();
+    watch(settings, updateLayerVisibilities, { deep: true, immediate: true });
   });
 });
 </script>
@@ -149,18 +149,6 @@ onMounted(() => {
   @apply text-shade-2;
   @apply border-none;
   @apply rounded-sm;
-}
-
-.mapboxgl-control-container {
-  @apply z-10;
-}
-
-.mapboxgl-ctrl-bottom-left,
-.mapboxgl-ctrl-bottom-right,
-.mapboxgl-ctrl-top-left,
-.mapboxgl-ctrl-top-right {
-  @apply pointer-events-auto;
-  @apply z-10;
 }
 
 .mapboxgl-popup-content {
