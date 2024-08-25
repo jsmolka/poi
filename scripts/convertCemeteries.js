@@ -41,14 +41,17 @@ function groupNearbyPlaces(places, distanceKm) {
 }
 
 function main() {
-  const cemeteries = readJson('cemeteries.json').filter((cemetery) => {
-    for (const component of cemetery.addressComponents) {
-      if (component.types.includes('country')) {
-        return component.shortText === 'DE' || component.longText === 'Germany';
+  const cemeteries = readJson('places.json')
+    .filter((place) => place.primaryType === 'cemetery')
+    .filter((cemetery) => {
+      return true;
+      for (const component of cemetery.addressComponents) {
+        if (component.types.includes('country')) {
+          return component.shortText === 'DE' || component.longText === 'Germany';
+        }
       }
-    }
-    return false;
-  });
+      return false;
+    });
 
   const groups = groupNearbyPlaces(cemeteries, 0.5);
   for (const group of groups) {
@@ -56,7 +59,7 @@ function main() {
       const rank = (text) => {
         text = text.toLowerCase();
         const words = text.split(' ');
-        const translations = ['friedhof', 'cemetery'];
+        const translations = ['friedhof', 'begraafplaats', 'cimetière', 'cemetery'];
         for (const [index, translation] of translations.entries()) {
           const factor = translations.length - index;
           if (words.includes(translation)) {

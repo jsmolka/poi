@@ -6,11 +6,23 @@
     </div>
     <div class="flex items-center gap-2">
       <div class="size-2 bg-shade-2 rounded-full" />
-      <div>Gas station</div>
+      <div>Gas stations</div>
     </div>
     <div class="flex items-center gap-2">
-      <div class="size-2 bg-shade-3 rounded-full" />
-      <div>Cemetery</div>
+      <div class="size-2 bg-red rounded-full" />
+      <div>Cemeteries</div>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="size-2 bg-orange rounded-full" />
+      <div>Visited cemeteries</div>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="size-2 bg-yellow rounded-full" />
+      <div>Confectioneries</div>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="size-2 bg-green rounded-full" />
+      <div>Supermarkets</div>
     </div>
   </div>
 </template>
