@@ -121,7 +121,10 @@ onMounted(() => {
       const layer = layers[feats.layer.id];
       const props = feats.properties;
 
-      const popup = new Popup({ maxWidth: Infinity, closeButton: false });
+      const popup = new Popup({
+        maxWidth: document.body.getBoundingClientRect().width,
+        closeButton: false,
+      });
       popup.setLngLat(feats.geometry.coordinates);
       popup.setHTML(
         [
