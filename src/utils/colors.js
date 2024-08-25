@@ -32,4 +32,7 @@ export const colors = Object.freeze({
   brand2: color('--brand-2'),
   brand3: color('--brand-3'),
   red: color('--red'),
+  orange: color('--orange'),
+  yellow: color('--yellow'),
+  green: color('--green'),
 });
