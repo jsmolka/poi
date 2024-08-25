@@ -1,2 +1,1 @@
-scripts/places.json filter=lfs diff=lfs merge=lfs -text
 src/assets/geojson/*.geojson filter=lfs diff=lfs merge=lfs -text

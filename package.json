@@ -8,12 +8,11 @@
     "dev": "vite",
     "build": "vite build",
     "update": "npm i -g npm-check-updates && ncu -u && npm i && npm audit fix",
-    "convert": "npm run convert-cemeteries && npm run convert-confectioneries && npm run convert-gas-stations && npm run convert-supermarkets",
-    "convert-cemeteries": "node scripts/convertCemeteries.js",
-    "convert-confectioneries": "node scripts/convertConfectioneries.js",
-    "convert-gas-stations": "node scripts/convertGasStations.js",
-    "convert-supermarkets": "node scripts/convertSupermarkets.js",
-    "scrape-places": "node scripts/scrapePlaces.js"
+    "fetch": "npm run fetch-cemeteries && npm run fetch-confectioneries && npm run fetch-gas-stations && npm run fetch-supermarkets",
+    "fetch-cemeteries": "node scripts/fetchCemeteries.js",
+    "fetch-confectioneries": "node scripts/fetchConfectioneries.js",
+    "fetch-gas-stations": "node scripts/fetchGasStations.js",
+    "fetch-supermarkets": "node scripts/fetchSupermarkets.js"
   },
   "prettier": {
     "singleQuote": true
@@ -22,17 +21,13 @@
     "@turf/turf": "^7.1.0",
     "@vitejs/plugin-vue": "^5.1.2",
     "autoprefixer": "^10.4.20",
-    "fast-csv": "^5.0.1",
-    "geokdbush": "^2.0.1",
-    "kdbush": "^4.0.2",
+    "axios": "^1.7.5",
     "postcss": "^8.4.41",
     "prettier": "^3.3.3",
-    "puppeteer": "^23.1.1",
     "sass": "^1.77.8",
     "tailwindcss": "^3.4.10",
     "tailwindcss-animate": "^1.0.7",
-    "vite": "^5.4.2",
-    "yargs": "^17.7.2"
+    "vite": "^5.4.2"
   },
   "dependencies": {
     "@radix-icons/vue": "^1.0.0",

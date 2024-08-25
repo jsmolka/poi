@@ -124,11 +124,12 @@ onMounted(() => {
       },
     });
 
-    map.addLayer(createLayer('cemeteries', colors.red.hex));
-    map.addLayer(createLayer('cemeteriesVisited', colors.orange.hex));
-    map.addLayer(createLayer('confectioneries', colors.yellow.hex));
-    map.addLayer(createLayer('gasStations', colors.shade2.hex));
-    map.addLayer(createLayer('supermarkets', colors.green.hex));
+    const symbolId = map.getStyle().layers.find((layer) => layer.type === 'symbol')?.id;
+    map.addLayer(createLayer('cemeteries', colors.red.hex), symbolId);
+    map.addLayer(createLayer('cemeteriesVisited', colors.orange.hex), symbolId);
+    map.addLayer(createLayer('confectioneries', colors.yellow.hex), symbolId);
+    map.addLayer(createLayer('gasStations', colors.shade2.hex), symbolId);
+    map.addLayer(createLayer('supermarkets', colors.green.hex), symbolId);
 
     const layers = [
       'cemeteries',
