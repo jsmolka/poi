@@ -2,12 +2,12 @@ import * as turf from '@turf/turf';
 import { queryOverpassApi, writeJson } from './common.js';
 
 const tested = [
-  180118850, // Kleingörschen
   2837558, // Ramsdorf
+  180118850, // Kleingörschen
 ];
 
 async function main() {
-  const places = await queryOverpassApi('nwr[landuse=cemetery](area);');
+  const places = await queryOverpassApi('nwr[landuse~"cemetery|grave_yard"](area)');
   writeJson(
     '../src/assets/geojson/cemeteries.geojson',
     turf.featureCollection(

@@ -17,13 +17,14 @@ export function writeJson(path, data) {
   write(path, JSON.stringify(data, undefined, 2));
 }
 
-export async function queryOverpassApi(query) {
+export async function queryOverpassApi(...queries) {
   const response = await axios.post(
     'https://overpass-api.de/api/interpreter',
     `
       [out:json][timeout:600];
       area["ISO3166-1"="DE"][admin_level=2];
-      (${query});
+      ${queries.map((query, index) => `${query} -> .q${index};`).join('')}
+      (${queries.map((_, index) => `.q${index};`).join('')});
       out center;
     `,
   );
