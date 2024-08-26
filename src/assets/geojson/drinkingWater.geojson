@@ -18,6 +18,34 @@
     {
       "type": "Feature",
       "properties": {
+        "id": 31821228,
+        "name": "Waschstelle"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.12063,
+          50.602444
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 31821241,
+        "name": "Waschstelle"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.117464,
+          50.604655
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": 35199894
       },
       "geometry": {
@@ -44,6 +72,19 @@
     {
       "type": "Feature",
       "properties": {
+        "id": 43326656
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.236664,
+          48.76178
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": 48867942
       },
       "geometry": {
@@ -51,6 +92,33 @@
         "coordinates": [
           11.260297,
           49.3903
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 53159597,
+        "name": "Uhlandbrunnen"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.714185,
+          48.701774
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 54567942
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.771637,
+          47.591462
         ]
       }
     },
@@ -84,6 +152,20 @@
     {
       "type": "Feature",
       "properties": {
+        "id": 60603435,
+        "name": "Bei der Waldsee-Therme"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.760331,
+          47.914304
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": 61328704
       },
       "geometry": {
@@ -104,6 +186,61 @@
         "coordinates": [
           11.072228,
           50.663746
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 76706911
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.974836,
+          49.991329
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 115714324,
+        "name": "Allmendhütte"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.826152,
+          48.100773
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 165299130
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.884089,
+          48.287305
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 238121210,
+        "name": "Draitschbrunnen",
+        "openingHours": "Mo-Fr 13:30-18:00; Sa 09:00-14:00"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.149715,
+          50.680285
         ]
       }
     },
@@ -267,6 +404,19 @@
         "coordinates": [
           9.660027,
           48.700566
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 256228461
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.14185,
+          50.521958
         ]
       }
     },
@@ -597,6 +747,20 @@
     {
       "type": "Feature",
       "properties": {
+        "id": 268609173,
+        "name": "Wasserhaus Perscheid"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.678727,
+          50.06448
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": 268981375
       },
       "geometry": {
@@ -673,6 +837,46 @@
         "coordinates": [
           9.185965,
           48.763153
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 272249329
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.604799,
+          47.98787
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 272249333
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.604975,
+          47.987806
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 272935001,
+        "name": "Quelle St. Georg – Zeller Quelle"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.630218,
+          47.755932
         ]
       }
     },
@@ -2255,6 +2459,45 @@
     {
       "type": "Feature",
       "properties": {
+        "id": 310550529
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.285736,
+          54.464381
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 310551165
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.290237,
+          54.464875
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 310551422
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.293461,
+          54.4652
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": 310656498,
         "name": "Neugrittbrunnen 1981"
       },
@@ -2332,6 +2575,20 @@
         "coordinates": [
           9.19049,
           48.797411
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 313165071,
+        "name": "Gasthof zur \"Wildsau\""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.043129,
+          51.721881
         ]
       }
     },
@@ -2788,6 +3045,21 @@
         "coordinates": [
           9.222226,
           48.808902
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 329096168,
+        "name": "K20 Projekthaus",
+        "openingHours": "24/7"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.912158,
+          51.796356
         ]
       }
     },
@@ -3975,6 +4247,19 @@
     {
       "type": "Feature",
       "properties": {
+        "id": 389406828
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.707104,
+          50.839508
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": 391250520,
         "name": "Hierabrunnen"
       },
@@ -4443,6 +4728,20 @@
     {
       "type": "Feature",
       "properties": {
+        "id": 412999380,
+        "name": "Tiefbrunnen"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.571343,
+          49.601919
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": 413907777
       },
       "geometry": {
@@ -4810,6 +5109,20 @@
         "coordinates": [
           12.694242,
           47.774092
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 419425285,
+        "name": "Wohnmobil Stellplatz Badehaus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.78403,
+          51.506284
         ]
       }
     },
@@ -5628,8 +5941,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          9.308021,
-          48.739874
+          9.307986,
+          48.739895
         ]
       }
     },
@@ -5890,6 +6203,20 @@
         "coordinates": [
           9.211016,
           47.682347
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 467291149,
+        "name": "Trinkhalle im Kurpark"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.627941,
+          51.089377
         ]
       }
     },
@@ -7534,6 +7861,19 @@
     {
       "type": "Feature",
       "properties": {
+        "id": 540833677
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.436355,
+          47.56557
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": 540941787
       },
       "geometry": {
@@ -8776,6 +9116,20 @@
     {
       "type": "Feature",
       "properties": {
+        "id": 630284191,
+        "name": "Best Western Hotel Viernheim Mannheim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.59571,
+          49.53986
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": 631783329
       },
       "geometry": {
@@ -9920,6 +10274,20 @@
         "coordinates": [
           6.882117,
           51.839406
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 717168735,
+        "name": "Kneipp-Wassertreteanlage"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.553536,
+          47.717065
         ]
       }
     },
@@ -12539,6 +12907,19 @@
     {
       "type": "Feature",
       "properties": {
+        "id": 882126448
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.739316,
+          53.311459
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": 883512460
       },
       "geometry": {
@@ -13714,6 +14095,19 @@
     {
       "type": "Feature",
       "properties": {
+        "id": 971915842
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.183444,
+          48.362859
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": 972366394
       },
       "geometry": {
@@ -13893,6 +14287,146 @@
         "coordinates": [
           6.928187,
           49.964593
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 984015324,
+        "name": "Wasch"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.729477,
+          51.287484
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 984015350,
+        "name": "Wasch"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.729425,
+          51.287501
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 984015370,
+        "name": "Wasch"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.7299,
+          51.288113
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 984015396,
+        "name": "Wasch"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.729951,
+          51.288096
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 984015416,
+        "name": "Wasch"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.730265,
+          51.287857
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 984015442,
+        "name": "Wasch"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.730238,
+          51.287824
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 984015462,
+        "name": "Wasch"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.72999,
+          51.287498
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 984015488,
+        "name": "Wasch"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.729963,
+          51.287466
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 984015545,
+        "name": "Wasch"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.729138,
+          51.287762
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 984015559,
+        "name": "Wasch"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.729109,
+          51.28773
         ]
       }
     },
@@ -14435,6 +14969,20 @@
     {
       "type": "Feature",
       "properties": {
+        "id": 1053546360,
+        "openingHours": "24/7"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.702397,
+          54.731268
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "id": 1054184065,
         "name": "Georg - Viktor - Quelle"
       },
@@ -14730,6 +15278,45 @@
         "coordinates": [
           10.199977,
           48.68569
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1083354575
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.440351,
+          50.07162
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1083354576
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.440268,
+          50.071391
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1083354577
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.440213,
+          50.070981
         ]
       }
     },
@@ -22859,20 +23446,6 @@
         "coordinates": [
           13.492128,
           52.420215
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 1776609969,
-        "name": "Mühlenbrunnen"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          9.212083,
-          48.796901
         ]
       }
     },
@@ -104127,14 +104700,13 @@
     {
       "type": "Feature",
       "properties": {
-        "id": 11950608214,
-        "name": "Stadtwerke Düsseldorf"
+        "id": 11950608214
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          6.770899,
-          51.226606
+          6.770862,
+          51.226544
         ]
       }
     },
@@ -105913,19 +106485,6 @@
         "coordinates": [
           10.944205,
           47.596648
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 12054040191
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          11.185295,
-          47.973076
         ]
       }
     },
@@ -108093,20 +108652,6 @@
     {
       "type": "Feature",
       "properties": {
-        "id": 12122432188,
-        "name": "Trinkwasser"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.770904,
-          51.226493
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "id": 12122830304
       },
       "geometry": {
@@ -108487,587 +109032,78 @@
     {
       "type": "Feature",
       "properties": {
-        "id": 31821228,
-        "name": "Waschstelle"
+        "id": 12136475115
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          8.12063,
-          50.602444
+          6.861473,
+          51.236876
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": 31821241,
-        "name": "Waschstelle"
+        "id": 12136571080
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          8.117464,
-          50.604655
+          14.07875,
+          51.048897
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": 43326656
+        "id": 12137428109
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          8.236664,
-          48.76178
+          11.18531,
+          47.973073
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": 53159597,
-        "name": "Uhlandbrunnen"
+        "id": 12137428110
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          9.714185,
-          48.701774
+          11.221542,
+          47.945709
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": 54567942
+        "id": 12137868013
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.771637,
-          47.591462
+          10.833233,
+          53.650313
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": 60603435,
-        "name": "Bei der Waldsee-Therme"
+        "id": 12138179853
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          9.760331,
-          47.914304
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 76706911
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.974836,
-          49.991329
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 115714324,
-        "name": "Allmendhütte"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          7.826152,
-          48.100773
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 165299130
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.884089,
-          48.287305
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 238121210,
-        "name": "Draitschbrunnen",
-        "openingHours": "Mo-Fr 13:30-18:00; Sa 09:00-14:00"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          7.149715,
-          50.680285
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 256228461
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          9.14185,
-          50.521958
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 268609173,
-        "name": "Wasserhaus Perscheid"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          7.678727,
-          50.06448
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 272249329
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          9.604799,
-          47.98787
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 272249333
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          9.604975,
-          47.987806
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 272935001,
-        "name": "Quelle St. Georg – Zeller Quelle"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          12.630218,
-          47.755932
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 310550529
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          9.285736,
-          54.464381
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 310551165
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          9.290237,
-          54.464875
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 310551422
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          9.293461,
-          54.4652
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 313165071,
-        "name": "Gasthof zur \"Wildsau\""
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.043129,
-          51.721881
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 329096168,
-        "name": "K20 Projekthaus",
-        "openingHours": "24/7"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          9.912158,
-          51.796356
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 389406828
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          8.707104,
-          50.839508
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 412999380,
-        "name": "Tiefbrunnen"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          8.571343,
-          49.601919
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 419425285,
-        "name": "Wohnmobil Stellplatz Badehaus"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.78403,
-          51.506284
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 467291149,
-        "name": "Trinkhalle im Kurpark"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          11.627941,
-          51.089377
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 540833677
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.436355,
-          47.56557
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 630284191,
-        "name": "Best Western Hotel Viernheim Mannheim"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          8.59571,
-          49.53986
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 717168735,
-        "name": "Kneipp-Wassertreteanlage"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          7.553536,
-          47.717065
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 882126448
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          12.739316,
-          53.311459
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 971915842
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          9.183444,
-          48.362859
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 984015324,
-        "name": "Wasch"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.729477,
-          51.287484
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 984015350,
-        "name": "Wasch"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.729425,
-          51.287501
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 984015370,
-        "name": "Wasch"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.7299,
-          51.288113
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 984015396,
-        "name": "Wasch"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.729951,
-          51.288096
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 984015416,
-        "name": "Wasch"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.730265,
-          51.287857
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 984015442,
-        "name": "Wasch"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.730238,
-          51.287824
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 984015462,
-        "name": "Wasch"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.72999,
-          51.287498
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 984015488,
-        "name": "Wasch"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.729963,
-          51.287466
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 984015545,
-        "name": "Wasch"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.729138,
-          51.287762
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 984015559,
-        "name": "Wasch"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.729109,
-          51.28773
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 1053546360,
-        "openingHours": "24/7"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          8.702397,
-          54.731268
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 1083354575
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.440351,
-          50.07162
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 1083354576
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.440268,
-          50.071391
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 1083354577
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          6.440213,
-          50.070981
+          11.495052,
+          49.601296
         ]
       }
     }

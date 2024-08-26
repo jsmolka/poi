@@ -8,14 +8,14 @@ import { colors } from '@/utils/colors';
 export const layers = {
   gasStations: {
     url: gasStationsUrl,
-    color: colors.shade2.hex,
+    color: colors.red.hex,
     textSingular: 'Gas station',
     textPlural: 'Gas stations',
   },
 
   supermarkets: {
     url: supermarketsUrl,
-    color: colors.red.hex,
+    color: colors.orange.hex,
     textSingular: 'Supermarket',
     textPlural: 'Supermarkets',
   },

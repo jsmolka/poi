@@ -41,5 +41,6 @@ export async function queryOverpassApi(...queries) {
       element.center.lat = _.round(element.center.lat, 6);
       element.center.lon = _.round(element.center.lon, 6);
       return element;
-    });
+    })
+    .sort((a, b) => a.id - b.id);
 }
