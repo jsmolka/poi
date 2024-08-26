@@ -122,20 +122,22 @@ onMounted(() => {
       const props = feats.properties;
 
       const popup = new Popup({
-        maxWidth: document.body.getBoundingClientRect().width,
+        maxWidth: Math.min(256, document.body.getBoundingClientRect().width) + 'px',
         closeButton: false,
       });
       popup.setLngLat(feats.geometry.coordinates);
-      popup.setHTML(
-        [
-          props.name ?? layer.textSingular,
-          props.id ? `ID: ${props.id}` : '',
-          props.openingHours ? `Opening hours: ${props.openingHours}` : '',
-          props.tested ? 'Place has been tested' : '',
-        ]
-          .filter(Boolean)
-          .join('<br>'),
-      );
+      popup.setHTML(/* html */ `
+        <div class="font-semibold" title="${props.id}">${props.name ?? layer.textSingular}</div>
+        <div class="${props.openingHours == null ? 'hidden' : ''}">
+          Opening hours:
+          <ul>
+            ${(props.openingHours ?? '')
+              .split(';')
+              .map((hours) => `<li>${hours.trim()}</li>`)
+              .join('')}
+          </ul>
+        </div>
+      `);
       popup.addTo(map);
     });
 
