@@ -8,12 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "update": "npm i -g npm-check-updates && ncu -u && npm i && npm audit fix",
-    "fetch": "npm run fetch-cemeteries && npm run fetch-confectioneries && npm run fetch-drinking-water && npm run fetch-gas-stations && npm run fetch-supermarkets",
-    "fetch-cemeteries": "node scripts/fetchCemeteries.js",
-    "fetch-confectioneries": "node scripts/fetchConfectioneries.js",
-    "fetch-drinking-water": "node scripts/fetchDrinkingWater.js",
-    "fetch-gas-stations": "node scripts/fetchGasStations.js",
-    "fetch-supermarkets": "node scripts/fetchSupermarkets.js"
+    "update-geojson": "node scripts/updateCemeteries.js && node scripts/updateConfectioneries.js && node scripts/updateDrinkingWater.js && node scripts/updateGasStations.js && node scripts/updateSupermarkets.js"
   },
   "prettier": {
     "singleQuote": true

@@ -8,7 +8,6 @@ async function main() {
     turf.featureCollection(
       places.map((place) =>
         turf.point([place.center.lon, place.center.lat], {
-          id: place.id,
           name: place.tags.name,
           openingHours: place.tags.opening_hours,
         }),

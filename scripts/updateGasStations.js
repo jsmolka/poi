@@ -2,15 +2,12 @@ import * as turf from '@turf/turf';
 import { queryOverpassApi, writeJson } from './common.js';
 
 async function main() {
-  const places = await queryOverpassApi(
-    'nwr[shop~"beverages|convenience|supermarket|water"](area)',
-  );
+  const places = await queryOverpassApi('nwr[amenity=fuel](area)');
   writeJson(
-    '../src/assets/geojson/supermarkets.geojson',
+    '../src/assets/geojson/gasStations.geojson',
     turf.featureCollection(
       places.map((place) =>
         turf.point([place.center.lon, place.center.lat], {
-          id: place.id,
           name: place.tags.name ?? place.tags.brand ?? place.tags.operator,
           openingHours: place.tags.opening_hours,
         }),
