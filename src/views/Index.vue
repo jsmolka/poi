@@ -91,23 +91,12 @@ const onMapLoaded = (map) => {
     const layer = layers[feats.layer.id];
     const props = feats.properties;
 
-    const popup = new Popup({
-      maxWidth: Math.min(256, document.body.getBoundingClientRect().width) + 'px',
-      closeButton: false,
-    });
+    const popup = new Popup({ closeButton: false });
     popup.setLngLat(feats.geometry.coordinates);
-    popup.setHTML(/* html */ `
-        <div class="font-semibold" title="${props.id}">${props.name ?? layer.textSingular}</div>
-        <div class="${props.openingHours == null ? 'hidden' : ''}">
-          Opening hours:
-          <ul>
-            ${(props.openingHours ?? '')
-              .split(';')
-              .map((hours) => `<li>${hours.trim()}</li>`)
-              .join('')}
-          </ul>
-        </div>
-      `);
+    popup.setHTML(
+      (props.name ?? layer.textSingular) +
+        (props.openingHours ? `<br>Opening hours: ${props.openingHours}` : ''),
+    );
     popup.addTo(map);
   });
 
@@ -134,7 +123,7 @@ const onMapLoaded = (map) => {
               },
             },
           },
-          symbol?.id,
+          symbol.id,
         );
       }
       if (map.getLayer(id) != null) {
