@@ -38,6 +38,7 @@
     "clsx": "^2.1.1",
     "idb-keyval": "^6.2.1",
     "lodash": "^4.17.21",
+    "lucide": "^0.433.0",
     "lucide-vue-next": "^0.435.0",
     "mapbox-gl": "^3.6.0",
     "notyf": "^3.10.0",

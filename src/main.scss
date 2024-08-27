@@ -15,3 +15,8 @@
 @layer utilities {
   @import 'styles/utilities';
 }
+
+.lucide {
+  @apply size-[15px];
+  @apply stroke-[1.5];
+}

@@ -1,10 +1,10 @@
 <template>
   <div class="flex items-center gap-2 p-2 bg-shade-8 border rounded-sm">
     <Button variant="ghost" size="icon" :disabled="location == null" title="Locate" @click="locate">
-      <LocateFixed class="size-4" />
+      <LocateFixed />
     </Button>
     <Button variant="ghost" size="icon" title="Upload route" @click="uploadRoute">
-      <RouteIcon class="size-4" />
+      <RouteIcon />
     </Button>
     <Toggle
       v-for="[key, layer] in Object.entries(layers)"
@@ -54,14 +54,13 @@ const uploadRoute = async () => {
   const content = await readAsText(await selectFile('gpx'));
   const geojson = toGeoJSON.gpx(new DOMParser().parseFromString(content, 'text/xml'));
 
-  map.addSource(id, {
-    type: 'geojson',
-    data: geojson,
-  });
   map.addLayer({
-    id,
+    id: 'route',
     type: 'line',
-    source: 'route',
+    source: {
+      type: 'geojson',
+      data: geojson,
+    },
     layout: {
       'line-join': 'round',
       'line-cap': 'round',
