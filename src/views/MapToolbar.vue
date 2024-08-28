@@ -1,10 +1,10 @@
 <template>
   <div class="flex items-center gap-2 p-2 bg-shade-8 border rounded-sm">
-    <Button variant="ghost" size="icon" :disabled="location == null" title="Locate" @click="locate">
-      <LocateFixed />
+    <Button variant="ghost" size="icon" title="Locate" :disabled="location == null" @click="locate">
+      <PhGpsFix class="size-4" />
     </Button>
     <Button variant="ghost" size="icon" title="Upload route" @click="uploadRoute">
-      <RouteIcon />
+      <PhPath class="size-4" />
     </Button>
     <Toggle
       v-for="[key, layer] in Object.entries(layers)"
@@ -27,7 +27,7 @@ import { useSettingsStore } from '@/stores/settings';
 import { colors } from '@/utils/colors';
 import { readAsText, selectFile } from '@/utils/filesystem';
 import toGeoJSON from '@mapbox/togeojson';
-import { LocateFixed, RouteIcon } from 'lucide-vue-next';
+import { PhGpsFix, PhPath } from '@phosphor-icons/vue';
 import { Map } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
 
