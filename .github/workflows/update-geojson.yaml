@@ -26,5 +26,5 @@ jobs:
 
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: Update geojson
+          commit_message: update geojson
           file_pattern: src/assets/geojson/*.geojson
