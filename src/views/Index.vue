@@ -15,7 +15,6 @@ import { useSettingsStore } from '@/stores/settings';
 import Map from '@/views/Map.vue';
 import MapLegend from '@/views/MapLegend.vue';
 import MapToolbar from '@/views/MapToolbar.vue';
-import { watchOnce } from '@vueuse/core';
 import { createElement, MapPin } from 'lucide';
 import { Marker, Popup, ScaleControl } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
@@ -71,7 +70,7 @@ const onMapMounted = (map) => {
   if (location.value) {
     initMarker(location.value);
   } else {
-    watchOnce(location, initMarker);
+    watch(location, initMarker, { once: true });
   }
 };
 
