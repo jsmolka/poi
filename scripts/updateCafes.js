@@ -7,7 +7,7 @@ async function main() {
     'nwr[shop~"bakery|ice_cream|pastry"](area)',
   );
   writeJson(
-    '../src/assets/geojson/confectioneries.geojson',
+    '../src/assets/geojson/cafes.geojson',
     turf.featureCollection(
       places.map((place) =>
         turf.point([place.center.lon, place.center.lat], {
