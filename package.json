@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "update": "npm i -g npm-check-updates && ncu -u && npm i && npm audit fix",
-    "update-geojson": "node scripts/updateCemeteries.js && node scripts/updateConfectioneries.js && node scripts/updateDrinkingWater.js && node scripts/updateGasStations.js && node scripts/updateSupermarkets.js"
+    "update-geojson": "node scripts/updateCemeteries.js && node scripts/updateConfectioneries.js && node scripts/updateGasStations.js && node scripts/updateSupermarkets.js"
   },
   "prettier": {
     "singleQuote": true

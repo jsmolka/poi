@@ -1,6 +1,5 @@
 import cemeteriesUrl from '@/assets/geojson/cemeteries.geojson?url';
 import confectioneriesUrl from '@/assets/geojson/confectioneries.geojson?url';
-import drinkingWaterUrl from '@/assets/geojson/drinkingWater.geojson?url';
 import gasStationsUrl from '@/assets/geojson/gasStations.geojson?url';
 import supermarketsUrl from '@/assets/geojson/supermarkets.geojson?url';
 import { colors } from '@/utils/colors';
@@ -32,12 +31,5 @@ export const layers = {
     color: colors.green.hex,
     textSingular: 'Cemetery',
     textPlural: 'Cemeteries',
-  },
-
-  drinkingWater: {
-    url: drinkingWaterUrl,
-    color: colors.brand3.hex,
-    textSingular: 'Drinking water',
-    textPlural: 'Drinking water',
   },
 };
