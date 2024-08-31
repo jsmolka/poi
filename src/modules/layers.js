@@ -8,28 +8,24 @@ export const layers = {
   gasStations: {
     url: gasStationsUrl,
     color: colors.red.hex,
-    textSingular: 'Gas station',
-    textPlural: 'Gas stations',
+    text: 'Gas station',
   },
 
   supermarkets: {
     url: supermarketsUrl,
     color: colors.orange.hex,
-    textSingular: 'Supermarket',
-    textPlural: 'Supermarkets',
+    text: 'Supermarket',
   },
 
   confectioneries: {
     url: confectioneriesUrl,
     color: colors.yellow.hex,
-    textSingular: 'Confectionary',
-    textPlural: 'Confectioneries',
+    text: 'Confectionary',
   },
 
   cemeteries: {
     url: cemeteriesUrl,
     color: colors.green.hex,
-    textSingular: 'Cemetery',
-    textPlural: 'Cemeteries',
+    text: 'Cemetery',
   },
 };

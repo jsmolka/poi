@@ -93,7 +93,7 @@ const onMapLoaded = (map) => {
     const popup = new Popup({ closeButton: false });
     popup.setLngLat(feats.geometry.coordinates);
     popup.setHTML(
-      (props.name ?? layer.textSingular) +
+      (props.name ?? layer.text) +
         (props.openingHours ? `<br>Opening hours: ${props.openingHours}` : ''),
     );
     popup.addTo(map);
