@@ -4,7 +4,7 @@ import { queryOverpassApi, writeJson } from './common.js';
 async function main() {
   const places = await queryOverpassApi(
     'nwr[amenity~"cafe|ice_cream"](area)',
-    'nwr[shop~"bakery|chocolate|confectionery|ice_cream|pastry"](area)',
+    'nwr[shop~"bakery|confectionery|ice_cream|pastry"](area)',
   );
   writeJson(
     '../src/assets/geojson/confectioneries.geojson',
