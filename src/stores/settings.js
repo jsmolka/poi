@@ -5,7 +5,7 @@ import { get, set } from 'idb-keyval';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-const version = 1;
+const version = 2;
 
 export const useSettingsStore = defineStore('settings', () => {
   const settings = ref(new Settings());
@@ -40,6 +40,9 @@ function convert(data) {
   const { version, data: settings } = data;
   switch (version) {
     case 1:
+      settings.cafes = settings.confectioneries;
+      break;
+    case 2:
       break;
   }
   return settings;
