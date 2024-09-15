@@ -8,38 +8,48 @@ function relative(path) {
 }
 
 function write(path, data) {
-  const file = relative(path);
-  mkdirSync(dirname(file), { recursive: true });
-  writeFileSync(file, data);
+  path = relative(path);
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, data);
 }
 
 function writeJson(path, data) {
   write(path, JSON.stringify(data));
 }
 
-async function overpass(countries, queries) {
+async function overpass(queries) {
+  // prettier-ignore
+  const countries = ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'ES', 'FR', 'IT', 'LI', 'LU', 'MC', 'NL', 'PL', 'SL'];
+
   const response = await axios.post(
     'https://overpass-api.de/api/interpreter',
-    `
-      [out:json][timeout:600];
-      (${countries.map((country) => `area["ISO3166-1"="${country}"][admin_level=2];`).join('')});
-      ${queries.map((query, index) => `${query} -> .q${index};`).join('')}
-      (${queries.map((_, index) => `.q${index};`).join('')});
-      out center qt;
-    `,
+    [
+      '[out:json][timeout:600];',
+      // Combine area of countries
+      '(',
+      ...countries.map((country) => `area["ISO3166-1"="${country}"][admin_level=2];`),
+      ');',
+      // Run queries
+      ...queries.map((query, index) => `${query} -> .q${index};`),
+      // Combine queries
+      '(',
+      ...queries.map((_, index) => `.q${index};`),
+      ');',
+      // Add center to ways and relations, sort by quad tile for better compression
+      'out center qt;',
+    ].join('\n'),
   );
 
-  return response.data.elements
-    .filter((element) => element.tags != null)
-    .map((element) => {
-      if (element.type === 'node') {
-        element.center = {
-          lat: element.lat,
-          lon: element.lon,
-        };
-      }
-      return element;
-    });
+  const elements = response.data.elements.filter((element) => element.tags != null);
+  for (const element of elements) {
+    if (element.type === 'node') {
+      element.center = {
+        lat: element.lat,
+        lon: element.lon,
+      };
+    }
+  }
+  return elements;
 }
 
 function encodeCoordinate(coordinate) {
@@ -50,36 +60,37 @@ function encodeCoordinateOffset(current, previous) {
   return encodeCoordinate(current) - encodeCoordinate(previous);
 }
 
-export async function update(path, countries, queries) {
-  const places = await overpass(countries, queries);
+export async function update(path, queries) {
+  const elements = await overpass(queries);
   writeJson(
     path,
-    places.map((place, index, array) => {
+    elements.map((element, index, array) => {
       const data = [
-        encodeCoordinateOffset(place.center.lat, array[index - 1]?.center.lat ?? 0),
-        encodeCoordinateOffset(place.center.lon, array[index - 1]?.center.lon ?? 0),
-        place.tags.name ?? place.tags.brand ?? place.tags.operator ?? '',
+        encodeCoordinateOffset(element.center.lat, array[index - 1]?.center.lat ?? 0),
+        encodeCoordinateOffset(element.center.lon, array[index - 1]?.center.lon ?? 0),
+        element.tags.name ?? element.tags.brand ?? element.tags.operator ?? '',
       ];
-      if (place.tags.opening_hours) {
-        data.push(place.tags.opening_hours);
+      if (element.tags.opening_hours) {
+        data.push(element.tags.opening_hours);
       }
       return data;
     }),
   );
 }
 
-const countries = ['DE', 'PL', 'CZ', 'AT', 'IT', 'CH', 'FR', 'ES', 'BE', 'NL', 'LU'];
-const pois = {
-  cafes: ['nwr[amenity~"cafe|ice_cream"](area)', 'nwr[shop~"bakery|ice_cream|pastry"](area)'],
-  cemeteries: ['nwr[landuse=cemetery](area)', 'nwr[amenity=grave_yard](area)'],
-  gasStations: ['nwr[amenity=fuel](area)'],
-  supermarkets: ['nwr[shop~"beverages|convenience|supermarket"](area)'],
-};
-
 async function main() {
+  const pois = {
+    cafes: ['nwr[amenity~"cafe|ice_cream"](area)', 'nwr[shop~"bakery|ice_cream|pastry"](area)'],
+    cemeteries: ['nwr[landuse=cemetery](area)', 'nwr[amenity=grave_yard](area)'],
+    gasStations: ['nwr[amenity=fuel](area)'],
+    supermarkets: ['nwr[shop~"beverages|convenience|supermarket"](area)'],
+  };
+
+  const promises = [];
   for (const [poi, queries] of Object.entries(pois)) {
-    await update(`../src/assets/data/eu/${poi}.json`, countries, queries);
+    promises.push(update(`../src/assets/data/${poi}.json`, queries));
   }
+  await Promise.all(promises);
 }
 
 main();

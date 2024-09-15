@@ -26,7 +26,7 @@ import { layers } from '@/modules/layers';
 import { useSettingsStore } from '@/stores/settings';
 import { colors } from '@/utils/colors';
 import { readAsText, selectFile } from '@/utils/filesystem';
-import toGeoJSON from '@mapbox/togeojson';
+import { gpxToGeoJson } from '@/utils/geoJson';
 import { PhGpsFix, PhPath } from '@phosphor-icons/vue';
 import { Map } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
@@ -52,7 +52,7 @@ const uploadRoute = async () => {
   if (map.getSource(id)) map.removeSource(id);
 
   const content = await readAsText(await selectFile('gpx'));
-  const geojson = toGeoJSON.gpx(new DOMParser().parseFromString(content, 'text/xml'));
+  const geojson = gpxToGeoJson(content);
 
   map.addLayer({
     id: 'route',

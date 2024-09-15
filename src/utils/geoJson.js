@@ -1,3 +1,4 @@
+import toGeoJSON from '@mapbox/togeojson';
 import * as turf from '@turf/turf';
 
 export function dataToGeoJson(data) {
@@ -14,4 +15,8 @@ export function dataToGeoJson(data) {
       return point;
     }),
   );
+}
+
+export function gpxToGeoJson(data) {
+  return toGeoJSON.gpx(new DOMParser().parseFromString(data, 'text/xml'));
 }

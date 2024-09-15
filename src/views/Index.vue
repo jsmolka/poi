@@ -12,7 +12,7 @@
 import { useLocation } from '@/composables/useLocation';
 import { layers } from '@/modules/layers';
 import { useSettingsStore } from '@/stores/settings';
-import { dataToGeoJson } from '@/utils/dataToGeoJson';
+import { dataToGeoJson } from '@/utils/geoJson';
 import Map from '@/views/Map.vue';
 import MapLegend from '@/views/MapLegend.vue';
 import MapToolbar from '@/views/MapToolbar.vue';
@@ -96,7 +96,7 @@ const onMapLoaded = (map) => {
     const popup = new Popup({ closeButton: false });
     popup.setLngLat(feats.geometry.coordinates);
     popup.setHTML(
-      (props.name ?? layer.text) +
+      (props.name || layer.text) +
         (props.openingHours ? `<br>Opening hours: ${props.openingHours}` : ''),
     );
     popup.addTo(map);
