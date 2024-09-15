@@ -3,7 +3,7 @@ import { defineSchema, primitive } from '@/utils/persist';
 export class Settings {
   constructor() {
     this.cafes = true;
-    this.cemeteries = true;
+    this.cemeteries = false;
     this.gasStations = true;
     this.supermarkets = true;
   }
