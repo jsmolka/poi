@@ -53,7 +53,7 @@ async function overpass(queries) {
 }
 
 function encodeCoordinate(coordinate) {
-  return Math.round(coordinate * 1e5);
+  return Math.round(1e5 * coordinate);
 }
 
 function encodeCoordinateOffset(current, previous) {
@@ -68,10 +68,12 @@ export async function update(path, queries) {
       const data = [
         encodeCoordinateOffset(element.center.lat, array[index - 1]?.center.lat ?? 0),
         encodeCoordinateOffset(element.center.lon, array[index - 1]?.center.lon ?? 0),
-        element.tags.name ?? element.tags.brand ?? element.tags.operator ?? '',
       ];
+      const name = element.tags.name ?? element.tags.brand ?? element.tags.operator ?? '';
       if (element.tags.opening_hours) {
-        data.push(element.tags.opening_hours);
+        data.push(name, element.tags.opening_hours);
+      } else if (name) {
+        data.push(name);
       }
       return data;
     }),

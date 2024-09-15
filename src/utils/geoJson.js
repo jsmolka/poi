@@ -8,7 +8,7 @@ export function dataToGeoJson(data) {
     data.map((item) => {
       lat += item[0];
       lng += item[1];
-      const point = turf.point([lng * 1e-5, lat * 1e-5], {
+      const point = turf.point([1e-5 * lng, 1e-5 * lat], {
         name: item[2],
         openingHours: item[3],
       });
