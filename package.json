@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "update": "npx npm-check-updates -u && npm i && npm audit fix",
-    "update-geojson": "node scripts/updateCafes.js && node scripts/updateCemeteries.js && node scripts/updateGasStations.js && node scripts/updateSupermarkets.js",
+    "update-data": "node scripts/updateData.js",
     "analyze": "npx vite-bundle-visualizer"
   },
   "prettier": {

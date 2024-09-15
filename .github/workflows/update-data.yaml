@@ -1,11 +1,11 @@
-name: Update GeoJSON
+name: Update data
 
 on:
   schedule:
     - cron: '0 0 1 * *'
 
 jobs:
-  update-geojson:
+  update-data:
     runs-on: ubuntu-latest
 
     permissions:
@@ -22,9 +22,9 @@ jobs:
           cache: 'npm'
 
       - run: npm ci
-      - run: npm run update-geojson
+      - run: npm run update-data
 
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: update geojson
-          file_pattern: src/assets/geojson/*.geojson
+          commit_message: update data
+          file_pattern: src/assets/data/*.json
