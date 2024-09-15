@@ -1,7 +1,7 @@
-import cafesUrl from '@/assets/geojson/cafes.geojson?url';
-import cemeteriesUrl from '@/assets/geojson/cemeteries.geojson?url';
-import gasStationsUrl from '@/assets/geojson/gasStations.geojson?url';
-import supermarketsUrl from '@/assets/geojson/supermarkets.geojson?url';
+import cafesUrl from '@/assets/data/cafes.json?url';
+import cemeteriesUrl from '@/assets/data/cemeteries.json?url';
+import gasStationsUrl from '@/assets/data/gasStations.json?url';
+import supermarketsUrl from '@/assets/data/supermarkets.json?url';
 import { colors } from '@/utils/colors';
 
 export const layers = {

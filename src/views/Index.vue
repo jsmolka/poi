@@ -12,9 +12,12 @@
 import { useLocation } from '@/composables/useLocation';
 import { layers } from '@/modules/layers';
 import { useSettingsStore } from '@/stores/settings';
+import { dataToGeoJson } from '@/utils/dataToGeoJson';
 import Map from '@/views/Map.vue';
 import MapLegend from '@/views/MapLegend.vue';
 import MapToolbar from '@/views/MapToolbar.vue';
+import * as turf from '@turf/turf';
+import axios from 'axios';
 import { createElement, MapPin } from 'lucide';
 import { Marker, Popup, ScaleControl } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
@@ -110,7 +113,7 @@ const onMapLoaded = (map) => {
             type: 'circle',
             source: {
               type: 'geojson',
-              data: layer.url,
+              data: turf.featureCollection([]),
             },
             paint: {
               'circle-color': layer.color,
@@ -124,6 +127,11 @@ const onMapLoaded = (map) => {
           },
           symbol.id,
         );
+
+        (async () => {
+          const response = await axios.get(layer.url);
+          map.getSource(id).setData(dataToGeoJson(response.data));
+        })();
       }
       if (map.getLayer(id) != null) {
         map.setLayoutProperty(id, 'visibility', settings.value[id] ? 'visible' : 'none');
