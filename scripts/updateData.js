@@ -36,11 +36,11 @@ async function overpass(queries) {
       ...queries.map((_, index) => `.q${index};`),
       ');',
       // Add center to ways and relations, sort by quad tile for better compression
-      'out center qt;',
+      'out tags center qt;',
     ].join('\n'),
   );
 
-  const elements = response.data.elements.filter((element) => element.tags != null);
+  const elements = response.data.elements;
   for (const element of elements) {
     if (element.type === 'node') {
       element.center = {
