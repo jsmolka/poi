@@ -30,6 +30,11 @@ onMounted(() => {
   map.touchZoomRotate.disableRotation();
   map.touchPitch.disable();
 
+  map.addDataLayer = function (layer) {
+    const symbolLayer = map.getStyle().layers.find(({ type }) => type === 'symbol');
+    return this.addLayer(layer, symbolLayer.id);
+  };
+
   emit('mounted', map);
   map.on('load', () => {
     emit('loaded', map);
