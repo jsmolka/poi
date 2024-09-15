@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { writeFileSync } from 'fs';
-import _ from 'lodash';
+import { round } from 'lodash-es';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -28,6 +28,7 @@ export async function queryOverpassApi(...queries) {
       out center;
     `,
   );
+
   return response.data.elements
     .filter((element) => ['node', 'way', 'relation'].includes(element.type))
     .filter((element) => element.tags != null)
@@ -38,8 +39,8 @@ export async function queryOverpassApi(...queries) {
           lon: element.lon,
         };
       }
-      element.center.lat = _.round(element.center.lat, 6);
-      element.center.lon = _.round(element.center.lon, 6);
+      element.center.lat = round(element.center.lat, 6);
+      element.center.lon = round(element.center.lon, 6);
       return element;
     });
 }
