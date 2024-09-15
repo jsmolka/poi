@@ -9,8 +9,8 @@ export function dataToGeoJson(data) {
       lat += item[0];
       lng += item[1];
       const point = turf.point([lng * 1e-5, lat * 1e-5], {
-        name: item[2] || undefined,
-        openingHours: item[3] || undefined,
+        name: item[2],
+        openingHours: item[3],
       });
       return point;
     }),
