@@ -16,7 +16,6 @@ import { dataToGeoJson } from '@/utils/geoJson';
 import Map from '@/views/Map.vue';
 import MapLegend from '@/views/MapLegend.vue';
 import MapToolbar from '@/views/MapToolbar.vue';
-import * as turf from '@turf/turf';
 import axios from 'axios';
 import { createElement, MapPin } from 'lucide';
 import { Marker, Popup, ScaleControl } from 'mapbox-gl';
@@ -79,59 +78,49 @@ const onMapMounted = (map) => {
 
 const onMapLoaded = (map) => {
   const ids = Object.keys(layers);
-
-  map.on('mouseenter', ids, () => {
-    map.getCanvas().style.cursor = 'pointer';
-  });
-
-  map.on('mouseleave', ids, () => {
-    map.getCanvas().style.cursor = '';
-  });
+  map.on('mouseenter', ids, () => (map.getCanvas().style.cursor = 'pointer'));
+  map.on('mouseleave', ids, () => (map.getCanvas().style.cursor = ''));
 
   map.on('click', ids, (event) => {
-    const feats = event.features[0];
-    const layer = layers[feats.layer.id];
-    const props = feats.properties;
+    const feature = event.features[0];
+    const layer = layers[feature.layer.id];
 
     const popup = new Popup({ closeButton: false });
-    popup.setLngLat(feats.geometry.coordinates);
+    popup.setLngLat(feature.geometry.coordinates);
     popup.setHTML(
-      (props.name || layer.text) +
-        (props.openingHours ? `<br>Opening hours: ${props.openingHours}` : ''),
+      (feature.properties.name || layer.text) +
+        (feature.properties.openingHours
+          ? `<br>Opening hours: ${feature.properties.openingHours}`
+          : ''),
     );
     popup.addTo(map);
   });
 
-  const symbol = map.getStyle().layers.find(({ type }) => type === 'symbol');
   const updateLayers = () => {
     for (const [id, layer] of Object.entries(layers)) {
       const visible = settings.value[id];
       if (visible && map.getLayer(id) == null) {
-        map.addLayer(
-          {
-            id,
-            type: 'circle',
-            source: {
-              type: 'geojson',
-              data: turf.featureCollection([]),
-            },
-            paint: {
-              'circle-color': layer.color,
-              'circle-radius': {
-                stops: [
-                  [6, 1],
-                  [18, 16],
-                ],
-              },
+        map.addDataLayer({
+          id,
+          type: 'circle',
+          source: {
+            type: 'geojson',
+            data: null,
+          },
+          paint: {
+            'circle-color': layer.color,
+            'circle-radius': {
+              stops: [
+                [6, 1],
+                [18, 16],
+              ],
             },
           },
-          symbol.id,
-        );
+        });
 
-        (async () => {
-          const response = await axios.get(layer.url);
+        axios.get(layer.url).then((response) => {
           map.getSource(id).setData(dataToGeoJson(response.data));
-        })();
+        });
       }
       if (map.getLayer(id) != null) {
         map.setLayoutProperty(id, 'visibility', settings.value[id] ? 'visible' : 'none');
