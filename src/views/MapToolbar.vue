@@ -54,21 +54,25 @@ const uploadRoute = async () => {
   const content = await readAsText(await selectFile('gpx'));
   const geojson = gpxToGeoJson(content);
 
-  map.addLayer({
-    id: 'route',
-    type: 'line',
-    source: {
-      type: 'geojson',
-      data: geojson,
+  const textLayer = map.getStyle().layers.find(({ type }) => type === 'symbol');
+  map.addLayer(
+    {
+      id: 'route',
+      type: 'line',
+      source: {
+        type: 'geojson',
+        data: geojson,
+      },
+      layout: {
+        'line-join': 'round',
+        'line-cap': 'round',
+      },
+      paint: {
+        'line-color': colors.shade2.hex,
+        'line-width': 4,
+      },
     },
-    layout: {
-      'line-join': 'round',
-      'line-cap': 'round',
-    },
-    paint: {
-      'line-color': colors.shade2.hex,
-      'line-width': 4,
-    },
-  });
+    textLayer.id,
+  );
 };
 </script>
