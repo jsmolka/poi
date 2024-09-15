@@ -25,7 +25,7 @@ export async function queryOverpassApi(...queries) {
       area["ISO3166-1"="DE"][admin_level=2];
       ${queries.map((query, index) => `${query} -> .q${index};`).join('')}
       (${queries.map((_, index) => `.q${index};`).join('')});
-      out center;
+      out center qt;
     `,
   );
 
