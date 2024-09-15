@@ -6,7 +6,7 @@
 import { mapboxAccessToken } from '@/common/mapboxAccessToken';
 import { useResizeObserver } from '@vueuse/core';
 import { Map } from 'mapbox-gl';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, useTemplateRef } from 'vue';
 
 const props = defineProps({
   center: { type: Object, required: true },
@@ -15,7 +15,7 @@ const props = defineProps({
 
 const emit = defineEmits(['mounted', 'loaded']);
 
-const container = ref();
+const container = useTemplateRef('container');
 
 onMounted(() => {
   const map = new Map({
