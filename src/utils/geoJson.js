@@ -8,11 +8,10 @@ export function dataToGeoJson(data) {
     data.map((item) => {
       lat += item[0];
       lng += item[1];
-      const point = turf.point([1e-5 * lng, 1e-5 * lat], {
+      return turf.point([1e-5 * lng, 1e-5 * lat], {
         name: item[2],
         openingHours: item[3],
       });
-      return point;
     }),
   );
 }
