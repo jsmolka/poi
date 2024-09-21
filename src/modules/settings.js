@@ -2,10 +2,10 @@ import { defineSchema, primitive } from '@/utils/persist';
 
 export class Settings {
   constructor() {
-    this.cafes = true;
+    this.cafes = false;
     this.cemeteries = false;
     this.gasStations = true;
-    this.supermarkets = true;
+    this.supermarkets = false;
   }
 }
 
