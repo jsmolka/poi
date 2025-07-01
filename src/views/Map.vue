@@ -66,6 +66,10 @@ onMounted(() => {
   @apply rounded-sm;
 }
 
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
+  @apply border-b-shade-5;
+}
+
 .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
   @apply border-t-shade-5;
 }
