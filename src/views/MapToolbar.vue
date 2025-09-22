@@ -71,6 +71,9 @@ const uploadRoute = async () => {
       'line-width': 4,
     },
   });
-  map.fitBounds(bbox(geojson), { padding: 0.1 * Math.min(window.innerWidth, window.innerHeight) });
+
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  map.fitBounds(bbox(geojson), { padding: 0.1 * Math.min(w, h) });
 };
 </script>
