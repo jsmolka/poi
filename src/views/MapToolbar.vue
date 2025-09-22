@@ -7,6 +7,18 @@
       <PhPath class="size-4" />
     </Button>
     <Toggle
+      variant="ghost"
+      size="icon"
+      :model-value="settings.showDistanceMarker"
+      @update:model-value="
+        settings.showDistanceMarker = $event;
+        updateDistanceMarker();
+      "
+      title="Show distance marker"
+    >
+      <PhRuler class="size-4" />
+    </Toggle>
+    <Toggle
       v-for="[key, layer] in Object.entries(layers)"
       variant="ghost"
       size="icon"
@@ -27,9 +39,9 @@ import { useSettingsStore } from '@/stores/settings';
 import { colors } from '@/utils/colors';
 import { readAsText, selectFile } from '@/utils/filesystem';
 import { gpxToGeoJson } from '@/utils/geoJson';
-import { PhGpsFix, PhPath } from '@phosphor-icons/vue';
-import { bbox } from '@turf/turf';
-import { Map } from 'mapbox-gl';
+import { PhGpsFix, PhPath, PhRuler } from '@phosphor-icons/vue';
+import * as turf from '@turf/turf';
+import { Map, Marker } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
 
 const props = defineProps({
@@ -46,16 +58,33 @@ const locate = () => {
   });
 };
 
+let route = null;
+
 const uploadRoute = async () => {
   const id = 'route';
-  const map = props.map;
-  if (map.getLayer(id)) map.removeLayer(id);
-  if (map.getSource(id)) map.removeSource(id);
+
+  if (props.map.getLayer(id)) props.map.removeLayer(id);
+  if (props.map.getSource(id)) props.map.removeSource(id);
+
+  route = null;
+  updateDistanceMarker();
 
   const content = await readAsText(await selectFile('gpx'));
   const geojson = gpxToGeoJson(content);
 
-  map.addDataLayer({
+  const coordinates = [];
+  turf.featureEach(geojson, (feature) => {
+    if (feature.geometry?.type === 'LineString') {
+      coordinates.push(...feature.geometry.coordinates);
+    }
+  });
+  if (coordinates.length > 0) {
+    route = turf.lineString(coordinates);
+  } else {
+    route = null;
+  }
+
+  props.map.addDataLayer({
     id: 'route',
     type: 'line',
     source: {
@@ -74,6 +103,34 @@ const uploadRoute = async () => {
 
   const w = window.innerWidth;
   const h = window.innerHeight;
-  map.fitBounds(bbox(geojson), { padding: 0.1 * Math.min(w, h) });
+  props.map.fitBounds(turf.bbox(geojson), { padding: 0.1 * Math.min(w, h) });
 };
+
+let marker = null;
+
+const updateDistanceMarker = (event) => {
+  if (route == null || !settings.value.showDistanceMarker) {
+    if (marker != null) {
+      marker.remove();
+      marker = null;
+    }
+    return;
+  }
+
+  const cursor = turf.point([event.lngLat.lng, event.lngLat.lat]);
+  const closestPoint = turf.nearestPointOnLine(route, cursor, { units: 'kilometers' });
+
+  if (marker == null) {
+    const element = document.createElement('div');
+    element.className = 'bg-shade-2 text-shade-8 text-xs p-1 rounded-sm';
+
+    marker = new Marker({ element, closeOnClick: false, anchor: 'center' })
+      .setLngLat(closestPoint.geometry.coordinates)
+      .addTo(props.map);
+  }
+  marker.setLngLat(closestPoint.geometry.coordinates);
+  marker.getElement().textContent = closestPoint.properties.location.toFixed(1);
+};
+
+props.map.on('mousemove', updateDistanceMarker);
 </script>
