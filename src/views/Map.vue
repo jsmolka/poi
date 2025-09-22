@@ -49,28 +49,3 @@ onMounted(() => {
   });
 });
 </script>
-
-<style lang="scss">
-.mapboxgl-ctrl-scale {
-  @apply bg-shade-5;
-  @apply text-shade-2;
-  @apply border-none;
-  @apply rounded-sm;
-}
-
-.mapboxgl-popup-content {
-  @apply px-2;
-  @apply py-1.5;
-  @apply bg-shade-5;
-  @apply text-shade-2;
-  @apply rounded-sm;
-}
-
-.mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
-  @apply border-b-shade-5;
-}
-
-.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
-  @apply border-t-shade-5;
-}
-</style>
