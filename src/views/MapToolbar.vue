@@ -28,6 +28,7 @@ import { colors } from '@/utils/colors';
 import { readAsText, selectFile } from '@/utils/filesystem';
 import { gpxToGeoJson } from '@/utils/geoJson';
 import { PhGpsFix, PhPath } from '@phosphor-icons/vue';
+import { bbox } from '@turf/turf';
 import { Map } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
 
@@ -70,5 +71,6 @@ const uploadRoute = async () => {
       'line-width': 4,
     },
   });
+  map.fitBounds(bbox(geojson), { padding: 0.1 * Math.min(window.innerWidth, window.innerHeight) });
 };
 </script>
