@@ -28,7 +28,7 @@
     "@mapbox/togeojson": "^0.16.2",
     "@phosphor-icons/vue": "^2.2.1",
     "@turf/turf": "^7.1.0",
-    "@vueuse/core": "^11.0.3",
+    "@vueuse/core": "^11.3.0",
     "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

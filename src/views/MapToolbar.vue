@@ -7,18 +7,6 @@
       <PhPath class="size-4" />
     </Button>
     <Toggle
-      variant="ghost"
-      size="icon"
-      :model-value="settings.showDistanceMarker"
-      @update:model-value="
-        settings.showDistanceMarker = $event;
-        updateDistanceMarker();
-      "
-      title="Show distance marker"
-    >
-      <PhRuler class="size-4" />
-    </Toggle>
-    <Toggle
       v-for="[key, layer] in Object.entries(layers)"
       variant="ghost"
       size="icon"
@@ -39,10 +27,12 @@ import { useSettingsStore } from '@/stores/settings';
 import { colors } from '@/utils/colors';
 import { readAsText, selectFile } from '@/utils/filesystem';
 import { gpxToGeoJson } from '@/utils/geoJson';
-import { PhGpsFix, PhPath, PhRuler } from '@phosphor-icons/vue';
+import { PhGpsFix, PhPath } from '@phosphor-icons/vue';
 import * as turf from '@turf/turf';
+import { useMagicKeys } from '@vueuse/core';
 import { Map, Marker } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
+import { watch } from 'vue';
 
 const props = defineProps({
   map: { type: Map, required: true },
@@ -108,13 +98,22 @@ const uploadRoute = async () => {
 
 let marker = null;
 
+const removeDistanceMarker = () => {
+  marker?.remove();
+  marker = null;
+};
+
+const { ctrl } = useMagicKeys();
+
+watch(ctrl, (value) => {
+  if (!value) {
+    removeDistanceMarker();
+  }
+});
+
 const updateDistanceMarker = (event) => {
-  if (route == null || !settings.value.showDistanceMarker) {
-    if (marker != null) {
-      marker.remove();
-      marker = null;
-    }
-    return;
+  if (route == null || !ctrl.value) {
+    return removeDistanceMarker();
   }
 
   const cursor = turf.point([event.lngLat.lng, event.lngLat.lat]);
