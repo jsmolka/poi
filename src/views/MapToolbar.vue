@@ -97,23 +97,16 @@ const uploadRoute = async () => {
 };
 
 let marker = null;
-
-const removeDistanceMarker = () => {
-  marker?.remove();
-  marker = null;
-};
+let markerEvent = null;
 
 const { ctrl } = useMagicKeys();
 
-watch(ctrl, (value) => {
-  if (!value) {
-    removeDistanceMarker();
-  }
-});
-
 const updateDistanceMarker = (event) => {
+  markerEvent = event;
   if (route == null || !ctrl.value) {
-    return removeDistanceMarker();
+    marker?.remove();
+    marker = null;
+    return;
   }
 
   const cursor = turf.point([event.lngLat.lng, event.lngLat.lat]);
@@ -132,4 +125,6 @@ const updateDistanceMarker = (event) => {
 };
 
 props.map.on('mousemove', updateDistanceMarker);
+
+watch(ctrl, () => updateDistanceMarker(markerEvent));
 </script>
