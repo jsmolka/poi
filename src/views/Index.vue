@@ -20,7 +20,7 @@ import axios from 'axios';
 import { createElement, MapPin } from 'lucide';
 import { Marker, Popup, ScaleControl } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
-import { createApp, watch } from 'vue';
+import { createApp, watch, watchEffect } from 'vue';
 
 const { settings } = storeToRefs(useSettingsStore());
 const { location } = useLocation();
@@ -96,7 +96,7 @@ const onMapLoaded = (map) => {
     popup.addTo(map);
   });
 
-  const updateLayers = () => {
+  watchEffect(() => {
     for (const [id, layer] of Object.entries(layers)) {
       const visible = settings.value[id];
       if (visible && map.getLayer(id) == null) {
@@ -126,7 +126,6 @@ const onMapLoaded = (map) => {
         map.setLayoutProperty(id, 'visibility', settings.value[id] ? 'visible' : 'none');
       }
     }
-  };
-  watch(settings, updateLayers, { deep: true, immediate: true });
+  });
 };
 </script>
