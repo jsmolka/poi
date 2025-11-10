@@ -19,7 +19,7 @@ function writeJson(path, data) {
 
 async function overpass(queries) {
   // prettier-ignore
-  const countries = ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'ES', 'FR', 'IT', 'LI', 'LU', 'MC', 'NL', 'PL'];
+  const countries = ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'ES', 'FR', 'IT', 'LI', 'LU', 'MC', 'NL', 'PL', 'PT'];
 
   const response = await axios.post(
     'https://overpass-api.de/api/interpreter',
