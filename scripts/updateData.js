@@ -13,6 +13,10 @@ function write(path, data) {
   writeFileSync(path, data);
 }
 
+function writeJson(path, data) {
+  write(path, JSON.stringify(data));
+}
+
 async function overpass(queries) {
   // prettier-ignore
   const countries = ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'ES', 'FR', 'IT', 'LI', 'LU', 'MC', 'NL', 'PL', 'PT'];
@@ -48,61 +52,31 @@ async function overpass(queries) {
   return elements;
 }
 
-function toNullTerminated(string) {
-  return string.replace(/\0/g, '') + '\0';
+function encodeCoordinate(coordinate) {
+  return Math.round(1e5 * coordinate);
 }
 
-function encodePlace(place) {
-  const encoder = new TextEncoder();
-  const encodedName = encoder.encode(toNullTerminated(place.name));
-  const encodedOpeningHours = encoder.encode(toNullTerminated(place.openingHours));
-
-  const buffer = new Uint8Array(8 + encodedName.length + encodedOpeningHours.length);
-  let offset = 0;
-
-  const coordinates = Float32Array.of(place.lat, place.lng);
-  buffer.set(new Uint8Array(coordinates.buffer), offset);
-  offset += 8;
-
-  buffer.set(encodedName, offset);
-  offset += encodedName.length;
-
-  buffer.set(encodedOpeningHours, offset);
-  offset += encodedOpeningHours.length;
-
-  return buffer;
-}
-
-function encodePlaces(places) {
-  const encodedPlaces = places.map((place) => encodePlace(place));
-
-  let length = 0;
-  for (const encodedPlace of encodedPlaces) {
-    length += encodedPlace.length;
-  }
-
-  const buffer = new Uint8Array(length);
-
-  let offset = 0;
-  for (const encodedPlace of encodedPlaces) {
-    buffer.set(encodedPlace, offset);
-    offset += encodedPlace.length;
-  }
-  return buffer;
+function encodeCoordinateOffset(current, previous) {
+  return encodeCoordinate(current) - encodeCoordinate(previous);
 }
 
 export async function update(path, queries) {
   const elements = await overpass(queries);
-  write(
+  writeJson(
     path,
-    encodePlaces(
-      elements.map((element) => ({
-        lat: element.center.lat,
-        lng: element.center.lon,
-        name: element.tags.name ?? element.tags.brand ?? element.tags.operator ?? '',
-        openingHours: element.tags.opening_hours ?? '',
-      })),
-    ),
+    elements.map((element, index, array) => {
+      const data = [
+        encodeCoordinateOffset(element.center.lat, array[index - 1]?.center.lat ?? 0),
+        encodeCoordinateOffset(element.center.lon, array[index - 1]?.center.lon ?? 0),
+      ];
+      const name = element.tags.name ?? element.tags.brand ?? element.tags.operator ?? '';
+      if (element.tags.opening_hours) {
+        data.push(name, element.tags.opening_hours);
+      } else if (name) {
+        data.push(name);
+      }
+      return data;
+    }),
   );
 }
 
@@ -116,7 +90,7 @@ async function main() {
 
   const promises = [];
   for (const [poi, queries] of Object.entries(pois)) {
-    promises.push(update(`../src/assets/data/${poi}.bin`, queries));
+    promises.push(update(`../src/assets/data/${poi}.json`, queries));
   }
   await Promise.all(promises);
 }

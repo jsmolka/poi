@@ -12,7 +12,7 @@
 import { useLocation } from '@/composables/useLocation';
 import { layers } from '@/modules/layers';
 import { useSettingsStore } from '@/stores/settings';
-import { bufferToGeoJson } from '@/utils/geoJson';
+import { dataToGeoJson } from '@/utils/geoJson';
 import Map from '@/views/Map.vue';
 import MapLegend from '@/views/MapLegend.vue';
 import MapToolbar from '@/views/MapToolbar.vue';
@@ -118,8 +118,8 @@ const onMapLoaded = (map) => {
           },
         });
 
-        axios.get(layer.url, { responseType: 'arraybuffer' }).then((response) => {
-          map.getSource(id).setData(bufferToGeoJson(new Uint8Array(response.data)));
+        axios.get(layer.url).then((response) => {
+          map.getSource(id).setData(dataToGeoJson(response.data));
         });
       }
       if (map.getLayer(id) != null) {
