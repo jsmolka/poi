@@ -26,17 +26,14 @@ export const layers = {
   },
 };
 
-const order = [...Object.keys(layers), 'route'];
+const orderedIds = [...Object.keys(layers), 'route'];
 
 export function addDataLayer(map, layer) {
-  const layers = map.getStyle().layers.map((layer) => layer.id);
+  map.addDataLayer(layer);
 
-  let before = undefined;
-  for (let i = order.indexOf(layer.id) + 1; i < order.length; i++) {
-    if (layers.includes(order[i])) {
-      before = order[i];
-      break;
+  for (const id of orderedIds) {
+    if (map.getLayer(id)) {
+      map.moveLayer(id);
     }
   }
-  map.addDataLayer(layer, before);
 }
