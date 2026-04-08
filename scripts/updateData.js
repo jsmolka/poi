@@ -21,24 +21,40 @@ async function overpass(queries) {
   // prettier-ignore
   const countries = ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'ES', 'FR', 'IT', 'LI', 'LU', 'MC', 'NL', 'PL', 'PT'];
 
-  const response = await axios.post(
+  const interpreters = [
     'https://overpass-api.de/api/interpreter',
-    [
-      '[out:json][timeout:600];',
-      // Combine area of countries
-      '(',
-      ...countries.map((country) => `area["ISO3166-1"="${country}"][admin_level=2];`),
-      ');',
-      // Run queries
-      ...queries.map((query, index) => `${query} -> .q${index};`),
-      // Combine queries
-      '(',
-      ...queries.map((_, index) => `.q${index};`),
-      ');',
-      // Add center to ways and relations, sort by quad tile for better compression
-      'out tags center qt;',
-    ].join('\n'),
-  );
+    'https://overpass.private.coffee/api/interpreter',
+    'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+  ];
+
+  let response = null;
+  for (const [i, interpreter] of interpreters.entries()) {
+    try {
+      response = await axios.post(
+        interpreter,
+        [
+          '[out:json][timeout:600];',
+          // Combine area of countries
+          '(',
+          ...countries.map((country) => `area["ISO3166-1"="${country}"][admin_level=2];`),
+          ');',
+          // Run queries
+          ...queries.map((query, index) => `${query} -> .q${index};`),
+          // Combine queries
+          '(',
+          ...queries.map((_, index) => `.q${index};`),
+          ');',
+          // Add center to ways and relations, sort by quad tile for better compression
+          'out tags center qt;',
+        ].join('\n'),
+      );
+      break;
+    } catch (error) {
+      if (i === interpreters.length - 1) {
+        throw error;
+      }
+    }
+  }
 
   const elements = response.data.elements;
   for (const element of elements) {
