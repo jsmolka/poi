@@ -10,7 +10,7 @@
 
 <script setup>
 import { useLocation } from '@/composables/useLocation';
-import { layers } from '@/modules/layers';
+import { addDataLayer, layers } from '@/modules/layers';
 import { useSettingsStore } from '@/stores/settings';
 import { dataToGeoJson } from '@/utils/geoJson';
 import Map from '@/views/Map.vue';
@@ -100,7 +100,7 @@ const onMapLoaded = (map) => {
     for (const [id, layer] of Object.entries(layers)) {
       const visible = settings.value[id];
       if (visible && map.getLayer(id) == null) {
-        map.addDataLayer({
+        addDataLayer(map, {
           id,
           type: 'circle',
           source: {

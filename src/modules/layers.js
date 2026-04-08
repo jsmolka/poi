@@ -25,3 +25,18 @@ export const layers = {
     url: new URL('@/assets/data/cemeteries.json', import.meta.url),
   },
 };
+
+const order = [...Object.keys(layers), 'route'];
+
+export function addDataLayer(map, layer) {
+  const layers = map.getStyle().layers.map((layer) => layer.id);
+
+  let before = undefined;
+  for (let i = order.indexOf(layer.id) + 1; i < order.length; i++) {
+    if (layers.includes(order[i])) {
+      before = order[i];
+      break;
+    }
+  }
+  map.addDataLayer(layer, before);
+}

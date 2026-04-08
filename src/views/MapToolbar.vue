@@ -22,7 +22,7 @@
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
 import { useLocation } from '@/composables/useLocation';
-import { layers } from '@/modules/layers';
+import { addDataLayer, layers } from '@/modules/layers';
 import { useSettingsStore } from '@/stores/settings';
 import { colors } from '@/utils/colors';
 import { readAsText, selectFile } from '@/utils/filesystem';
@@ -74,7 +74,7 @@ const uploadRoute = async () => {
     route = null;
   }
 
-  props.map.addDataLayer({
+  addDataLayer(props.map, {
     id: 'route',
     type: 'line',
     source: {
