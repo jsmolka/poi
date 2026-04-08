@@ -22,8 +22,8 @@ async function overpass(queries) {
   const countries = ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'ES', 'FR', 'IT', 'LI', 'LU', 'MC', 'NL', 'PL', 'PT'];
 
   const interpreters = [
-    'https://overpass-api.de/api/interpreter',
     'https://overpass.private.coffee/api/interpreter',
+    'https://overpass-api.de/api/interpreter',
     'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
   ];
 
