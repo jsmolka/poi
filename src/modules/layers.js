@@ -24,6 +24,12 @@ export const layers = {
     color: colors.green.hex,
     url: new URL('@/assets/data/cemeteries.json', import.meta.url),
   },
+
+  blacklist: {
+    text: 'Blacklist',
+    color: colors.shade2.hex,
+    url: new URL('@/assets/data/blacklist.json', import.meta.url),
+  },
 };
 
 const orderedIds = [...Object.keys(layers), 'route'];

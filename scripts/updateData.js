@@ -76,24 +76,25 @@ function encodeCoordinateOffset(current, previous) {
   return encodeCoordinate(current) - encodeCoordinate(previous);
 }
 
+function encode(elements) {
+  return elements.map((element, index, array) => {
+    const data = [
+      encodeCoordinateOffset(element.center.lat, array[index - 1]?.center.lat ?? 0),
+      encodeCoordinateOffset(element.center.lon, array[index - 1]?.center.lon ?? 0),
+    ];
+    const name = element.tags.name ?? element.tags.brand ?? element.tags.operator ?? '';
+    if (element.tags.opening_hours) {
+      data.push(name, element.tags.opening_hours);
+    } else if (name) {
+      data.push(name);
+    }
+    return data;
+  });
+}
+
 export async function update(path, queries) {
   const elements = await overpass(queries);
-  writeJson(
-    path,
-    elements.map((element, index, array) => {
-      const data = [
-        encodeCoordinateOffset(element.center.lat, array[index - 1]?.center.lat ?? 0),
-        encodeCoordinateOffset(element.center.lon, array[index - 1]?.center.lon ?? 0),
-      ];
-      const name = element.tags.name ?? element.tags.brand ?? element.tags.operator ?? '';
-      if (element.tags.opening_hours) {
-        data.push(name, element.tags.opening_hours);
-      } else if (name) {
-        data.push(name);
-      }
-      return data;
-    }),
-  );
+  writeJson(path, encode(elements));
 }
 
 async function main() {
@@ -109,6 +110,8 @@ async function main() {
     promises.push(update(`../src/assets/data/${poi}.json`, queries));
   }
   await Promise.all(promises);
+
+  writeJson('../src/assets/data/blacklist.json', encode(blacklist));
 }
 
 main();

@@ -1,0 +1,20 @@
+[
+  {
+    "center": {
+      "lat": 50.965938,
+      "lon": 11.7873777
+    },
+    "tags": {
+      "name": "Cobble downhill"
+    }
+  },
+  {
+    "center": {
+      "lat": 50.893884,
+      "lon": 11.827902
+    },
+    "tags": {
+      "name": "Rooted downhill"
+    }
+  }
+]
