@@ -27,7 +27,7 @@ export const layers = {
 
   blacklist: {
     text: 'Blacklist',
-    color: colors.shade2.hex,
+    color: colors.shade3.hex,
     url: new URL('@/assets/data/blacklist.json', import.meta.url),
   },
 };
