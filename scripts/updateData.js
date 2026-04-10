@@ -2,6 +2,7 @@ import axios from 'axios';
 import { mkdirSync, writeFileSync } from 'fs';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import blacklist from './blacklist.json' with { type: 'json' };
 
 function relative(path) {
   return fileURLToPath(new URL(path, import.meta.url));
