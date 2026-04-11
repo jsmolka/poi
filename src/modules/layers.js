@@ -46,7 +46,7 @@ export function addDataLayer(map, layer) {
 
   for (const id of orderedIds) {
     if (map.getLayer(id)) {
-      map.moveLayer(id);
+      map.moveLayer(id, 'road-label-simple');
     }
   }
 }
