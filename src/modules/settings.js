@@ -6,6 +6,8 @@ export class Settings {
     this.cemeteries = false;
     this.gasStations = true;
     this.supermarkets = false;
+    this.drinkingWater = false;
+    this.blacklist = false;
   }
 }
 
@@ -14,4 +16,6 @@ defineSchema(Settings, {
   cemeteries: primitive(),
   gasStations: primitive(),
   supermarkets: primitive(),
+  drinkingWater: primitive(),
+  blacklist: primitive(),
 });

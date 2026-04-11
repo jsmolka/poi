@@ -25,8 +25,7 @@ export const layers = {
     url: new URL('@/assets/data/cemeteries.json', import.meta.url),
   },
 
-  // Underscore to prevent clashing with internal Mapbox layer names
-  _water: {
+  drinkingWater: {
     text: 'Water',
     color: colors.brand3.hex,
     url: new URL('@/assets/data/water.json', import.meta.url),
