@@ -48,6 +48,11 @@ async function overpass(queries) {
           // Add center to ways and relations, sort by quad tile for better compression
           'out tags center qt;',
         ].join('\n'),
+        {
+          headers: {
+            'User-Agent': 'poi',
+          },
+        },
       );
       break;
     } catch (error) {
@@ -104,6 +109,7 @@ async function main() {
     cemeteries: ['nwr[landuse=cemetery](area)', 'nwr[amenity=grave_yard](area)'],
     gasStations: ['nwr[amenity=fuel](area)'],
     supermarkets: ['nwr[shop~"beverages|convenience|supermarket"](area)'],
+    water: ['nwr[amenity=drinking_water](area)'],
   };
 
   const promises = [];
