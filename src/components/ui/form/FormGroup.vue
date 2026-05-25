@@ -1,7 +1,7 @@
 <template>
-  <span :class="cn('text-shade-3 ml-auto text-xs tracking-widest', props.class)">
+  <div :class="cn('flex flex-col gap-3', props.class)">
     <slot />
-  </span>
+  </div>
 </template>
 
 <script setup>

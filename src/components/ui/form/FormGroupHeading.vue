@@ -1,7 +1,7 @@
 <template>
-  <span :class="cn('text-shade-3 ml-auto text-xs tracking-widest', props.class)">
+  <h1 :class="cn('text-shade-1 text-base font-semibold', props.class)">
     <slot />
-  </span>
+  </h1>
 </template>
 
 <script setup>
