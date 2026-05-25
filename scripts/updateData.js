@@ -23,8 +23,8 @@ async function overpass(queries) {
   const countries = ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'ES', 'FR', 'IT', 'LI', 'LU', 'MC', 'NL', 'PL', 'PT'];
 
   const interpreters = [
-    'https://overpass.private.coffee/api/interpreter',
     'https://overpass-api.de/api/interpreter',
+    'https://overpass.private.coffee/api/interpreter',
     'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
   ];
 
@@ -98,9 +98,12 @@ function encode(elements) {
   });
 }
 
-export async function update(path, queries) {
+export async function update(poi, queries) {
   const elements = await overpass(queries);
-  writeJson(path, encode(elements));
+  if (elements.length === 0) {
+    throw new Error(`No elements for ${poi}`);
+  }
+  writeJson(`../src/assets/data/${poi}.json`, encode(elements));
 }
 
 async function main() {
@@ -112,12 +115,9 @@ async function main() {
     water: ['nwr[amenity=drinking_water](area)'],
   };
 
-  const promises = [];
   for (const [poi, queries] of Object.entries(pois)) {
-    promises.push(update(`../src/assets/data/${poi}.json`, queries));
+    await update(poi, queries);
   }
-  await Promise.all(promises);
-
   writeJson('../src/assets/data/blacklist.json', encode(blacklist));
 }
 
