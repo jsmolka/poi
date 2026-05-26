@@ -121,7 +121,14 @@ const updateDistanceMarker = (event) => {
       .addTo(props.map);
   }
   marker.setLngLat(closestPoint.geometry.coordinates);
-  marker.getElement().textContent = closestPoint.properties.location.toFixed(1);
+  marker.getElement().textContent = closestPoint.properties.totalDistance.toLocaleString(
+    undefined,
+    {
+      maximumFractionDigits: 1,
+      minimumFractionDigits: 1,
+      useGrouping: false,
+    },
+  );
 };
 
 props.map.on('mousemove', updateDistanceMarker);
