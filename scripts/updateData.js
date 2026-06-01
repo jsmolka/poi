@@ -54,6 +54,9 @@ async function overpass(queries) {
           },
         },
       );
+      if (response.data.remark != null) {
+        throw response.data.remark;
+      }
       break;
     } catch (error) {
       if (i === interpreters.length - 1) {
@@ -100,9 +103,6 @@ function encode(elements) {
 
 export async function update(poi, queries) {
   const elements = await overpass(queries);
-  if (elements.length === 0) {
-    throw new Error(`No elements for ${poi}`);
-  }
   writeJson(`../src/assets/data/${poi}.json`, encode(elements));
 }
 
