@@ -34,7 +34,7 @@ async function overpass(queries) {
       response = await axios.post(
         interpreter,
         [
-          '[out:json][timeout:600];',
+          '[out:json][timeout:3600];',
           // Combine area of countries
           '(',
           ...countries.map((country) => `area["ISO3166-1"="${country}"][admin_level=2];`),
