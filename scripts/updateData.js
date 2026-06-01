@@ -25,7 +25,7 @@ async function overpass(queries) {
   const interpreters = [
     'https://overpass-api.de/api/interpreter',
     'https://overpass.private.coffee/api/interpreter',
-    'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+    // 'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
   ];
 
   let response = null;
