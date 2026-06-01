@@ -116,7 +116,9 @@ async function main() {
   };
 
   for (const [poi, queries] of Object.entries(pois)) {
+    console.time(poi);
     await update(poi, queries);
+    console.timeEnd(poi);
   }
   writeJson('../src/assets/data/blacklist.json', encode(blacklist));
 }
