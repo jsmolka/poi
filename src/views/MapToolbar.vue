@@ -10,7 +10,7 @@
       variant="ghost"
       size="icon"
       title="Show distance marker"
-      v-model="settings.showDistanceMaker"
+      v-model="settings.showDistanceMarker"
     >
       <PhRuler class="size-4" />
     </Toggle>
@@ -116,8 +116,8 @@ const updateDistanceMarker = (event) => {
 
   markerEvent = event;
 
-  const showDistanceMaker = settings.value.showDistanceMaker || ctrl.value;
-  if (route == null || !showDistanceMaker) {
+  const showDistanceMarker = settings.value.showDistanceMarker || ctrl.value;
+  if (route == null || !showDistanceMarker) {
     marker?.remove();
     marker = null;
     return;
@@ -149,7 +149,7 @@ props.map.on('mousemove', updateDistanceMarker);
 
 watch(ctrl, () => updateDistanceMarker(markerEvent));
 watch(
-  () => settings.value.showDistanceMaker,
+  () => settings.value.showDistanceMarker,
   () => updateDistanceMarker(markerEvent),
 );
 </script>

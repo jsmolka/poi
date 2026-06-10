@@ -2,7 +2,7 @@ import { defineSchema, primitive } from '@/utils/persist';
 
 export class Settings {
   constructor() {
-    this.showDistanceMaker = false;
+    this.showDistanceMarker = false;
     this.cafes = false;
     this.cemeteries = false;
     this.gasStations = true;
@@ -13,7 +13,7 @@ export class Settings {
 }
 
 defineSchema(Settings, {
-  showDistanceMaker: primitive(),
+  showDistanceMarker: primitive(),
   cafes: primitive(),
   cemeteries: primitive(),
   gasStations: primitive(),
