@@ -16,5 +16,14 @@
     "tags": {
       "name": "Rooted downhill"
     }
+  },
+  {
+    "center": {
+      "lat": 51.082967,
+      "lon": 11.804133
+    },
+    "tags": {
+      "name": "Cobbles"
+    }
   }
 ]
