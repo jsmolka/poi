@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import '../node_modules/mapbox-gl/dist/mapbox-gl.css';
+@import 'mapbox-gl/dist/mapbox-gl.css';
 
 @font-face {
   font-family: 'Inter';
