@@ -77,11 +77,21 @@ const onMapMounted = (map) => {
   }
 };
 
+const satelliteUrl = (lat, lng, zoom = 21) => {
+  const params = new URLSearchParams({
+    api: '1',
+    map_action: 'map',
+    center: `${lat},${lng}`,
+    zoom: String(zoom),
+    basemap: 'satellite',
+  });
+  return `https://www.google.com/maps/@?${params}`;
+};
+
 const onMapLoaded = (map) => {
   const ids = Object.keys(layers);
   map.on('mouseenter', ids, () => (map.getCanvas().style.cursor = 'pointer'));
   map.on('mouseleave', ids, () => (map.getCanvas().style.cursor = ''));
-
   map.on('click', ids, (event) => {
     const feature = event.features[0];
 
@@ -92,15 +102,12 @@ const onMapLoaded = (map) => {
         : feature
       ).geometry.coordinates,
     );
-    popup.setHTML(
-      [
-        feature.properties.name ?? layers[feature.layer.id].name,
-        feature.properties.openingHours ? `Opening hours: ${feature.properties.openingHours}` : '',
-        feature.properties.smoothness ? `Smoothness: ${feature.properties.smoothness}` : '',
-      ]
-        .filter(Boolean)
-        .join('<br>'),
-    );
+    popup.setHTML(`
+      <a class="underline" href="${satelliteUrl(event.lngLat.lat, event.lngLat.lng)}" target="_blank">
+        ${feature.properties.name ?? layers[feature.layer.id].name}
+      </a>
+      ${feature.properties.openingHours ? `<br>Opening hours: ${feature.properties.openingHours}` : ''}
+    `);
     popup.addTo(map);
   });
 
