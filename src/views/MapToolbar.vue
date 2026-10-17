@@ -103,7 +103,7 @@ const uploadRoute = async () => {
       'line-color': colors.shade2.hex,
       'line-width': {
         stops: [
-          [6, 4],
+          [6, 0.5],
           [18, 8],
         ],
       },
