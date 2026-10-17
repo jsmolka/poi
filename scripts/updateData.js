@@ -1,8 +1,11 @@
 import polyline from '@googlemaps/polyline-codec';
 import axios from 'axios';
+import { config } from 'dotenv';
 import { mkdirSync, writeFileSync } from 'fs';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+
+config();
 
 // https://wiki.openstreetmap.org/wiki/Precision_of_coordinates
 const precision = 5;
