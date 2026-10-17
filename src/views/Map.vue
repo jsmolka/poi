@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { mapboxAccessToken } from '@/common/mapboxAccessToken';
+import { env } from '@/common/env';
 import { useResizeObserver } from '@vueuse/core';
 import { Map } from 'mapbox-gl';
 import { onMounted, onUnmounted, useTemplateRef } from 'vue';
@@ -19,7 +19,7 @@ const container = useTemplateRef('container');
 
 onMounted(() => {
   const map = new Map({
-    accessToken: mapboxAccessToken,
+    accessToken: env.mapboxAccessToken,
     container: container.value,
     style: 'mapbox://styles/juliansmolka/clzwx15zy002n01qs7yrr9zsr',
     center: props.center,
