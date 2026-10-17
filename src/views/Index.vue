@@ -140,8 +140,19 @@ const onMapLoaded = (map) => {
                 type: 'geojson',
                 data: null,
               },
-              layout: { 'line-join': 'round', 'line-cap': 'round' },
-              paint: { 'line-color': layer.color, 'line-width': 5 },
+              paint: {
+                'line-color': layer.color,
+                'line-width': {
+                  stops: [
+                    [6, 0.5],
+                    [18, 8],
+                  ],
+                },
+              },
+              layout: {
+                'line-join': 'round',
+                'line-cap': 'round',
+              },
             });
             axios.get(layer.url).then((response) => {
               map.getSource(id).setData(wayToGeoJson(response.data));
