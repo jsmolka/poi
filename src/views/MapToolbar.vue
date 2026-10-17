@@ -95,7 +95,12 @@ const uploadRoute = async () => {
     },
     paint: {
       'line-color': colors.shade2.hex,
-      'line-width': 4,
+      'line-width': {
+        stops: [
+          [6, 4],
+          [18, 8],
+        ],
+      },
     },
   });
 

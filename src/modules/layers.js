@@ -44,7 +44,17 @@ export const layers = {
   },
 };
 
-const orderedIds = [...Object.keys(layers), 'route'];
+const orderedIds = [
+  'route',
+
+  ...Object.entries(layers)
+    .filter(([_, { type }]) => type === 'way')
+    .map(([key]) => key),
+
+  ...Object.entries(layers)
+    .filter(([_, { type }]) => type === 'poi')
+    .map(([key]) => key),
+];
 
 export function addDataLayer(map, layer) {
   map.addDataLayer(layer);
