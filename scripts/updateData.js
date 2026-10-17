@@ -1,4 +1,4 @@
-import polyline from '@googlemaps/polyline-codec';
+import codec from '@googlemaps/polyline-codec';
 import axios from 'axios';
 import { config } from 'dotenv';
 import { mkdirSync, writeFileSync } from 'fs';
@@ -26,6 +26,7 @@ function writeJson(path, data) {
 
 async function query(queries, countries, out) {
   const interpreters = [
+    `https://overpass.nextgis.com/${process.env.NEXTGIS_OVERPASS_API_KEY}/api/interpreter`,
     'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
     'https://overpass.private.coffee/api/interpreter',
     'https://overpass-api.de/api/interpreter',
@@ -58,6 +59,9 @@ async function query(queries, countries, out) {
       if (response.data.remark != null) {
         throw response.data.remark;
       }
+      if (response.data.elements.length === 0) {
+        throw 'No elements';
+      }
       return response.data.elements;
     } catch (error) {
       if (i === interpreters.length - 1) {
@@ -67,37 +71,37 @@ async function query(queries, countries, out) {
   }
 }
 
-function encodeCoordinate(coordinate) {
-  return Math.round(10 ** precision * coordinate);
-}
-
-function encodeCoordinateOffset(current, previous) {
-  return encodeCoordinate(current) - encodeCoordinate(previous);
-}
-
 function encodePoi(elements) {
+  const data = [];
+  const meta = [];
   for (const element of elements) {
-    if (element.type === 'node') {
-      element.center = {
-        lat: element.lat,
-        lon: element.lon,
-      };
+    // prettier-ignore
+    data.push([
+      element.lat ?? element.center.lat,
+      element.lon ?? element.center.lon
+    ]);
+
+    const name =
+      element.tags.name ??
+      element.tags.brand ??
+      element.tags.operator ??
+      element.tags.official_name ??
+      element.tags.short_name ??
+      '';
+    if (element.tags.opening_hours) {
+      meta.push([name, element.tags.opening_hours]);
+    } else if (name) {
+      meta.push(name);
+    } else if (typeof meta[meta.length - 1] === 'number') {
+      meta[meta.length - 1]++;
+    } else {
+      meta.push(1);
     }
   }
-
-  return elements.map((element, index, array) => {
-    const data = [
-      encodeCoordinateOffset(element.center.lat, array[index - 1]?.center.lat ?? 0),
-      encodeCoordinateOffset(element.center.lon, array[index - 1]?.center.lon ?? 0),
-    ];
-    const name = element.tags.name ?? element.tags.brand ?? element.tags.operator ?? '';
-    if (element.tags.opening_hours) {
-      data.push(name, element.tags.opening_hours);
-    } else if (name) {
-      data.push(name);
-    }
-    return data;
-  });
+  return {
+    data: codec.encode(data, precision),
+    meta,
+  };
 }
 
 async function updatePoi(poi, queries) {
@@ -110,33 +114,12 @@ async function updatePoi(poi, queries) {
 }
 
 function encodeWay(elements) {
-  return elements.map((element) => {
-    const data = [
-      polyline.encode(
-        element.geometry.map(({ lat, lon }) => [lat, lon]),
-        precision,
-      ),
-    ];
-
-    // https://wiki.openstreetmap.org/wiki/Key:smoothness
-    const smoothness = element.tags.smoothness;
-    if (smoothness) {
-      const index = [
-        'excellent',
-        'good',
-        'intermediate',
-        'bad',
-        'very_bad',
-        'horrible',
-        'very_horrible',
-        'impassable',
-      ].indexOf(smoothness);
-      if (index !== -1) {
-        data.push(index);
-      }
-    }
-    return data;
-  });
+  return elements.map((element) =>
+    codec.encode(
+      element.geometry.map(({ lat, lon }) => [lat, lon]),
+      precision,
+    ),
+  );
 }
 
 async function updateWay(way, queries) {
