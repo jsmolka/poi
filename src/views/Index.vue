@@ -87,9 +87,10 @@ const onMapLoaded = (map) => {
 
     const popup = new Popup({ closeButton: false });
     popup.setLngLat(
-      feature.geometry.type === 'LineString'
-        ? turf.nearestPointOnLine(feature, turf.centroid(feature)).geometry.coordinates
-        : feature.geometry.coordinates,
+      (feature.geometry.type === 'LineString'
+        ? turf.nearestPointOnLine(feature, turf.point([event.lngLat.lng, event.lngLat.lat]))
+        : feature
+      ).geometry.coordinates,
     );
     popup.setHTML(
       [
