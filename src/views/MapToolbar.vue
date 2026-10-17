@@ -3,9 +3,11 @@
     <Button variant="ghost" size="icon" title="Locate" :disabled="location == null" @click="locate">
       <PhGpsFix class="size-4" />
     </Button>
+
     <Button variant="ghost" size="icon" title="Upload route" @click="uploadRoute">
       <PhPath class="size-4" />
     </Button>
+
     <Toggle
       variant="ghost"
       size="icon"
@@ -14,6 +16,7 @@
     >
       <PhRuler class="size-4" />
     </Toggle>
+
     <Toggle
       v-for="[key, layer] in Object.entries(layers)"
       variant="ghost"
@@ -30,7 +33,7 @@
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
 import { useLocation } from '@/composables/useLocation';
-import { addDataLayer, layers } from '@/modules/layers';
+import { addDataLayer, layers, routeId } from '@/modules/layers';
 import { useSettingsStore } from '@/stores/settings';
 import { colors } from '@/utils/colors';
 import { readAsText, selectFile } from '@/utils/filesystem';
@@ -59,10 +62,13 @@ const locate = () => {
 let route = null;
 
 const uploadRoute = async () => {
-  const id = 'route';
+  if (props.map.getLayer(routeId)) {
+    props.map.removeLayer(routeId);
+  }
 
-  if (props.map.getLayer(id)) props.map.removeLayer(id);
-  if (props.map.getSource(id)) props.map.removeSource(id);
+  if (props.map.getSource(routeId)) {
+    props.map.removeSource(routeId);
+  }
 
   route = null;
   updateDistanceMarker();
@@ -83,7 +89,7 @@ const uploadRoute = async () => {
   }
 
   addDataLayer(props.map, {
-    id: 'route',
+    id: routeId,
     type: 'line',
     source: {
       type: 'geojson',

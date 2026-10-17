@@ -44,8 +44,10 @@ export const layers = {
   },
 };
 
+export const routeId = 'route';
+
 const orderedIds = [
-  'route',
+  routeId,
 
   ...Object.entries(layers)
     .filter(([_, { type }]) => type === 'way')

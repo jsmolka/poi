@@ -90,24 +90,33 @@ const satelliteUrl = (lat, lng, zoom = 21) => {
 
 const onMapLoaded = (map) => {
   const ids = Object.keys(layers);
-  map.on('mouseenter', ids, () => (map.getCanvas().style.cursor = 'pointer'));
-  map.on('mouseleave', ids, () => (map.getCanvas().style.cursor = ''));
+
+  map.on('mouseenter', ids, () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', ids, () => {
+    map.getCanvas().style.cursor = '';
+  });
+
   map.on('click', ids, (event) => {
     const feature = event.features[0];
-
     const popup = new Popup({ closeButton: false });
+
     popup.setLngLat(
       (feature.geometry.type === 'LineString'
         ? turf.nearestPointOnLine(feature, turf.point([event.lngLat.lng, event.lngLat.lat]))
         : feature
       ).geometry.coordinates,
     );
+
     popup.setHTML(`
-      <a class="underline" href="${satelliteUrl(event.lngLat.lat, event.lngLat.lng)}" target="_blank">
+      <a href="${satelliteUrl(event.lngLat.lat, event.lngLat.lng)}" target="_blank" class="underline">
         ${feature.properties.name ?? layers[feature.layer.id].name}
       </a>
       ${feature.properties.openingHours ? `<br>Opening hours: ${feature.properties.openingHours}` : ''}
     `);
+
     popup.addTo(map);
   });
 
