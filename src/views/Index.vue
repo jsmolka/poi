@@ -12,10 +12,11 @@
 import { useLocation } from '@/composables/useLocation';
 import { addDataLayer, layers } from '@/modules/layers';
 import { useSettingsStore } from '@/stores/settings';
-import { dataToGeoJson } from '@/utils/geoJson';
+import { poiToGeoJson, wayToGeoJson } from '@/utils/geoJson';
 import Map from '@/views/Map.vue';
 import MapLegend from '@/views/MapLegend.vue';
 import MapToolbar from '@/views/MapToolbar.vue';
+import * as turf from '@turf/turf';
 import axios from 'axios';
 import { createElement, MapPin } from 'lucide';
 import { Marker, Popup, ScaleControl } from 'mapbox-gl';
@@ -83,15 +84,21 @@ const onMapLoaded = (map) => {
 
   map.on('click', ids, (event) => {
     const feature = event.features[0];
-    const layer = layers[feature.layer.id];
 
     const popup = new Popup({ closeButton: false });
-    popup.setLngLat(feature.geometry.coordinates);
+    popup.setLngLat(
+      feature.geometry.type === 'LineString'
+        ? turf.nearestPointOnLine(feature, turf.centroid(feature)).geometry.coordinates
+        : feature.geometry.coordinates,
+    );
     popup.setHTML(
-      (feature.properties.name || layer.text) +
-        (feature.properties.openingHours
-          ? `<br>Opening hours: ${feature.properties.openingHours}`
-          : ''),
+      [
+        feature.properties.name ?? layers[feature.layer.id].name,
+        feature.properties.openingHours ? `Opening hours: ${feature.properties.openingHours}` : '',
+        feature.properties.smoothness ? `Smoothness: ${feature.properties.smoothness}` : '',
+      ]
+        .filter(Boolean)
+        .join('<br>'),
     );
     popup.addTo(map);
   });
@@ -100,28 +107,48 @@ const onMapLoaded = (map) => {
     for (const [id, layer] of Object.entries(layers)) {
       const visible = settings.value[id];
       if (visible && map.getLayer(id) == null) {
-        addDataLayer(map, {
-          id,
-          type: 'circle',
-          source: {
-            type: 'geojson',
-            data: null,
-          },
-          paint: {
-            'circle-color': layer.color,
-            'circle-radius': {
-              stops: [
-                [6, 1],
-                [18, 16],
-              ],
-            },
-          },
-        });
+        switch (layer.type) {
+          case 'poi':
+            addDataLayer(map, {
+              id,
+              type: 'circle',
+              source: {
+                type: 'geojson',
+                data: null,
+              },
+              paint: {
+                'circle-color': layer.color,
+                'circle-radius': {
+                  stops: [
+                    [6, 1],
+                    [18, 16],
+                  ],
+                },
+              },
+            });
+            axios.get(layer.url).then((response) => {
+              map.getSource(id).setData(poiToGeoJson(response.data));
+            });
+            break;
 
-        axios.get(layer.url).then((response) => {
-          map.getSource(id).setData(dataToGeoJson(response.data));
-        });
+          case 'way':
+            addDataLayer(map, {
+              id,
+              type: 'line',
+              source: {
+                type: 'geojson',
+                data: null,
+              },
+              layout: { 'line-join': 'round', 'line-cap': 'round' },
+              paint: { 'line-color': layer.color, 'line-width': 5 },
+            });
+            axios.get(layer.url).then((response) => {
+              map.getSource(id).setData(wayToGeoJson(response.data));
+            });
+            break;
+        }
       }
+
       if (map.getLayer(id) != null) {
         map.setLayoutProperty(id, 'visibility', settings.value[id] ? 'visible' : 'none');
       }

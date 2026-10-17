@@ -1,23 +1,20 @@
+import { layers } from '@/modules/layers';
 import { defineSchema, primitive } from '@/utils/persist';
 
 export class Settings {
   constructor() {
     this.showDistanceMarker = false;
-    this.cafes = false;
-    this.cemeteries = false;
-    this.gasStations = true;
-    this.supermarkets = false;
-    this.drinkingWater = false;
-    this.blacklist = false;
+    for (const key of Object.keys(layers)) {
+      this[key] = false;
+    }
   }
 }
 
-defineSchema(Settings, {
+const schema = {
   showDistanceMarker: primitive(),
-  cafes: primitive(),
-  cemeteries: primitive(),
-  gasStations: primitive(),
-  supermarkets: primitive(),
-  drinkingWater: primitive(),
-  blacklist: primitive(),
-});
+};
+for (const key of Object.keys(layers)) {
+  schema[key] = primitive();
+}
+
+defineSchema(Settings, schema);

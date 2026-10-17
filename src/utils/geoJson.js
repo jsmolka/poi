@@ -1,7 +1,8 @@
+import { decode } from '@googlemaps/polyline-codec';
 import toGeoJSON from '@mapbox/togeojson';
 import * as turf from '@turf/turf';
 
-export function dataToGeoJson(data) {
+export function poiToGeoJson(data) {
   let lat = 0;
   let lng = 0;
   return turf.featureCollection(
@@ -13,6 +14,30 @@ export function dataToGeoJson(data) {
         openingHours: item[3],
       });
     }),
+  );
+}
+
+export function wayToGeoJson(data) {
+  return turf.featureCollection(
+    data.map(([coordinates, smoothness]) =>
+      turf.lineString(
+        decode(coordinates).map(([lat, lng]) => [lng, lat]),
+        {
+          smoothness: [
+            'excellent',
+            'good',
+            'intermediate',
+            'bad',
+            'very bad',
+            'horrible',
+            'very horrible',
+            'impassable',
+          ].map(
+            (smoothness, index, array) => `${smoothness} (${array.length - index}/${array.length})`,
+          )[smoothness],
+        },
+      ),
+    ),
   );
 }
 

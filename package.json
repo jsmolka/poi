@@ -32,6 +32,7 @@
     "vue-tsc": "^3.3.11"
   },
   "dependencies": {
+    "@googlemaps/polyline-codec": "^1.0.28",
     "@mapbox/togeojson": "^0.16.2",
     "@phosphor-icons/vue": "^2.2.1",
     "@turf/turf": "^7.4.0",

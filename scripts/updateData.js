@@ -1,8 +1,11 @@
-import blacklist from './blacklist.json' with { type: 'json' };
+import polyline from '@googlemaps/polyline-codec';
 import axios from 'axios';
 import { mkdirSync, writeFileSync } from 'fs';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+
+// https://wiki.openstreetmap.org/wiki/Precision_of_coordinates
+const precision = 5;
 
 function relative(path) {
   return fileURLToPath(new URL(path, import.meta.url));
@@ -18,20 +21,16 @@ function writeJson(path, data) {
   write(path, JSON.stringify(data));
 }
 
-async function overpass(queries) {
-  // prettier-ignore
-  const countries = ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'ES', 'FR', 'IT', 'LI', 'LU', 'MC', 'NL', 'PL', 'PT'];
-
+async function query(queries, countries, out) {
   const interpreters = [
-    'https://overpass-api.de/api/interpreter',
-    'https://overpass.private.coffee/api/interpreter',
     'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+    'https://overpass.private.coffee/api/interpreter',
+    'https://overpass-api.de/api/interpreter',
   ];
 
-  let response = null;
   for (const [i, interpreter] of interpreters.entries()) {
     try {
-      response = await axios.post(
+      const response = await axios.post(
         interpreter,
         [
           '[out:json][timeout:3600];',
@@ -45,8 +44,7 @@ async function overpass(queries) {
           '(',
           ...queries.map((_, index) => `.q${index};`),
           ');',
-          // Add center to ways and relations, sort by quad tile for better compression
-          'out tags center qt;',
+          out,
         ].join('\n'),
         {
           headers: {
@@ -57,15 +55,24 @@ async function overpass(queries) {
       if (response.data.remark != null) {
         throw response.data.remark;
       }
-      break;
+      return response.data.elements;
     } catch (error) {
       if (i === interpreters.length - 1) {
         throw error;
       }
     }
   }
+}
 
-  const elements = response.data.elements;
+function encodeCoordinate(coordinate) {
+  return Math.round(10 ** precision * coordinate);
+}
+
+function encodeCoordinateOffset(current, previous) {
+  return encodeCoordinate(current) - encodeCoordinate(previous);
+}
+
+function encodePoi(elements) {
   for (const element of elements) {
     if (element.type === 'node') {
       element.center = {
@@ -74,18 +81,7 @@ async function overpass(queries) {
       };
     }
   }
-  return elements;
-}
 
-function encodeCoordinate(coordinate) {
-  return Math.round(1e5 * coordinate);
-}
-
-function encodeCoordinateOffset(current, previous) {
-  return encodeCoordinate(current) - encodeCoordinate(previous);
-}
-
-function encode(elements) {
   return elements.map((element, index, array) => {
     const data = [
       encodeCoordinateOffset(element.center.lat, array[index - 1]?.center.lat ?? 0),
@@ -101,9 +97,48 @@ function encode(elements) {
   });
 }
 
-export async function update(poi, queries) {
-  const elements = await overpass(queries);
-  writeJson(`../src/assets/data/${poi}.json`, encode(elements));
+async function updatePoi(poi, queries) {
+  const elements = await query(
+    queries,
+    ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'ES', 'FR', 'IT', 'LI', 'LU', 'MC', 'NL', 'PL', 'PT'],
+    'out tags center qt;',
+  );
+  writeJson(`../src/assets/data/${poi}.json`, encodePoi(elements));
+}
+
+function encodeWay(elements) {
+  return elements.map((element) => {
+    const data = [
+      polyline.encode(
+        element.geometry.map(({ lat, lon }) => [lat, lon]),
+        precision,
+      ),
+    ];
+
+    // https://wiki.openstreetmap.org/wiki/Key:smoothness
+    const smoothness = element.tags.smoothness;
+    if (smoothness) {
+      const index = [
+        'excellent',
+        'good',
+        'intermediate',
+        'bad',
+        'very_bad',
+        'horrible',
+        'very_horrible',
+        'impassable',
+      ].indexOf(smoothness);
+      if (index !== -1) {
+        data.push(index);
+      }
+    }
+    return data;
+  });
+}
+
+async function updateWay(way, queries) {
+  const elements = await query(queries, ['DE'], 'out tags geom;');
+  writeJson(`../src/assets/data/${way}.json`, encodeWay(elements));
 }
 
 async function main() {
@@ -114,13 +149,22 @@ async function main() {
     supermarkets: ['nwr[shop~"beverages|convenience|supermarket"](area)'],
     water: ['nwr[amenity=drinking_water](area)'],
   };
-
   for (const [poi, queries] of Object.entries(pois)) {
     console.time(poi);
-    await update(poi, queries);
+    await updatePoi(poi, queries);
     console.timeEnd(poi);
   }
-  writeJson('../src/assets/data/blacklist.json', encode(blacklist));
+
+  const ways = {
+    cobblestones: [
+      'way[highway][surface~"cobblestone|sett|cobblestone:flattened|unhewn_cobblestone"](area)',
+    ],
+  };
+  for (const [way, queries] of Object.entries(ways)) {
+    console.time(way);
+    await updateWay(way, queries);
+    console.timeEnd(way);
+  }
 }
 
 main();

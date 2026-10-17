@@ -19,7 +19,7 @@
       variant="ghost"
       size="icon"
       v-model="settings[key]"
-      :title="layer.text"
+      :title="layer.name"
     >
       <div class="size-4 rounded-full" :style="{ background: layer.color }" />
     </Toggle>
