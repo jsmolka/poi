@@ -112,7 +112,7 @@ const onMapLoaded = (map) => {
     popup.setLngLat(coordinates);
     popup.setHTML(`
       <a href="${satelliteUrl(coordinates[1], coordinates[0])}" target="_blank" class="underline">
-        ${feature.properties.name ?? layers[feature.layer.id].name}
+        ${feature.properties.name || layers[feature.layer.id].name}
       </a>
       ${feature.properties.openingHours ? `<br>Opening hours: ${feature.properties.openingHours}` : ''}
     `);
