@@ -101,17 +101,17 @@ const onMapLoaded = (map) => {
 
   map.on('click', ids, (event) => {
     const feature = event.features[0];
-    const popup = new Popup({ closeButton: false });
 
-    popup.setLngLat(
-      (feature.geometry.type === 'LineString'
+    const coordinates = (
+      feature.geometry.type === 'LineString'
         ? turf.nearestPointOnLine(feature, turf.point([event.lngLat.lng, event.lngLat.lat]))
         : feature
-      ).geometry.coordinates,
-    );
+    ).geometry.coordinates;
 
+    const popup = new Popup({ closeButton: false });
+    popup.setLngLat(coordinates);
     popup.setHTML(`
-      <a href="${satelliteUrl(event.lngLat.lat, event.lngLat.lng)}" target="_blank" class="underline">
+      <a href="${satelliteUrl(coordinates[1], coordinates[0])}" target="_blank" class="underline">
         ${feature.properties.name ?? layers[feature.layer.id].name}
       </a>
       ${feature.properties.openingHours ? `<br>Opening hours: ${feature.properties.openingHours}` : ''}
