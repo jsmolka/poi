@@ -4,6 +4,7 @@
 
 <script setup>
 import { env } from '@/common/env';
+import { layerIds } from '@/modules/layers';
 import { useResizeObserver } from '@vueuse/core';
 import { Map } from 'mapbox-gl';
 import { onMounted, onUnmounted, useTemplateRef } from 'vue';
@@ -31,8 +32,15 @@ onMounted(() => {
   map.touchPitch.disable();
 
   map.addDataLayer = function (layer) {
-    const symbolLayer = map.getStyle().layers.find(({ type }) => type === 'symbol');
-    return this.addLayer(layer, symbolLayer.id);
+    const textLayer = this.getStyle().layers.find(({ type }) => type === 'symbol');
+
+    this.addLayer(layer, textLayer?.id);
+
+    for (const id of layerIds) {
+      if (this.getLayer(id)) {
+        this.moveLayer(id, 'road-label-simple');
+      }
+    }
   };
 
   emit('mounted', map);

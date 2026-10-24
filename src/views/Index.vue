@@ -10,7 +10,7 @@
 
 <script setup>
 import { useLocation } from '@/composables/useLocation';
-import { addDataLayer, layers } from '@/modules/layers';
+import { layers } from '@/modules/layers';
 import { useSettingsStore } from '@/stores/settings';
 import { poiToGeoJson, wayToGeoJson } from '@/utils/geoJson';
 import Map from '@/views/Map.vue';
@@ -126,7 +126,7 @@ const onMapLoaded = (map) => {
       if (visible && map.getLayer(id) == null) {
         switch (layer.type) {
           case 'poi':
-            addDataLayer(map, {
+            map.addDataLayer({
               id,
               type: 'circle',
               source: {
@@ -149,7 +149,7 @@ const onMapLoaded = (map) => {
             break;
 
           case 'way':
-            addDataLayer(map, {
+            map.addDataLayer({
               id,
               type: 'line',
               source: {

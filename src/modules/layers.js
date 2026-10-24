@@ -46,7 +46,7 @@ export const layers = {
 
 export const routeId = 'route';
 
-const orderedIds = [
+export const layerIds = [
   routeId,
 
   ...Object.entries(layers)
@@ -57,13 +57,3 @@ const orderedIds = [
     .filter(([_, { type }]) => type === 'poi')
     .map(([key]) => key),
 ];
-
-export function addDataLayer(map, layer) {
-  map.addDataLayer(layer);
-
-  for (const id of orderedIds) {
-    if (map.getLayer(id)) {
-      map.moveLayer(id, 'road-label-simple');
-    }
-  }
-}
