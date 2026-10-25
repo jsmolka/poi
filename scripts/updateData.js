@@ -129,11 +129,14 @@ async function updateWay(way, queries) {
 
 async function main() {
   const pois = {
-    cafes: ['nwr[amenity~"cafe|ice_cream"](area)', 'nwr[shop~"bakery|ice_cream|pastry"](area)'],
-    cemeteries: ['nwr[landuse=cemetery](area)', 'nwr[amenity=grave_yard](area)'],
-    gasStations: ['nwr[amenity=fuel](area)'],
-    supermarkets: ['nwr[shop~"beverages|convenience|supermarket"](area)'],
-    water: ['nwr[amenity=drinking_water](area)'],
+    cafes: [
+      'nwr["amenity"~"^(cafe|ice_cream)$"](area)',
+      'nwr["shop"~"^(bakery|ice_cream|pastry)$"](area)',
+    ],
+    cemeteries: ['nwr["landuse"="cemetery"](area)', 'nwr["amenity"="grave_yard"](area)'],
+    gasStations: ['nwr["amenity"="fuel"](area)'],
+    supermarkets: ['nwr["shop"~"^(beverages|convenience|supermarket)$"](area)'],
+    water: ['nwr["amenity"="drinking_water"](area)'],
   };
   for (const [poi, queries] of Object.entries(pois)) {
     console.time(poi);
@@ -143,7 +146,7 @@ async function main() {
 
   const ways = {
     cobblestones: [
-      'way[highway][surface~"cobblestone|sett|cobblestone:flattened|unhewn_cobblestone"](area)',
+      'way["highway"]["surface"~"^(cobblestone|sett|cobblestone:flattened|unhewn_cobblestone)$"](area)',
     ],
   };
   for (const [way, queries] of Object.entries(ways)) {
