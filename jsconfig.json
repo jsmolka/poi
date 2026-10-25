@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "esnext",
     "paths": {
-      "@/*": ["./src/*"]
+      "@common/*": ["./common/*"],
+      "@/*": ["./src/*"],
     }
   }
 }

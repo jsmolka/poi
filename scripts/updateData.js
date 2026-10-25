@@ -1,4 +1,4 @@
-import codec from '@googlemaps/polyline-codec';
+import { compress, encode } from '../common/codec.js';
 import axios from 'axios';
 import { config } from 'dotenv';
 import { mkdirSync, writeFileSync } from 'fs';
@@ -8,9 +8,6 @@ import { fileURLToPath } from 'url';
 
 config();
 
-// https://wiki.openstreetmap.org/wiki/Precision_of_coordinates
-const precision = 5;
-
 function relative(path) {
   return fileURLToPath(new URL(path, import.meta.url));
 }
@@ -19,10 +16,6 @@ function write(path, data) {
   path = relative(path);
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, data);
-}
-
-function writeJson(path, data) {
-  write(path, JSON.stringify(data));
 }
 
 async function query(queries, countries, out) {
@@ -73,30 +66,25 @@ async function query(queries, countries, out) {
 }
 
 function encodePoi(elements) {
-  const data = [];
-  const meta = [];
+  const polyline = [];
+  const metadata = [];
   for (const element of elements) {
     // prettier-ignore
-    data.push([
+    polyline.push([
       element.lat ?? element.center.lat,
       element.lon ?? element.center.lon
     ]);
 
-    const name = element.tags.name ?? element.tags.brand ?? '';
+    const name = element.tags.name ?? element.tags.brand ?? null;
     if (element.tags.opening_hours) {
-      meta.push([name, element.tags.opening_hours]);
+      metadata.push([name, element.tags.opening_hours]);
     } else if (name) {
-      meta.push(name);
-    } else if (typeof meta[meta.length - 1] === 'number') {
-      meta[meta.length - 1]++;
+      metadata.push([name]);
     } else {
-      meta.push(1);
+      metadata.push([]);
     }
   }
-  return {
-    data: codec.encode(data, precision),
-    meta,
-  };
+  return encode([polyline], metadata);
 }
 
 async function updatePoi(poi, queries) {
@@ -105,31 +93,38 @@ async function updatePoi(poi, queries) {
     ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'ES', 'FR', 'IT', 'LI', 'LU', 'MC', 'NL', 'PL', 'PT'],
     'out tags center qt;',
   );
-  writeJson(`../src/assets/data/${poi}.json`, encodePoi(elements));
+  write(`../src/assets/data/${poi}.bin`, await compress(encodePoi(elements)));
+}
+
+function simplifyPolyline(polyline, toleranceMeters = 1) {
+  if (polyline.length <= 2) {
+    return polyline;
+  }
+
+  const lat = (polyline[0][0] * Math.PI) / 180;
+  const degToMetersLat = 110574;
+  const degToMetersLng = 111320 * Math.cos(lat);
+
+  return simplify(
+    polyline.map((coordinates, i) => ({
+      x: coordinates[0] * degToMetersLat,
+      y: coordinates[1] * degToMetersLng,
+      i,
+    })),
+    toleranceMeters,
+    true,
+  ).map(({ i }) => polyline[i]);
 }
 
 function encodeWay(elements) {
-  return elements.map((element) => {
-    let polyline = element.geometry.map(({ lat, lon }) => [lat, lon]);
-    if (polyline.length > 2) {
-      const lat = (polyline[0][0] * Math.PI) / 180;
-      const metersDegLng = 111320 * Math.cos(lat);
-      const metersDegLat = 110574;
-
-      const projected = polyline.map((coordinate, i) => ({
-        x: coordinate[0] * metersDegLng,
-        y: coordinate[1] * metersDegLat,
-        i,
-      }));
-      polyline = simplify(projected, 1, true).map(({ i }) => polyline[i]);
-    }
-    return codec.encode(polyline, precision);
-  });
+  return encode(
+    elements.map((element) => simplifyPolyline(element.geometry.map(({ lat, lon }) => [lat, lon]))),
+  );
 }
 
 async function updateWay(way, queries) {
   const elements = await query(queries, ['DE'], 'out geom;');
-  writeJson(`../src/assets/data/${way}.json`, encodeWay(elements));
+  write(`../src/assets/data/${way}.bin`, await compress(encodeWay(elements)));
 }
 
 async function main() {

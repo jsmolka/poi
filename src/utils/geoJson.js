@@ -1,30 +1,13 @@
-import { decode } from '@googlemaps/polyline-codec';
+import { decode, decompress } from '@common/codec';
 import toGeoJSON from '@mapbox/togeojson';
 import * as turf from '@turf/turf';
 
-const precision = 5;
-
-export function poiToGeoJson(data) {
-  const meta = [];
-  for (let item of data.meta) {
-    switch (typeof item) {
-      case 'object':
-        meta.push(item);
-        break;
-      case 'string':
-        meta.push([item]);
-        break;
-      case 'number':
-        while (item--) {
-          meta.push([]);
-        }
-        break;
-    }
-  }
+export async function poiToGeoJson(data) {
+  const { polylines, metadata } = decode(await decompress(data));
 
   return turf.featureCollection(
-    decode(data.data, precision).map(([lat, lng], index) => {
-      const [name, openingHours] = meta[index];
+    polylines[0].map(([lat, lng], index) => {
+      const [name, openingHours] = metadata[index];
       return turf.point([lng, lat], {
         name,
         openingHours,
@@ -33,11 +16,11 @@ export function poiToGeoJson(data) {
   );
 }
 
-export function wayToGeoJson(data) {
+export async function wayToGeoJson(data) {
+  const { polylines } = decode(await decompress(data));
+
   return turf.featureCollection(
-    data.map((coordinates) =>
-      turf.lineString(decode(coordinates, precision).map(([lat, lng]) => [lng, lat])),
-    ),
+    polylines.map((coordinates) => turf.lineString(coordinates.map(([lat, lng]) => [lng, lat]))),
   );
 }
 

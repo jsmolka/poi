@@ -143,8 +143,8 @@ const onMapLoaded = (map) => {
                 },
               },
             });
-            axios.get(layer.url).then((response) => {
-              map.getSource(id).setData(poiToGeoJson(response.data));
+            axios.get(layer.url, { responseType: 'arraybuffer' }).then(async (response) => {
+              map.getSource(id).setData(await poiToGeoJson(response.data));
             });
             break;
 
@@ -170,8 +170,8 @@ const onMapLoaded = (map) => {
                 },
               },
             });
-            axios.get(layer.url).then((response) => {
-              map.getSource(id).setData(wayToGeoJson(response.data));
+            axios.get(layer.url, { responseType: 'arraybuffer' }).then(async (response) => {
+              map.getSource(id).setData(await wayToGeoJson(response.data));
             });
             break;
         }
