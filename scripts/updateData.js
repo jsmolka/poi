@@ -81,13 +81,7 @@ function encodePoi(elements) {
       element.lon ?? element.center.lon
     ]);
 
-    const name =
-      element.tags.name ??
-      element.tags.brand ??
-      element.tags.operator ??
-      element.tags.official_name ??
-      element.tags.short_name ??
-      '';
+    const name = element.tags.name ?? element.tags.brand ?? '';
     if (element.tags.opening_hours) {
       meta.push([name, element.tags.opening_hours]);
     } else if (name) {
