@@ -3,6 +3,7 @@ import axios from 'axios';
 import { config } from 'dotenv';
 import { mkdirSync, writeFileSync } from 'fs';
 import { dirname } from 'path';
+import simplify from 'simplify-js';
 import { fileURLToPath } from 'url';
 
 config();
@@ -108,16 +109,26 @@ async function updatePoi(poi, queries) {
 }
 
 function encodeWay(elements) {
-  return elements.map((element) =>
-    codec.encode(
-      element.geometry.map(({ lat, lon }) => [lat, lon]),
-      precision,
-    ),
-  );
+  return elements.map((element) => {
+    let polyline = element.geometry.map(({ lat, lon }) => [lat, lon]);
+    if (polyline.length > 2) {
+      const lat = (polyline[0][0] * Math.PI) / 180;
+      const metersDegLng = 111320 * Math.cos(lat);
+      const metersDegLat = 110574;
+
+      const projected = polyline.map((coordinate, i) => ({
+        x: coordinate[0] * metersDegLng,
+        y: coordinate[1] * metersDegLat,
+        i,
+      }));
+      polyline = simplify(projected, 1, true).map(({ i }) => polyline[i]);
+    }
+    return codec.encode(polyline, precision);
+  });
 }
 
 async function updateWay(way, queries) {
-  const elements = await query(queries, ['DE'], 'out tags geom;');
+  const elements = await query(queries, ['DE'], 'out geom;');
   writeJson(`../src/assets/data/${way}.json`, encodeWay(elements));
 }
 
