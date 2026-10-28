@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center gap-2 p-2 bg-shade-8 border rounded-sm">
+  <div class="bg-shade-8 flex items-center gap-2 rounded-sm border p-2">
     <Button variant="ghost" size="icon" title="Locate" :disabled="location == null" @click="locate">
       <PhGpsFix class="size-4" />
     </Button>
@@ -8,37 +8,56 @@
       <PhPath class="size-4" />
     </Button>
 
-    <Toggle
-      variant="ghost"
-      size="icon"
-      title="Show distance marker"
-      v-model="settings.showDistanceMarker"
-    >
-      <PhRuler class="size-4" />
-    </Toggle>
+    <DropdownMenu>
+      <DropdownMenuTrigger as-child>
+        <Button variant="ghost" size="icon" title="Settings">
+          <PhGear class="size-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuGroup>
+          <DropdownMenuCheckboxItem
+            v-for="country in Country.$values"
+            v-model="settings[country]"
+            @select.prevent
+          >
+            {{ Country.$translate(country) }}
+          </DropdownMenuCheckboxItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
 
     <Toggle
-      v-for="[key, layer] in Object.entries(layers)"
+      v-for="[poi, { name, color }] in Object.entries(pois)"
       variant="ghost"
       size="icon"
-      v-model="settings[key]"
-      :title="layer.name"
+      :title="name"
+      v-model="settings[poi]"
     >
-      <div class="size-4 rounded-full" :style="{ background: layer.color }" />
+      <div class="size-4 rounded-full" :style="{ background: color }" />
     </Toggle>
   </div>
 </template>
 
 <script setup>
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Toggle } from '@/components/ui/toggle';
 import { useLocation } from '@/composables/useLocation';
-import { layers, routeId } from '@/modules/layers';
+import { Country } from '@/modules/country';
+import { pois } from '@/modules/pois';
 import { useSettingsStore } from '@/stores/settings';
 import { colors } from '@/utils/colors';
 import { readAsText, selectFile } from '@/utils/filesystem';
 import { gpxToGeoJson } from '@/utils/geoJson';
-import { PhGpsFix, PhPath, PhRuler } from '@phosphor-icons/vue';
+import { cn } from '@/utils/ui';
+import { PhGear, PhGpsFix, PhPath } from '@phosphor-icons/vue';
 import * as turf from '@turf/turf';
 import { useMagicKeys } from '@vueuse/core';
 import { Map, Marker } from 'mapbox-gl';
@@ -62,16 +81,16 @@ const locate = () => {
 let route = null;
 
 const uploadRoute = async () => {
-  if (props.map.getLayer(routeId)) {
-    props.map.removeLayer(routeId);
-  }
+  const id = 'route';
 
-  if (props.map.getSource(routeId)) {
-    props.map.removeSource(routeId);
+  if (props.map.getLayer(id)) {
+    props.map.removeLayer(id);
+  }
+  if (props.map.getSource(id)) {
+    props.map.removeSource(id);
   }
 
   route = null;
-  updateDistanceMarker();
 
   const content = await readAsText(await selectFile('gpx'));
   const geojson = gpxToGeoJson(content);
@@ -82,33 +101,37 @@ const uploadRoute = async () => {
       coordinates.push(...feature.geometry.coordinates);
     }
   });
-  if (coordinates.length > 0) {
-    route = turf.lineString(coordinates);
-  } else {
+  if (coordinates.length === 0) {
     route = null;
+    return;
   }
 
-  props.map.addDataLayer({
-    id: routeId,
-    type: 'line',
-    source: {
-      type: 'geojson',
-      data: geojson,
-    },
-    layout: {
-      'line-join': 'round',
-      'line-cap': 'round',
-    },
-    paint: {
-      'line-color': colors.shade2.hex,
-      'line-width': {
-        stops: [
-          [6, 0.5],
-          [18, 8],
-        ],
+  route = turf.lineString(coordinates);
+
+  props.map.addLayer(
+    {
+      id,
+      type: 'line',
+      source: {
+        type: 'geojson',
+        data: geojson,
+      },
+      layout: {
+        'line-join': 'round',
+        'line-cap': 'round',
+      },
+      paint: {
+        'line-color': colors.shade2.hex,
+        'line-width': {
+          stops: [
+            [6, 0.5],
+            [18, 8],
+          ],
+        },
       },
     },
-  });
+    `${id}-order`,
+  );
 
   const w = window.innerWidth;
   const h = window.innerHeight;
@@ -127,8 +150,7 @@ const updateDistanceMarker = (event) => {
 
   markerEvent = event;
 
-  const showDistanceMarker = settings.value.showDistanceMarker || ctrl.value;
-  if (route == null || !showDistanceMarker) {
+  if (route == null || !ctrl.value) {
     marker?.remove();
     marker = null;
     return;
@@ -139,12 +161,13 @@ const updateDistanceMarker = (event) => {
 
   if (marker == null) {
     const element = document.createElement('div');
-    element.className = 'bg-shade-2 text-shade-8 text-xs p-1 rounded-sm';
+    element.className = cn('bg-shade-2 text-shade-8 rounded-sm p-1 text-xs');
 
     marker = new Marker({ element, closeOnClick: false, anchor: 'center' })
       .setLngLat(closestPoint.geometry.coordinates)
       .addTo(props.map);
   }
+
   marker.setLngLat(closestPoint.geometry.coordinates);
   marker.getElement().textContent = closestPoint.properties.totalDistance.toLocaleString(
     undefined,
@@ -156,11 +179,9 @@ const updateDistanceMarker = (event) => {
   );
 };
 
-props.map.on('mousemove', updateDistanceMarker);
+watch(ctrl, () => {
+  updateDistanceMarker(markerEvent);
+});
 
-watch(ctrl, () => updateDistanceMarker(markerEvent));
-watch(
-  () => settings.value.showDistanceMarker,
-  () => updateDistanceMarker(markerEvent),
-);
+props.map.on('mousemove', updateDistanceMarker);
 </script>

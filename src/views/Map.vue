@@ -4,7 +4,9 @@
 
 <script setup>
 import { env } from '@/common/env';
-import { layerIds } from '@/modules/layers';
+import { Country } from '@/modules/country';
+import { pois } from '@/modules/pois';
+import { pairs } from '@/utils/iterator';
 import { useResizeObserver } from '@vueuse/core';
 import { Map } from 'mapbox-gl';
 import { onMounted, onUnmounted, useTemplateRef } from 'vue';
@@ -23,30 +25,17 @@ onMounted(() => {
     accessToken: env.mapboxAccessToken,
     container: container.value,
     style: 'mapbox://styles/juliansmolka/clzwx15zy002n01qs7yrr9zsr',
-    center: props.center,
-    zoom: props.zoom,
+    ...props,
   });
 
   map.dragRotate.disable();
   map.touchZoomRotate.disableRotation();
   map.touchPitch.disable();
 
-  map.addDataLayer = function (layer) {
-    const textLayer = this.getStyle().layers.find(({ type }) => type === 'symbol');
-
-    this.addLayer(layer, textLayer?.id);
-
-    for (const id of layerIds) {
-      if (this.getLayer(id)) {
-        this.moveLayer(id, 'road-label-simple');
-      }
-    }
-  };
-
   emit('mounted', map);
 
   map.on('load', () => {
-    emit('loaded', map);
+    onLoaded(map);
   });
 
   useResizeObserver(container, () => {
@@ -57,4 +46,32 @@ onMounted(() => {
     map.remove();
   });
 });
+
+const onLoaded = (map) => {
+  const text = map.getStyle().layers.find((layer) => {
+    return layer.type === 'symbol';
+  });
+
+  const ids = [text.id];
+  for (const poi of Object.keys(pois)) {
+    for (const country of Country.$values) {
+      ids.push(`${poi}/${country}-order`);
+    }
+  }
+
+  ids.push('route-order');
+
+  for (const [beforeId, id] of pairs(ids)) {
+    map.addLayer(
+      {
+        id,
+        type: 'background',
+        layout: { visibility: 'none' },
+      },
+      beforeId,
+    );
+  }
+
+  emit('loaded', map);
+};
 </script>

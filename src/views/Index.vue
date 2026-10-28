@@ -1,16 +1,17 @@
 <template>
   <Map
-    class="h-full bg-shade-6"
+    class="bg-shade-6 size-full"
     :center="location ?? leipzig"
     :zoom="10"
-    @loaded="onMapLoaded"
     @mounted="onMapMounted"
+    @loaded="onMapLoaded"
   />
 </template>
 
 <script setup>
 import { useLocation } from '@/composables/useLocation';
-import { layers } from '@/modules/layers';
+import { Country } from '@/modules/country';
+import { pois } from '@/modules/pois';
 import { useSettingsStore } from '@/stores/settings';
 import { poiToGeoJson, wayToGeoJson } from '@/utils/geoJson';
 import Map from '@/views/Map.vue';
@@ -89,7 +90,16 @@ const satelliteUrl = (lat, lng, zoom = 21) => {
 };
 
 const onMapLoaded = (map) => {
-  const ids = Object.keys(layers);
+  const ids = [];
+  for (const poi of Object.keys(pois)) {
+    for (const country of Country.$values) {
+      ids.push(`${poi}/${country}`);
+    }
+  }
+
+  map.on('click', ids, (event) => {
+    onPoiClick(event);
+  });
 
   map.on('mouseenter', ids, () => {
     map.getCanvas().style.cursor = 'pointer';
@@ -99,88 +109,127 @@ const onMapLoaded = (map) => {
     map.getCanvas().style.cursor = '';
   });
 
-  map.on('click', ids, (event) => {
-    const feature = event.features[0];
+  const pending = new window.Map();
 
-    const coordinates = (
-      feature.geometry.type === 'LineString'
-        ? turf.nearestPointOnLine(feature, turf.point([event.lngLat.lng, event.lngLat.lat]))
-        : feature
-    ).geometry.coordinates;
+  const load = async (id, type, color, url) => {
+    const controller = new AbortController();
+    pending.set(id, controller);
 
-    const popup = new Popup({ closeButton: false });
-    popup.setLngLat(coordinates);
-    popup.setHTML(`
+    try {
+      const response = await axios.get(url, {
+        responseType: 'arraybuffer',
+        signal: controller.signal,
+      });
+
+      const source = {
+        type: 'geojson',
+        data: type === 'poi'
+          ? await poiToGeoJson(response.data)
+          : await wayToGeoJson(response.data), // prettier-ignore
+      };
+
+      if (controller.signal.aborted) {
+        return;
+      }
+
+      if (type === 'poi') {
+        map.addLayer(
+          {
+            id,
+            type: 'circle',
+            source,
+            paint: {
+              'circle-color': color,
+              'circle-radius': {
+                stops: [
+                  [6, 1],
+                  [18, 16],
+                ],
+              },
+            },
+          },
+          `${id}-order`,
+        );
+      } else {
+        map.addLayer(
+          {
+            id,
+            type: 'line',
+            source,
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round',
+            },
+            paint: {
+              'line-color': color,
+              'line-width': {
+                stops: [
+                  [6, 0.5],
+                  [18, 8],
+                ],
+              },
+            },
+          },
+          `${id}-order`,
+        );
+      }
+    } catch (error) {
+      if (!axios.isCancel(error)) {
+        throw error;
+      }
+    } finally {
+      if (!controller.signal.aborted) {
+        pending.delete(id);
+      }
+    }
+  };
+
+  watchEffect(() => {
+    for (const [poi, { type, color, urls }] of Object.entries(pois)) {
+      for (const country of Country.$values) {
+        const id = `${poi}/${country}`;
+
+        if (!(settings.value[poi] && settings.value[country])) {
+          pending.get(id)?.abort();
+          pending.delete(id);
+
+          if (map.getLayer(id)) {
+            map.removeLayer(id);
+          }
+          if (map.getSource(id)) {
+            map.removeSource(id);
+          }
+          continue;
+        }
+
+        if (pending.has(id) || map.getLayer(id)) {
+          continue;
+        }
+
+        load(id, type, color, urls[country]);
+      }
+    }
+  });
+};
+
+const onPoiClick = (event) => {
+  const feature = event.features[0];
+
+  const coordinates = (
+    feature.geometry.type === 'LineString'
+      ? turf.nearestPointOnLine(feature, turf.point([event.lngLat.lng, event.lngLat.lat]))
+      : feature
+  ).geometry.coordinates;
+
+  const popup = new Popup({ closeButton: false });
+  popup.setLngLat(coordinates);
+  popup.setHTML(`
       <a href="${satelliteUrl(coordinates[1], coordinates[0])}" target="_blank" class="underline">
-        ${feature.properties.name || layers[feature.layer.id].name}
+        ${feature.properties.name || pois[feature.layer.id.split('/')[0]].name}
       </a>
       ${feature.properties.openingHours ? `<br>Opening hours: ${feature.properties.openingHours}` : ''}
     `);
 
-    popup.addTo(map);
-  });
-
-  watchEffect(() => {
-    for (const [id, layer] of Object.entries(layers)) {
-      const visible = settings.value[id];
-      if (visible && map.getLayer(id) == null) {
-        switch (layer.type) {
-          case 'poi':
-            map.addDataLayer({
-              id,
-              type: 'circle',
-              source: {
-                type: 'geojson',
-                data: null,
-              },
-              paint: {
-                'circle-color': layer.color,
-                'circle-radius': {
-                  stops: [
-                    [6, 1],
-                    [18, 16],
-                  ],
-                },
-              },
-            });
-            axios.get(layer.url, { responseType: 'arraybuffer' }).then(async (response) => {
-              map.getSource(id).setData(await poiToGeoJson(response.data));
-            });
-            break;
-
-          case 'way':
-            map.addDataLayer({
-              id,
-              type: 'line',
-              source: {
-                type: 'geojson',
-                data: null,
-              },
-              layout: {
-                'line-join': 'round',
-                'line-cap': 'round',
-              },
-              paint: {
-                'line-color': layer.color,
-                'line-width': {
-                  stops: [
-                    [6, 0.5],
-                    [18, 8],
-                  ],
-                },
-              },
-            });
-            axios.get(layer.url, { responseType: 'arraybuffer' }).then(async (response) => {
-              map.getSource(id).setData(await wayToGeoJson(response.data));
-            });
-            break;
-        }
-      }
-
-      if (map.getLayer(id) != null) {
-        map.setLayoutProperty(id, 'visibility', settings.value[id] ? 'visible' : 'none');
-      }
-    }
-  });
+  popup.addTo(event.target);
 };
 </script>

@@ -4,6 +4,10 @@ import { config } from 'dotenv';
 import { mkdirSync, writeFileSync } from 'fs';
 import { dirname } from 'path';
 import simplify from 'simplify-js';
+import { chain } from 'stream-chain';
+import { parser } from 'stream-json';
+import { pick } from 'stream-json/filters/Pick.js';
+import { streamValues } from 'stream-json/streamers/stream-values.js';
 import { fileURLToPath } from 'url';
 
 config();
@@ -34,7 +38,9 @@ async function query(queries, countries, out) {
           '[out:json][timeout:3600];',
           // Combine area of countries
           '(',
-          ...countries.map((country) => `area["ISO3166-1"="${country}"][admin_level=2];`),
+          ...countries.map(
+            (country) => `area["ISO3166-1"="${country.toUpperCase()}"][admin_level=2];`,
+          ),
           ');',
           // Run queries
           ...queries.map((query, index) => `${query} -> .q${index};`),
@@ -45,18 +51,44 @@ async function query(queries, countries, out) {
           out,
         ].join('\n'),
         {
+          // Some responses exceed Node's string length limit
+          responseType: 'stream',
           headers: {
             'User-Agent': 'poi',
           },
         },
       );
-      if (response.data.remark != null) {
-        throw response.data.remark;
-      }
-      if (response.data.elements.length === 0) {
-        throw 'No elements';
-      }
-      return response.data.elements;
+
+      return new Promise((resolve, reject) => {
+        const pipeline = chain([
+          response.data,
+          parser(),
+          pick({ filter: /^(remark|elements\.\d+)$/ }),
+          streamValues(),
+        ]);
+
+        const elements = [];
+
+        pipeline.on('data', ({ value }) => {
+          if (typeof value === 'object') {
+            elements.push(value);
+          } else {
+            response.data.destroy();
+            pipeline.destroy();
+            reject(value);
+          }
+        });
+
+        pipeline.on('end', () => {
+          if (elements.length > 0) {
+            resolve(elements);
+          } else {
+            reject('No elements');
+          }
+        });
+
+        pipeline.on('error', reject);
+      });
     } catch (error) {
       if (i === interpreters.length - 1) {
         throw error;
@@ -87,47 +119,35 @@ function encodePoi(elements) {
   return encode([polyline], metadata);
 }
 
-async function updatePoi(poi, queries) {
-  const elements = await query(
-    queries,
-    ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'ES', 'FR', 'IT', 'LI', 'LU', 'MC', 'NL', 'PL', 'PT'],
-    'out tags center qt;',
-  );
-  write(`../src/assets/data/${poi}.bin`, await compress(encodePoi(elements)));
-}
-
-function simplifyPolyline(polyline, toleranceMeters = 1) {
-  if (polyline.length <= 2) {
-    return polyline;
-  }
-
-  const lat = (polyline[0][0] * Math.PI) / 180;
-  const degToMetersLat = 110574;
-  const degToMetersLng = 111320 * Math.cos(lat);
-
-  return simplify(
-    polyline.map((coordinates, i) => ({
-      x: coordinates[0] * degToMetersLat,
-      y: coordinates[1] * degToMetersLng,
-      i,
-    })),
-    toleranceMeters,
-    true,
-  ).map(({ i }) => polyline[i]);
-}
-
 function encodeWay(elements) {
   return encode(
-    elements.map((element) => simplifyPolyline(element.geometry.map(({ lat, lon }) => [lat, lon]))),
-  );
-}
+    elements.map((element) => {
+      const polyline = element.geometry.map(({ lat, lon }) => [lat, lon]);
+      if (polyline.length <= 2) {
+        return polyline;
+      }
 
-async function updateWay(way, queries) {
-  const elements = await query(queries, ['DE'], 'out geom;');
-  write(`../src/assets/data/${way}.bin`, await compress(encodeWay(elements)));
+      const lat = (polyline[0][0] * Math.PI) / 180;
+      const degToMetersLat = 110574;
+      const degToMetersLng = 111320 * Math.cos(lat);
+
+      return simplify(
+        polyline.map((coordinates, i) => ({
+          x: coordinates[0] * degToMetersLat,
+          y: coordinates[1] * degToMetersLng,
+          i,
+        })),
+        1,
+        true,
+      ).map(({ i }) => polyline[i]);
+    }),
+  );
 }
 
 async function main() {
+  // prettier-ignore
+  const countries = ['at', 'be', 'ch', 'cz', 'de', 'dk', 'es', 'fr', 'it', 'li', 'lu', 'mc', 'nl', 'pl', 'pt', 'si'];
+
   const pois = {
     cafes: [
       'nwr["amenity"~"^(cafe|ice_cream)$"](area)',
@@ -139,20 +159,35 @@ async function main() {
     water: ['nwr["amenity"="drinking_water"](area)'],
   };
   for (const [poi, queries] of Object.entries(pois)) {
-    console.time(poi);
-    await updatePoi(poi, queries);
-    console.timeEnd(poi);
+    for (const country of countries) {
+      const path = `${poi}/${country}`;
+      console.time(path);
+      try {
+        const elements = await query(queries, [country], 'out tags center qt;');
+        write(`../src/assets/data/${path}.bin`, await compress(encodePoi(elements)));
+      } finally {
+        console.timeEnd(path);
+      }
+    }
   }
 
   const ways = {
     cobblestones: [
       'way["highway"]["surface"~"^(cobblestone|sett|cobblestone:flattened|unhewn_cobblestone)$"](area)',
     ],
+    gravel: ['way["highway"]["surface"~"^(gravel|fine_gravel|compacted|pebblestone)$"](area)'],
   };
   for (const [way, queries] of Object.entries(ways)) {
-    console.time(way);
-    await updateWay(way, queries);
-    console.timeEnd(way);
+    for (const country of countries) {
+      const path = `${way}/${country}`;
+      console.time(path);
+      try {
+        const elements = await query(queries, [country], 'out geom;');
+        write(`../src/assets/data/${path}.bin`, await compress(encodeWay(elements)));
+      } finally {
+        console.timeEnd(path);
+      }
+    }
   }
 }
 

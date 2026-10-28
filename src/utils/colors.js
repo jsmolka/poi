@@ -45,4 +45,5 @@ export const colors = Object.freeze({
   yellow: Color.parse('--color-yellow'),
   green: Color.parse('--color-green'),
   purple: Color.parse('--color-purple'),
+  brown: Color.parse('--color-brown'),
 });

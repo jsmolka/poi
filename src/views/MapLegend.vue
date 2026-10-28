@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col gap-1.5 px-2 py-1.5 bg-shade-5 text-xs rounded-sm">
-    <div v-for="layer in Object.values(layers)" class="flex items-center gap-2">
-      <div class="size-2 rounded-full" :style="{ background: layer.color }" />
-      {{ layer.name }}
+  <div class="bg-shade-5 flex flex-col gap-1.5 rounded-sm px-2 py-1.5 text-xs">
+    <div v-for="{ name, color } in Object.values(pois)" class="flex items-center gap-2">
+      <div class="size-2 rounded-full" :style="{ background: color }" />
+      {{ name }}
     </div>
   </div>
 </template>
 
 <script setup>
-import { layers } from '@/modules/layers';
+import { pois } from '@/modules/pois';
 </script>
