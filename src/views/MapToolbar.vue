@@ -1,5 +1,7 @@
 <template>
-  <div class="bg-shade-8 flex items-center gap-2 rounded-sm border p-2">
+  <div
+    class="bg-shade-8 flex max-w-[calc(100vw-20px)] flex-wrap items-center gap-2 rounded-sm border p-2"
+  >
     <Button variant="ghost" size="icon" title="Locate" :disabled="location == null" @click="locate">
       <PhGpsFix class="size-4" />
     </Button>
