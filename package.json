@@ -12,9 +12,6 @@
     "format": "npx eslint --fix src && npx prettier --write src",
     "bundle": "npx vite-bundle-visualizer"
   },
-  "prettier": {
-    "singleQuote": true
-  },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "@typescript-eslint/parser": "^8.71.2",
