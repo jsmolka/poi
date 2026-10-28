@@ -4,6 +4,8 @@ import { defineSchema, primitive } from '@/utils/persist';
 
 export class Settings {
   constructor() {
+    this.showDistanceMarker = false;
+
     for (const value of Country.$values) {
       this[value] = value === Country.de;
     }
@@ -13,7 +15,9 @@ export class Settings {
   }
 }
 
-const schema = {};
+const schema = {
+  showDistanceMarker: primitive(),
+};
 for (const value of Country.$values) {
   schema[value] = primitive();
 }

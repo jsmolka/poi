@@ -10,6 +10,15 @@
       <PhPath class="size-4" />
     </Button>
 
+    <Toggle
+      variant="ghost"
+      size="icon"
+      title="Show distance marker"
+      v-model="settings.showDistanceMarker"
+    >
+      <PhRuler class="size-4" />
+    </Toggle>
+
     <DropdownMenu>
       <DropdownMenuTrigger as-child>
         <Button variant="ghost" size="icon" title="Settings">
@@ -59,7 +68,7 @@ import { colors } from '@/utils/colors';
 import { readAsText, selectFile } from '@/utils/filesystem';
 import { gpxToGeoJson } from '@/utils/geoJson';
 import { cn } from '@/utils/ui';
-import { PhGear, PhGpsFix, PhPath } from '@phosphor-icons/vue';
+import { PhGear, PhGpsFix, PhPath, PhRuler } from '@phosphor-icons/vue';
 import * as turf from '@turf/turf';
 import { useMagicKeys } from '@vueuse/core';
 import { Map, Marker } from 'mapbox-gl';
@@ -93,6 +102,7 @@ const uploadRoute = async () => {
   }
 
   route = null;
+  updateDistanceMarker(markerEvent);
 
   const content = await readAsText(await selectFile('gpx'));
   const geojson = gpxToGeoJson(content);
@@ -152,7 +162,8 @@ const updateDistanceMarker = (event) => {
 
   markerEvent = event;
 
-  if (route == null || !ctrl.value) {
+  const showDistanceMarker = settings.value.showDistanceMarker || ctrl.value;
+  if (route == null || !showDistanceMarker) {
     marker?.remove();
     marker = null;
     return;
@@ -181,9 +192,11 @@ const updateDistanceMarker = (event) => {
   );
 };
 
-watch(ctrl, () => {
-  updateDistanceMarker(markerEvent);
-});
+watch(ctrl, () => updateDistanceMarker(markerEvent));
+watch(
+  () => settings.value.showDistanceMarker,
+  () => updateDistanceMarker(markerEvent),
+);
 
 props.map.on('mousemove', updateDistanceMarker);
 </script>
