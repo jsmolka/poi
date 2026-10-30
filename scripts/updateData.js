@@ -81,13 +81,13 @@ async function query(queries, countries, out) {
           data += chunk.toString('utf-8');
         }
 
-        let error;
+        let message;
         try {
-          error = data.match(/Error<\/strong>:\s*([^<]+)/)[1].trim();
+          message = data.match(/Error<\/strong>:\s*([^<]+)/)[1].trim();
         } catch {
-          error = data;
+          message = data;
         }
-        throw new Error(error);
+        throw new Error(message);
       }
 
       return new Promise((resolve, reject) => {
