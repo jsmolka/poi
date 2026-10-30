@@ -12,6 +12,8 @@ import { fileURLToPath } from 'url';
 
 config();
 
+const nextgisOverpassApiKey = process.env.NEXTGIS_OVERPASS_API_KEY;
+
 function relative(path) {
   return fileURLToPath(new URL(path, import.meta.url));
 }
@@ -23,15 +25,28 @@ function write(path, data) {
 }
 
 async function query(queries, countries, out) {
-  const interpreters = [
-    `https://overpass.nextgis.com/${process.env.NEXTGIS_OVERPASS_API_KEY}/api/interpreter`,
+  let interpreters = [
     'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
     'https://overpass.private.coffee/api/interpreter',
     'https://overpass-api.de/api/interpreter',
   ];
 
+  if (nextgisOverpassApiKey) {
+    interpreters = [
+      `https://overpass.nextgis.com/${nextgisOverpassApiKey}/api/interpreter`,
+      ...interpreters,
+    ];
+  }
+
   for (const [i, interpreter] of interpreters.entries()) {
     try {
+      console.log(
+        '>',
+        nextgisOverpassApiKey
+          ? interpreter.replaceAll(nextgisOverpassApiKey, 'API_KEY')
+          : interpreter,
+      );
+
       const response = await axios.post(
         interpreter,
         [
@@ -72,7 +87,7 @@ async function query(queries, countries, out) {
         } catch {
           error = data;
         }
-        throw error;
+        throw new Error(error);
       }
 
       return new Promise((resolve, reject) => {
@@ -106,8 +121,19 @@ async function query(queries, countries, out) {
         pipeline.on('error', reject);
       });
     } catch (error) {
+      let message;
+      if (axios.isAxiosError(error)) {
+        message = error.message;
+      } else if (error instanceof Error) {
+        message = error.message;
+      } else {
+        message = error;
+      }
+
+      console.log('x', message);
+
       if (i === interpreters.length - 1) {
-        throw error;
+        throw new Error(message);
       }
     }
   }
@@ -177,12 +203,14 @@ async function main() {
   for (const [poi, queries] of Object.entries(pois)) {
     for (const country of countries) {
       const path = `${poi}/${country}`;
+      console.log(path);
       console.time(path);
       try {
         const elements = await query(queries, [country], 'out tags center qt;');
         write(`../src/assets/data/${path}.bin`, await compress(encodePoi(elements)));
       } finally {
         console.timeEnd(path);
+        console.log();
       }
     }
   }
@@ -196,12 +224,14 @@ async function main() {
   for (const [way, queries] of Object.entries(ways)) {
     for (const country of countries) {
       const path = `${way}/${country}`;
+      console.log(path);
       console.time(path);
       try {
         const elements = await query(queries, [country], 'out geom;');
         write(`../src/assets/data/${path}.bin`, await compress(encodeWay(elements)));
       } finally {
         console.timeEnd(path);
+        console.log();
       }
     }
   }
