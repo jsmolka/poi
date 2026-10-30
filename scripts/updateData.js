@@ -39,14 +39,14 @@ async function query(queries, countries, out) {
   }
 
   for (const [i, interpreter] of interpreters.entries()) {
-    try {
-      console.log(
-        '>',
-        nextgisOverpassApiKey
-          ? interpreter.replaceAll(nextgisOverpassApiKey, 'API_KEY')
-          : interpreter,
-      );
+    console.log(
+      '>',
+      nextgisOverpassApiKey
+        ? interpreter.replaceAll(nextgisOverpassApiKey, 'API_KEY')
+        : interpreter,
+    );
 
+    try {
       const response = await axios.post(
         interpreter,
         [
