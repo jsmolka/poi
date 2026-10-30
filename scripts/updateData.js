@@ -1,5 +1,5 @@
 import { compress, encode } from '../common/codec.js';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { config } from 'dotenv';
 import { mkdirSync, writeFileSync } from 'fs';
 import { dirname } from 'path';
@@ -76,18 +76,7 @@ async function query(queries, countries, out) {
       );
 
       if (response.headers['content-type'] !== 'application/json') {
-        let data = '';
-        for await (const chunk of response.data) {
-          data += chunk.toString('utf-8');
-        }
-
-        let message;
-        try {
-          message = data.match(/Error<\/strong>:\s*([^<]+)/)[1].trim();
-        } catch {
-          message = data;
-        }
-        throw new Error(message);
+        throw new AxiosError(undefined, undefined, undefined, undefined, response);
       }
 
       return new Promise((resolve, reject) => {
@@ -123,7 +112,16 @@ async function query(queries, countries, out) {
     } catch (error) {
       let message;
       if (axios.isAxiosError(error)) {
-        message = error.message;
+        let data = '';
+        for await (const chunk of error.response.data) {
+          data += chunk.toString('utf-8');
+        }
+
+        try {
+          message = data.match(/Error<\/strong>:\s*([^<]+)/)[1].trim();
+        } catch {
+          message = error.message;
+        }
       } else if (error instanceof Error) {
         message = error.message;
       } else {
