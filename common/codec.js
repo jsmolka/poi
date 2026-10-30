@@ -11,29 +11,31 @@ function unzigzag(value) {
 }
 
 function writeVarint(out, value) {
-  while (value >= 128) {
-    out.push((value % 128) | 128);
-    value = Math.floor(value / 128);
+  while (value > 0x7f) {
+    out.push((value & 0x7f) | 0x80);
+    value >>>= 7;
   }
   out.push(value);
 }
 
 function readVarint(buffer, position) {
-  let result = 0;
-  let multiplier = 1;
-  let value;
+  let value = 0;
+  let shift = 0;
+  let byte;
   do {
-    value = buffer[position.value++];
-    if (value === undefined) {
+    byte = buffer[position.value++];
+    if (byte === undefined) {
       throw new Error('Unexpected end of data');
     }
-    result += (value & 127) * multiplier;
-    multiplier *= 128;
-    if (multiplier > 2 ** 56) {
+
+    value |= (byte & 0x7f) << shift;
+
+    shift += 7;
+    if (shift > 35) {
       throw new Error('Corrupt data: varint too long');
     }
-  } while (value & 128);
-  return result;
+  } while (byte & 0x80);
+  return value >>> 0;
 }
 
 const textEncoder = new TextEncoder();
