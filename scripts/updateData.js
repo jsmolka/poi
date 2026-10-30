@@ -54,6 +54,7 @@ async function query(queries, countries, out) {
           // Some responses exceed Node's string length limit
           responseType: 'stream',
           headers: {
+            Accept: 'application/json',
             'User-Agent': 'poi',
           },
         },
