@@ -60,6 +60,21 @@ async function query(queries, countries, out) {
         },
       );
 
+      if (response.headers['content-type'] !== 'application/json') {
+        let data = '';
+        for await (const chunk of response.data) {
+          data += chunk.toString('utf-8');
+        }
+
+        let error;
+        try {
+          error = data.match(/Error<\/strong>:\s*([^<]+)/)[1].trim();
+        } catch {
+          error = data;
+        }
+        throw error;
+      }
+
       return new Promise((resolve, reject) => {
         const pipeline = chain([
           response.data,
