@@ -64,26 +64,26 @@ export function useDeck(map) {
   let nextKey = 0;
 
   worker.onmessage = ({ data }) => {
-    const resolve = pending.get(data.reqId);
+    const resolve = pending.get(data.id);
     if (resolve) {
-      pending.delete(data.reqId);
+      pending.delete(data.id);
       resolve(data);
     }
   };
 
-  const requestTile = (key, bbox, z, signal) =>
+  const requestTile = (key, bbox, zoom, signal) =>
     new Promise((resolve, reject) => {
       if (signal?.aborted) {
         reject(new DOMException('Aborted', 'AbortError'));
         return;
       }
 
-      const reqId = nextReq++;
-      pending.set(reqId, resolve);
+      const id = nextReq++;
+      pending.set(id, resolve);
       signal?.addEventListener(
         'abort',
         () => {
-          if (pending.delete(reqId)) {
+          if (pending.delete(id)) {
             reject(new DOMException('Aborted', 'AbortError'));
           }
         },
@@ -93,10 +93,10 @@ export function useDeck(map) {
       worker.postMessage({
         type: 'tile',
         key,
-        reqId,
-        z,
+        id,
         bbox: [bbox.west, bbox.south, bbox.east, bbox.north],
-        tileSize: TILE_SIZE,
+        size: TILE_SIZE,
+        zoom,
         maxZoom: MAX_ZOOM,
       });
     });
@@ -158,14 +158,14 @@ export function useDeck(map) {
         length === 0
           ? null
           : { length, attributes: { getPosition: { value: positions, size: 2 } } },
-      renderTile: (props, size) =>
+      renderTile: (props, scale) =>
         new ScatterplotLayer({
           id: props.id,
           data: props.data,
           getFillColor: [color.r, color.g, color.b, 0xff],
           getRadius: 2,
           radiusUnits: 'pixels',
-          radiusScale: size,
+          radiusScale: scale,
           pickable: false,
         }),
     });
@@ -195,14 +195,14 @@ export function useDeck(map) {
         length === 0
           ? null
           : { length, startIndices, attributes: { getPath: { value: positions, size: 2 } } },
-      renderTile: (props, size) =>
+      renderTile: (props, scale) =>
         new PathLayer({
           id: props.id,
           data: props.data,
           getColor: [color.r, color.g, color.b, 0xff],
           getWidth: 1,
           widthUnits: 'pixels',
-          widthScale: size,
+          widthScale: scale,
           jointRounded: true,
           capRounded: true,
           pickable: false,

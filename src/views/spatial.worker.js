@@ -13,12 +13,7 @@ const datasets = new Map();
 self.onmessage = ({ data: message }) => {
   switch (message.type) {
     case 'init': {
-      datasets.set(
-        message.key,
-        message.kind === 'poi'
-          ? indexPois(message.positions)
-          : indexWays(message.positions, message.starts),
-      );
+      datasets.set(message.key, index(message));
       break;
     }
     case 'tile': {
@@ -32,7 +27,11 @@ self.onmessage = ({ data: message }) => {
   }
 };
 
-function indexPois(positions) {
+function index({ kind, positions, starts }) {
+  return { kind, ...(kind === 'poi' ? indexPoi(positions) : indexWay(positions, starts)) };
+}
+
+function indexPoi(positions) {
   const vertices = positions.length / 2;
   const bush = new Flatbush(vertices, undefined, Float32Array);
 
@@ -41,10 +40,10 @@ function indexPois(positions) {
   }
   bush.finish();
 
-  return { kind: 'poi', bush, positions };
+  return { bush, positions };
 }
 
-function indexWays(positions, starts) {
+function indexWay(positions, starts) {
   const length = starts.length - 1;
   const vertices = positions.length / 2;
   const bush = new Flatbush(length, undefined, Float32Array);
@@ -72,7 +71,7 @@ function indexWays(positions, starts) {
   }
   bush.finish();
 
-  return { kind: 'way', bush, positions, starts, significances };
+  return { bush, positions, starts, significances };
 }
 
 function douglasPeucker(positions, start, end, significances) {
@@ -131,36 +130,33 @@ function douglasPeucker(positions, start, end, significances) {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Tile generation (runs per request)
-// ---------------------------------------------------------------------------
-
-function tile({ key, reqId, z, bbox, tileSize, maxZoom }) {
+function tile({ key, id, bbox, size, zoom, maxZoom }) {
   const dataset = datasets.get(key);
-  if (!dataset) {
-    self.postMessage({ reqId, length: 0 });
+  if (dataset == null) {
+    self.postMessage({ id, length: 0 });
     return;
   }
 
   const [west, south, east, north] = bbox;
-  const tol = 360 / (tileSize * 2 ** z); // degrees of longitude per screen px at this zoom
-  const cosLat = Math.max(0.05, Math.cos((((south + north) / 2) * Math.PI) / 180));
-  const full = z >= maxZoom || SIMPLIFY_PX === 0; // overzoomed from the last level: full detail
-
-  if (dataset.kind === 'poi') tilePoints(dataset, reqId, west, south, east, north);
-  else tileWays(dataset, reqId, west, south, east, north, tol, cosLat, full);
+  if (dataset.kind === 'poi') {
+    tilePoi(dataset, id, west, south, east, north);
+  } else {
+    const pxToLng = 360 / (size * 2 ** zoom);
+    const pxToLat = Math.max(0.05, Math.cos((((south + north) / 2) * Math.PI) / 180)) * pxToLng;
+    const fullDetail = zoom >= maxZoom || SIMPLIFY_PX === 0;
+    tileWay(dataset, id, west, south, east, north, pxToLng, pxToLat, fullDetail);
+  }
 }
 
-function tilePoints(ds, reqId, west, south, east, north) {
-  const { bush, positions } = ds;
-  const hits = bush.search(west, south, east, north);
-
-  const out = new Float32Array(hits.length * 2);
-  for (let k = 0; k < hits.length; k++) {
-    out[2 * k] = positions[2 * hits[k]];
-    out[2 * k + 1] = positions[2 * hits[k] + 1];
+function tilePoi(dataset, id, west, south, east, north) {
+  const { bush, positions } = dataset;
+  const indices = bush.search(west, south, east, north);
+  const visible = new Float32Array(indices.length * 2);
+  for (const [i, index] of indices.entries()) {
+    visible[2 * i] = positions[2 * index];
+    visible[2 * i + 1] = positions[2 * index + 1];
   }
-  self.postMessage({ reqId, length: hits.length, positions: out }, [out.buffer]);
+  self.postMessage({ id, length: indices.length, positions: visible }, [visible.buffer]);
 }
 
 let T0 = 0;
@@ -209,16 +205,13 @@ function clipSegment(ax, ay, bx, by, x0, y0, x1, y1) {
   return true;
 }
 
-function tileWays(ds, reqId, west, south, east, north, tol, cosLat, full) {
-  const { bush, positions, starts, significances } = ds;
+function tileWay(dataset, id, west, south, east, north, pxToLng, pxToLat, fullDetail) {
+  const { bush, positions, starts, significances } = dataset;
 
-  const tolY = tol * cosLat; // degrees of latitude per px (approx.)
-  // Conservative: use the smaller of the two axes so nothing visible gets dropped.
-  const simplifyTol = SIMPLIFY_PX * tolY;
-  const thr = full ? 0 : simplifyTol * simplifyTol;
+  const threshold = fullDetail ? 0 : (SIMPLIFY_PX * Math.min(pxToLng, pxToLat)) ** 2;
 
-  const bx = BUFFER_PX * tol;
-  const by = BUFFER_PX * tolY;
+  const bx = BUFFER_PX * pxToLng;
+  const by = BUFFER_PX * pxToLat;
   const x0 = west - bx;
   const x1 = east + bx;
   const y0 = south - by;
@@ -249,7 +242,7 @@ function tileWays(ds, reqId, west, south, east, north, tol, cosLat, full) {
     let ay = 0;
 
     for (let v = s; v < e; v++) {
-      if (significances[v] < thr) continue; // simplified away at this zoom
+      if (significances[v] < threshold) continue; // simplified away at this zoom
 
       const x = positions[2 * v];
       const y = positions[2 * v + 1];
@@ -281,7 +274,7 @@ function tileWays(ds, reqId, west, south, east, north, tol, cosLat, full) {
 
   const result = Float32Array.from(outPos);
   const startIndices = Uint32Array.from(outStarts);
-  self.postMessage({ reqId, length: outStarts.length, positions: result, startIndices }, [
+  self.postMessage({ id, length: outStarts.length, positions: result, startIndices }, [
     result.buffer,
     startIndices.buffer,
   ]);
