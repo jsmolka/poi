@@ -1,3 +1,4 @@
+import { clamp } from '@/utils/numeric';
 import Flatbush from 'flatbush';
 
 // Margin around each tile (in screen px) so line caps/joins don't show seams at tile edges.
@@ -5,7 +6,7 @@ const BUFFER_PX = 16;
 // Vertex simplification tolerance in screen px. Features are never dropped, only redundant
 // vertices (collinear, duplicate, or within this distance of the line). 0.25px is invisible;
 // raise it (e.g. 1) for lighter tiles at low zoom, or set 0 to send every vertex.
-const SIMPLIFY_PX = 0.25;
+const SIMPLIFY_PX = 1;
 
 const datasets = new Map();
 
@@ -32,7 +33,9 @@ self.onmessage = ({ data: message }) => {
 };
 
 function indexPois(positions) {
-  const bush = new Flatbush(positions.length / 2, undefined, Float32Array);
+  const vertices = positions.length / 2;
+  const bush = new Flatbush(vertices, undefined, Float32Array);
+
   for (let i = 0; i < positions.length; i += 2) {
     bush.add(positions[i], positions[i + 1]);
   }
@@ -42,27 +45,22 @@ function indexPois(positions) {
 }
 
 function indexWays(positions, starts) {
-  const n = starts.length - 1;
-  if (n <= 0) return null;
+  const length = starts.length - 1;
+  const vertices = positions.length / 2;
+  const bush = new Flatbush(length, undefined, Float32Array);
+  const significances = new Float32Array(vertices);
 
-  const sig = new Float32Array(positions.length / 2); // per-vertex significance
-  const bush = new Flatbush(n, undefined, Float32Array);
+  for (let i = 0; i < length; i++) {
+    const start = starts[i];
+    const end = starts[i + 1];
 
-  for (let w = 0; w < n; w++) {
-    const s = starts[w];
-    const e = starts[w + 1];
-    if (e - s < 2) {
-      bush.add(0, 0, 0, 0); // placeholder, skipped in tile()
-      continue;
-    }
-
-    let minX = Infinity;
-    let minY = Infinity;
+    let minX = +Infinity;
     let maxX = -Infinity;
+    let minY = +Infinity;
     let maxY = -Infinity;
-    for (let v = s; v < e; v++) {
-      const x = positions[2 * v];
-      const y = positions[2 * v + 1];
+    for (let vertex = start; vertex < end; vertex++) {
+      const x = positions[2 * vertex];
+      const y = positions[2 * vertex + 1];
       if (x < minX) minX = x;
       if (x > maxX) maxX = x;
       if (y < minY) minY = y;
@@ -70,60 +68,65 @@ function indexWays(positions, starts) {
     }
     bush.add(minX, minY, maxX, maxY);
 
-    significance(positions, s, e, sig);
+    douglasPeucker(positions, start, end, significances);
   }
   bush.finish();
-  return { kind: 'way', bush, positions, starts, sig };
+
+  return { kind: 'way', bush, positions, starts, significances };
 }
 
-// Douglas-Peucker, computed once. sig[v] is the squared distance (in degrees^2) at which
-// vertex v would be dropped; endpoints are Infinity. At tile time, simplifying to a
-// tolerance is just "keep vertices with sig >= tol^2", with no per-tile geometry work.
-// A child's significance is clamped to its parent's, so a kept vertex always has its
-// ancestors kept too. Without that, the error against the final polyline can exceed the
-// tolerance (measured up to ~1.8x).
-function significance(pos, first, end, sig) {
+function douglasPeucker(positions, start, end, significances) {
   const last = end - 1;
-  sig[first] = Infinity;
-  sig[last] = Infinity;
+  significances[start] = Infinity;
+  significances[last] = Infinity;
 
-  const stack = [first, last, Infinity]; // [lo, hi, parentSig] triples
-  while (stack.length) {
-    const bound = stack.pop();
-    const hi = stack.pop();
-    const lo = stack.pop();
-    if (hi - lo < 2) continue;
+  const ranges = [start, last, Infinity];
+  while (ranges.length > 0) {
+    const parentSignificance = ranges.pop();
+    const rangeStart = ranges.pop();
+    const rangeEnd = ranges.pop();
+    if (rangeStart - rangeEnd < 2) {
+      continue;
+    }
 
-    const ax = pos[2 * lo];
-    const ay = pos[2 * lo + 1];
-    const dx = pos[2 * hi] - ax;
-    const dy = pos[2 * hi + 1] - ay;
-    const len2 = dx * dx + dy * dy;
+    const cordStartX = positions[2 * rangeEnd];
+    const cordStartY = positions[2 * rangeEnd + 1];
+    const cordDx = positions[2 * rangeStart] - cordStartX;
+    const cordDy = positions[2 * rangeStart + 1] - cordStartY;
+    const cordLengthSq = cordDx ** 2 + cordDy ** 2;
 
-    let maxD = 0;
-    let idx = -1;
-    for (let i = lo + 1; i < hi; i++) {
-      const px = pos[2 * i] - ax;
-      const py = pos[2 * i + 1] - ay;
-      let d2;
-      if (len2 === 0) {
-        d2 = px * px + py * py;
+    let maxDistSq = 0;
+    let maxVertex = -1;
+    for (let vertex = rangeEnd + 1; vertex < rangeStart; vertex++) {
+      const offsetX = positions[2 * vertex] - cordStartX;
+      const offsetY = positions[2 * vertex + 1] - cordStartY;
+
+      let distSq;
+      if (cordLengthSq === 0) {
+        distSq = offsetX ** 2 + offsetY ** 2;
       } else {
-        let t = (px * dx + py * dy) / len2;
-        t = t < 0 ? 0 : t > 1 ? 1 : t;
-        const ex = px - t * dx;
-        const ey = py - t * dy;
-        d2 = ex * ex + ey * ey;
+        const along = clamp((offsetX * cordDx + offsetY * cordDy) / cordLengthSq, 0, 1);
+        const gapX = offsetX - along * cordDx;
+        const gapY = offsetY - along * cordDy;
+        distSq = gapX ** 2 + gapY ** 2;
       }
-      if (d2 > maxD) {
-        maxD = d2;
-        idx = i;
+      if (distSq > maxDistSq) {
+        maxDistSq = distSq;
+        maxVertex = vertex;
       }
     }
-    if (idx >= 0) {
-      const d = maxD < bound ? maxD : bound;
-      sig[idx] = d;
-      stack.push(lo, idx, d, idx, hi, d);
+
+    if (maxVertex >= 0) {
+      const vertexSignificance = Math.min(maxDistSq, parentSignificance);
+      significances[maxVertex] = vertexSignificance;
+      ranges.push(
+        rangeEnd,
+        maxVertex,
+        vertexSignificance,
+        maxVertex,
+        rangeStart,
+        vertexSignificance,
+      );
     }
   }
 }
@@ -133,8 +136,8 @@ function significance(pos, first, end, sig) {
 // ---------------------------------------------------------------------------
 
 function tile({ key, reqId, z, bbox, tileSize, maxZoom }) {
-  const ds = datasets.get(key);
-  if (!ds) {
+  const dataset = datasets.get(key);
+  if (!dataset) {
     self.postMessage({ reqId, length: 0 });
     return;
   }
@@ -144,8 +147,8 @@ function tile({ key, reqId, z, bbox, tileSize, maxZoom }) {
   const cosLat = Math.max(0.05, Math.cos((((south + north) / 2) * Math.PI) / 180));
   const full = z >= maxZoom || SIMPLIFY_PX === 0; // overzoomed from the last level: full detail
 
-  if (ds.kind === 'poi') tilePoints(ds, reqId, west, south, east, north);
-  else tileWays(ds, reqId, west, south, east, north, tol, cosLat, full);
+  if (dataset.kind === 'poi') tilePoints(dataset, reqId, west, south, east, north);
+  else tileWays(dataset, reqId, west, south, east, north, tol, cosLat, full);
 }
 
 function tilePoints(ds, reqId, west, south, east, north) {
@@ -207,7 +210,7 @@ function clipSegment(ax, ay, bx, by, x0, y0, x1, y1) {
 }
 
 function tileWays(ds, reqId, west, south, east, north, tol, cosLat, full) {
-  const { bush, positions, starts, sig } = ds;
+  const { bush, positions, starts, significances } = ds;
 
   const tolY = tol * cosLat; // degrees of latitude per px (approx.)
   // Conservative: use the smaller of the two axes so nothing visible gets dropped.
@@ -246,7 +249,7 @@ function tileWays(ds, reqId, west, south, east, north, tol, cosLat, full) {
     let ay = 0;
 
     for (let v = s; v < e; v++) {
-      if (sig[v] < thr) continue; // simplified away at this zoom
+      if (significances[v] < thr) continue; // simplified away at this zoom
 
       const x = positions[2 * v];
       const y = positions[2 * v + 1];

@@ -172,18 +172,18 @@ export function useDeck(map) {
   };
 
   const addLayerWay = (id, polylines, color, beforeId = undefined) => {
-    // Flatten once: one coordinate buffer + per-way vertex offsets (transferred to the worker).
-    const starts = new Uint32Array(polylines.length + 1);
     let total = 0;
-    for (let i = 0; i < polylines.length; i++) {
+
+    const starts = new Uint32Array(polylines.length + 1);
+    for (const [i, polyline] of polylines.entries()) {
       starts[i] = total;
-      total += polylines[i].length / 2;
+      total += polyline.length / 2;
     }
     starts[polylines.length] = total;
 
-    const positions = new Float32Array(total * 2);
-    for (let i = 0; i < polylines.length; i++) {
-      positions.set(polylines[i], starts[i] * 2);
+    const positions = new Float32Array(2 * total);
+    for (const [i, polyline] of polylines.entries()) {
+      positions.set(polyline, 2 * starts[i]);
     }
 
     addTiledLayer({
