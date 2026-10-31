@@ -45,7 +45,7 @@
       :title="name"
       v-model="settings[poi]"
     >
-      <div class="size-4 rounded-full" :style="{ background: color }" />
+      <div class="size-4 rounded-full" :style="{ background: color.hex }" />
     </Toggle>
   </div>
 </template>

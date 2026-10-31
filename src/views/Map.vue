@@ -22,9 +22,11 @@ const container = useTemplateRef('container');
 
 onMounted(() => {
   const map = new Map({
-    accessToken: env.mapboxAccessToken,
     container: container.value,
+    accessToken: env.mapboxAccessToken,
     style: 'mapbox://styles/juliansmolka/clzwx15zy002n01qs7yrr9zsr',
+    projection: 'mercator',
+    antialias: true,
     ...props,
   });
 

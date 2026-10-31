@@ -13,14 +13,14 @@ import { useLocation } from '@/composables/useLocation';
 import { Country } from '@/modules/country';
 import { pois } from '@/modules/pois';
 import { useSettingsStore } from '@/stores/settings';
-import { poiToGeoJson, wayToGeoJson } from '@/utils/geoJson';
 import Map from '@/views/Map.vue';
 import MapLegend from '@/views/MapLegend.vue';
 import MapToolbar from '@/views/MapToolbar.vue';
-import * as turf from '@turf/turf';
+import { useDeck } from '@/views/useDeck';
+import { decode, decompress } from '@common/codec';
 import axios from 'axios';
 import { createElement, MapPin } from 'lucide';
-import { Marker, Popup, ScaleControl } from 'mapbox-gl';
+import { Marker, ScaleControl } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
 import { createApp, watch, watchEffect } from 'vue';
 
@@ -90,16 +90,12 @@ const satelliteUrl = (lat, lng, zoom = 21) => {
 };
 
 const onMapLoaded = (map) => {
-  const ids = [];
+  const ids = ['paths'];
   for (const poi of Object.keys(pois)) {
     for (const country of Country.$values) {
       ids.push(`${poi}/${country}`);
     }
   }
-
-  map.on('click', ids, (event) => {
-    onPoiClick(event);
-  });
 
   map.on('mouseenter', ids, () => {
     map.getCanvas().style.cursor = 'pointer';
@@ -111,6 +107,8 @@ const onMapLoaded = (map) => {
 
   const pending = new window.Map();
 
+  const { addLayerPoi, addLayerWay, removeLayer } = useDeck(map);
+
   const load = async (id, type, color, url) => {
     const controller = new AbortController();
     pending.set(id, controller);
@@ -121,57 +119,15 @@ const onMapLoaded = (map) => {
         signal: controller.signal,
       });
 
-      const source = {
-        type: 'geojson',
-        data: type === 'poi'
-          ? await poiToGeoJson(response.data)
-          : await wayToGeoJson(response.data), // prettier-ignore
-      };
-
+      const { polylines } = decode(await decompress(response.data));
       if (controller.signal.aborted) {
         return;
       }
 
       if (type === 'poi') {
-        map.addLayer(
-          {
-            id,
-            type: 'circle',
-            source,
-            paint: {
-              'circle-color': color,
-              'circle-radius': {
-                stops: [
-                  [6, 1],
-                  [18, 16],
-                ],
-              },
-            },
-          },
-          `${id}-order`,
-        );
+        addLayerPoi(id, polylines[0], color, `${id}-order`);
       } else {
-        map.addLayer(
-          {
-            id,
-            type: 'line',
-            source,
-            layout: {
-              'line-join': 'round',
-              'line-cap': 'round',
-            },
-            paint: {
-              'line-color': color,
-              'line-width': {
-                stops: [
-                  [6, 0.5],
-                  [18, 8],
-                ],
-              },
-            },
-          },
-          `${id}-order`,
-        );
+        addLayerWay(id, polylines, color, `${id}-order`);
       }
     } catch (error) {
       if (!axios.isCancel(error)) {
@@ -192,13 +148,7 @@ const onMapLoaded = (map) => {
         if (!(settings.value[poi] && settings.value[country])) {
           pending.get(id)?.abort();
           pending.delete(id);
-
-          if (map.getLayer(id)) {
-            map.removeLayer(id);
-          }
-          if (map.getSource(id)) {
-            map.removeSource(id);
-          }
+          removeLayer(id);
           continue;
         }
 
@@ -210,26 +160,5 @@ const onMapLoaded = (map) => {
       }
     }
   });
-};
-
-const onPoiClick = (event) => {
-  const feature = event.features[0];
-
-  const coordinates = (
-    feature.geometry.type === 'LineString'
-      ? turf.nearestPointOnLine(feature, turf.point([event.lngLat.lng, event.lngLat.lat]))
-      : feature
-  ).geometry.coordinates;
-
-  const popup = new Popup({ closeButton: false });
-  popup.setLngLat(coordinates);
-  popup.setHTML(`
-      <a href="${satelliteUrl(coordinates[1], coordinates[0])}" target="_blank" class="underline">
-        ${feature.properties.name || pois[feature.layer.id.split('/')[0]].name}
-      </a>
-      ${feature.properties.openingHours ? `<br>Opening hours: ${feature.properties.openingHours}` : ''}
-    `);
-
-  popup.addTo(event.target);
 };
 </script>

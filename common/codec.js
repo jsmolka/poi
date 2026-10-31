@@ -93,11 +93,9 @@ export function decode(buffer) {
 
   return {
     polylines: Array.from({ length: readVarint(buffer, state) }, () => {
-      return Array.from({ length: readVarint(buffer, state) }, () => {
-        return Array.from({ length: 2 }, (_, index) => {
-          previous[index] += unzigzag(readVarint(buffer, state));
-          return previous[index] / 10 ** PRECISION;
-        });
+      return Float32Array.from({ length: 2 * readVarint(buffer, state) }, (_, index) => {
+        previous[index & 0x1] += unzigzag(readVarint(buffer, state));
+        return previous[index & 0x1] / 10 ** PRECISION;
       });
     }),
 
