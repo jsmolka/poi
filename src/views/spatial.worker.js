@@ -47,7 +47,7 @@ function indexWay(positions, starts) {
   const length = starts.length - 1;
   const vertices = positions.length / 2;
   const bush = new Flatbush(length, undefined, Float32Array);
-  const significances = new Float32Array(vertices);
+  const weights = new Float32Array(vertices);
 
   for (let i = 0; i < length; i++) {
     const start = starts[i];
@@ -67,47 +67,47 @@ function indexWay(positions, starts) {
     }
     bush.add(minX, minY, maxX, maxY);
 
-    douglasPeucker(positions, start, end, significances);
+    simplify(positions, start, end, weights);
   }
   bush.finish();
 
-  return { bush, positions, starts, significances };
+  return { bush, positions, starts, weights };
 }
 
-function douglasPeucker(positions, start, end, significances) {
+function simplify(positions, start, end, weights) {
   const last = end - 1;
-  significances[start] = Infinity;
-  significances[last] = Infinity;
+  weights[start] = Infinity;
+  weights[last] = Infinity;
 
-  const ranges = [start, last, Infinity];
-  while (ranges.length > 0) {
-    const parentSignificance = ranges.pop();
-    const rangeStart = ranges.pop();
-    const rangeEnd = ranges.pop();
-    if (rangeStart - rangeEnd < 2) {
+  const stack = [start, last, Infinity];
+  while (stack.length > 0) {
+    const parentWeight = stack.pop();
+    const hi = stack.pop();
+    const lo = stack.pop();
+    if (hi - lo < 2) {
       continue;
     }
 
-    const cordStartX = positions[2 * rangeEnd];
-    const cordStartY = positions[2 * rangeEnd + 1];
-    const cordDx = positions[2 * rangeStart] - cordStartX;
-    const cordDy = positions[2 * rangeStart + 1] - cordStartY;
-    const cordLengthSq = cordDx ** 2 + cordDy ** 2;
+    const ax = positions[2 * lo];
+    const bx = positions[2 * lo + 1];
+    const dx = positions[2 * hi] - ax;
+    const dy = positions[2 * hi + 1] - bx;
+    const lenSq = dx ** 2 + dy ** 2;
 
     let maxDistSq = 0;
-    let maxVertex = -1;
-    for (let vertex = rangeEnd + 1; vertex < rangeStart; vertex++) {
-      const offsetX = positions[2 * vertex] - cordStartX;
-      const offsetY = positions[2 * vertex + 1] - cordStartY;
+    let maxVertex = null;
+    for (let vertex = lo + 1; vertex < hi; vertex++) {
+      const ox = positions[2 * vertex] - ax;
+      const oy = positions[2 * vertex + 1] - bx;
 
       let distSq;
-      if (cordLengthSq === 0) {
-        distSq = offsetX ** 2 + offsetY ** 2;
+      if (lenSq === 0) {
+        distSq = ox ** 2 + oy ** 2;
       } else {
-        const along = clamp((offsetX * cordDx + offsetY * cordDy) / cordLengthSq, 0, 1);
-        const gapX = offsetX - along * cordDx;
-        const gapY = offsetY - along * cordDy;
-        distSq = gapX ** 2 + gapY ** 2;
+        const t = clamp((ox * dx + oy * dy) / lenSq, 0, 1);
+        const gx = ox - t * dx;
+        const ty = oy - t * dy;
+        distSq = gx ** 2 + ty ** 2;
       }
       if (distSq > maxDistSq) {
         maxDistSq = distSq;
@@ -115,17 +115,10 @@ function douglasPeucker(positions, start, end, significances) {
       }
     }
 
-    if (maxVertex >= 0) {
-      const vertexSignificance = Math.min(maxDistSq, parentSignificance);
-      significances[maxVertex] = vertexSignificance;
-      ranges.push(
-        rangeEnd,
-        maxVertex,
-        vertexSignificance,
-        maxVertex,
-        rangeStart,
-        vertexSignificance,
-      );
+    if (maxVertex != null) {
+      const weight = Math.min(maxDistSq, parentWeight);
+      weights[maxVertex] = weight;
+      stack.push(lo, maxVertex, weight, maxVertex, hi, weight);
     }
   }
 }
@@ -159,16 +152,12 @@ function tilePoi(dataset, id, west, south, east, north) {
   self.postMessage({ id, length: indices.length, positions: visible }, [visible.buffer]);
 }
 
-let T0 = 0;
-let T1 = 1;
-
-// Liang-Barsky. On success, [T0, T1] is the visible part of the segment as fractions of a->b.
 function clipSegment(ax, ay, bx, by, x0, y0, x1, y1) {
   const dx = bx - ax;
   const dy = by - ay;
+
   let t0 = 0;
   let t1 = 1;
-
   for (let k = 0; k < 4; k++) {
     let p;
     let q;
@@ -187,26 +176,25 @@ function clipSegment(ax, ay, bx, by, x0, y0, x1, y1) {
     }
 
     if (p === 0) {
-      if (q < 0) return false;
+      if (q < 0) {
+        return { visible: false, t0, t1 };
+      }
     } else {
       const r = q / p;
       if (p < 0) {
-        if (r > t1) return false;
+        if (r > t1) return { visible: false, t0, t1 };
         if (r > t0) t0 = r;
       } else {
-        if (r < t0) return false;
+        if (r < t0) return { visible: false, t0, t1 };
         if (r < t1) t1 = r;
       }
     }
   }
-
-  T0 = t0;
-  T1 = t1;
-  return true;
+  return { visible: true, t0, t1 };
 }
 
 function tileWay(dataset, id, west, south, east, north, pxToLng, pxToLat, fullDetail) {
-  const { bush, positions, starts, significances } = dataset;
+  const { bush, positions, starts, weights } = dataset;
 
   const threshold = fullDetail ? 0 : (SIMPLIFY_PX * Math.min(pxToLng, pxToLat)) ** 2;
 
@@ -242,22 +230,25 @@ function tileWay(dataset, id, west, south, east, north, pxToLng, pxToLat, fullDe
     let ay = 0;
 
     for (let v = s; v < e; v++) {
-      if (significances[v] < threshold) continue; // simplified away at this zoom
+      if (weights[v] < threshold) {
+        continue;
+      }
 
       const x = positions[2 * v];
       const y = positions[2 * v + 1];
 
       if (have) {
-        if (clipSegment(ax, ay, x, y, x0, y0, x1, y1)) {
+        const { visible, t0, t1 } = clipSegment(ax, ay, x, y, x0, y0, x1, y1);
+        if (visible) {
           const dx = x - ax;
           const dy = y - ay;
-          if (!open || T0 > 0) {
+          if (!open || t0 > 0) {
             if (open) endPiece();
             beginPiece();
-            outPos.push(ax + T0 * dx, ay + T0 * dy);
+            outPos.push(ax + t0 * dx, ay + t0 * dy);
           }
-          outPos.push(ax + T1 * dx, ay + T1 * dy);
-          open = T1 >= 1;
+          outPos.push(ax + t1 * dx, ay + t1 * dy);
+          open = t1 >= 1;
           if (!open) endPiece(); // the line left the (buffered) tile
         } else if (open) {
           endPiece();
