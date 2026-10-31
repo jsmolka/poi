@@ -1,7 +1,13 @@
 import { clamp, lerp } from '@/utils/numeric';
+import { TileLayer } from '@deck.gl/geo-layers';
 import { PathLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { MapboxOverlay } from '@deck.gl/mapbox';
-import Flatbush from 'flatbush';
+
+// Must match what the worker assumes: tiles are 512px, so tile zoom == map zoom.
+const TILE_SIZE = 512;
+// Tiles at this zoom (and when overzooming past it) are sent at full detail.
+// Lower it if tiles get heavy in dense areas.
+const MAX_ZOOM = 14;
 
 export function useDeck(map) {
   const overlay = new MapboxOverlay({ interleaved: true });
@@ -42,71 +48,6 @@ export function useDeck(map) {
     overlay.setProps({ layers: Array.from(layers.values()) });
   };
 
-  const getPaddedBounds = (padding = undefined) => {
-    padding ??= 0.25;
-
-    const bounds = map.getBounds();
-    const w = bounds.getWest();
-    const e = bounds.getEast();
-    const s = bounds.getSouth();
-    const n = bounds.getNorth();
-
-    const viewW = e - w;
-    const viewH = n - s;
-    const dx = padding * viewW;
-    const dy = padding * viewH;
-    return {
-      w: w - dx,
-      e: e + dx,
-      s: Math.max(-90, s - dy),
-      n: Math.min(+90, n + dy),
-      viewW,
-      viewH,
-    };
-  };
-
-  const getPaddedBoxes = (padding = undefined) => {
-    const { w, e, s, n } = getPaddedBounds(padding);
-    if (e - w >= 360) {
-      return [[-180, s, 180, n]];
-    } else if (w < -180) {
-      return [
-        [w + 360, s, 180, n],
-        [-180, s, e, n],
-      ];
-    } else if (e > 180) {
-      return [
-        [w, s, 180, n],
-        [-180, s, e - 360, n],
-      ];
-    } else {
-      return [[w, s, e, n]];
-    }
-  };
-
-  function isLeavingPaddedBounds(loadedBounds) {
-    const bounds = getPaddedBounds(0.05);
-    if (
-      loadedBounds == null ||
-      loadedBounds.s > bounds.s ||
-      loadedBounds.n < bounds.n ||
-      loadedBounds.viewW > 2 * bounds.viewW
-    ) {
-      return true;
-    }
-
-    if (loadedBounds.e - loadedBounds.w >= 360) {
-      return false;
-    }
-
-    for (const wrap of [-360, 0, 360]) {
-      if (bounds.w + wrap > loadedBounds.w && bounds.e + wrap < loadedBounds.e) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   const scale = () => {
     const minZoom = 6;
     const maxZoom = 18;
@@ -115,157 +56,158 @@ export function useDeck(map) {
     return lerp(minSize, maxSize, clamp((map.getZoom() - minZoom) / (maxZoom - minZoom), 0, 1));
   };
 
-  const addLayerPoi = (id, polyline, color, beforeId = undefined) => {
-    const bush = new Flatbush(polyline.length / 2, undefined, Float32Array);
-    for (let i = 0; i < polyline.length; i += 2) {
-      const x = polyline[i];
-      const y = polyline[i + 1];
-      bush.add(x, y);
+  // ---- worker plumbing ------------------------------------------------------
+
+  const worker = new Worker(new URL('./spatial.worker.js', import.meta.url), { type: 'module' });
+  const pending = new Map();
+  let nextReq = 0;
+  let nextKey = 0;
+
+  worker.onmessage = ({ data }) => {
+    const resolve = pending.get(data.reqId);
+    if (resolve) {
+      pending.delete(data.reqId);
+      resolve(data);
     }
-    bush.finish();
+  };
 
-    let loadedBounds = null;
-
-    function queryVisible() {
-      const indices = [];
-      loadedBounds = getPaddedBounds();
-      for (const [minX, minY, maxX, maxY] of getPaddedBoxes()) {
-        for (const index of bush.search(minX, minY, maxX, maxY)) {
-          indices.push(index);
-        }
+  const requestTile = (key, bbox, z, signal) =>
+    new Promise((resolve, reject) => {
+      if (signal?.aborted) {
+        reject(new DOMException('Aborted', 'AbortError'));
+        return;
       }
 
-      const visiblePositions = new Float32Array(2 * indices.length);
-      for (const [i, index] of indices.entries()) {
-        visiblePositions[2 * i] = polyline[2 * index];
-        visiblePositions[2 * i + 1] = polyline[2 * index + 1];
-      }
+      const reqId = nextReq++;
+      pending.set(reqId, resolve);
+      signal?.addEventListener(
+        'abort',
+        () => {
+          if (pending.delete(reqId)) {
+            reject(new DOMException('Aborted', 'AbortError'));
+          }
+        },
+        { once: true },
+      );
 
-      return {
-        length: indices.length,
-        attributes: { getPosition: { value: visiblePositions, size: 2 } },
-      };
-    }
-
-    let data = queryVisible();
-
-    const makeLayer = () => {
-      return new ScatterplotLayer({
-        id,
-        data,
-        getFillColor: [color.r, color.g, color.b, 0xff],
-        getRadius: 2,
-        radiusUnits: 'pixels',
-        radiusScale: scale(),
-        jointRounded: true,
-        capRounded: true,
-        beforeId,
+      worker.postMessage({
+        type: 'tile',
+        key,
+        reqId,
+        z,
+        bbox: [bbox.west, bbox.south, bbox.east, bbox.north],
+        tileSize: TILE_SIZE,
+        maxZoom: MAX_ZOOM,
       });
-    };
+    });
 
-    const update = () => {
-      if (isLeavingPaddedBounds(loadedBounds)) {
-        (async () => {
-          console.time('P');
-          data = queryVisible();
-          updateLayer(makeLayer());
-          console.timeEnd('P');
-        })();
+  // ---- shared tiled-layer helper ---------------------------------------------
+
+  const addTiledLayer = ({ id, beforeId, init, transfer, toData, renderTile }) => {
+    // unique per registration so a re-add with the same id can't touch the new dataset
+    const key = `${id}#${nextKey++}`;
+    worker.postMessage({ type: 'init', key, ...init }, transfer);
+
+    // Size is quantised so the layer is only rebuilt when it visibly changes.
+    const quantisedScale = () => Math.round(scale() * 10) / 10;
+    let size = quantisedScale();
+
+    const makeLayer = () =>
+      new TileLayer({
+        id,
+        beforeId,
+        pickable: false,
+        tileSize: TILE_SIZE,
+        minZoom: 0,
+        maxZoom: MAX_ZOOM,
+        maxRequests: 3, // tiles that scroll out of view before they're requested never reach the worker
+        refinementStrategy: 'best-available', // keep showing parent/child tiles while new ones load
+        getTileData: async ({ bbox, index, signal }) =>
+          toData(await requestTile(key, bbox, index.z, signal)),
+        renderSubLayers: (props) => (props.data ? renderTile(props, size) : null),
+        // Changing this regenerates the sublayers from the cached tile data (no refetch).
+        updateTriggers: { renderSubLayers: [size] },
+      });
+
+    const onZoom = () => {
+      const next = quantisedScale();
+      if (next !== size) {
+        size = next;
+        updateLayer(makeLayer());
       }
     };
 
-    map.on('move', update);
-
+    map.on('zoom', onZoom);
     addLayer(makeLayer(), () => {
-      map.off('move', update);
+      map.off('zoom', onZoom);
+      worker.postMessage({ type: 'dispose', key });
+    });
+  };
+
+  // ---- public API -------------------------------------------------------------
+
+  const addLayerPoi = (id, polyline, color, beforeId = undefined) => {
+    const positions = Float32Array.from(polyline); // copy: the buffer is transferred away
+
+    addTiledLayer({
+      id,
+      beforeId,
+      init: { kind: 'poi', positions },
+      transfer: [positions.buffer],
+      toData: ({ length, positions }) =>
+        length === 0
+          ? null
+          : { length, attributes: { getPosition: { value: positions, size: 2 } } },
+      renderTile: (props, size) =>
+        new ScatterplotLayer({
+          id: props.id,
+          data: props.data,
+          getFillColor: [color.r, color.g, color.b, 0xff],
+          getRadius: 2,
+          radiusUnits: 'pixels',
+          radiusScale: size,
+          pickable: false,
+        }),
     });
   };
 
   const addLayerWay = (id, polylines, color, beforeId = undefined) => {
-    const bush = new Flatbush(polylines.length, undefined, Float32Array);
-    for (const polyline of polylines) {
-      let minX = +Infinity;
-      let maxX = -Infinity;
-      let minY = +Infinity;
-      let maxY = -Infinity;
-      for (const [i, coordinate] of polyline.entries()) {
-        if ((i & 0x1) === 0) {
-          minX = Math.min(minX, coordinate);
-          maxX = Math.max(maxX, coordinate);
-        } else {
-          minY = Math.min(minY, coordinate);
-          maxY = Math.max(maxY, coordinate);
-        }
-      }
-      bush.add(minX, minY, maxX, maxY);
+    // Flatten once: one coordinate buffer + per-way vertex offsets (transferred to the worker).
+    const starts = new Uint32Array(polylines.length + 1);
+    let total = 0;
+    for (let i = 0; i < polylines.length; i++) {
+      starts[i] = total;
+      total += polylines[i].length / 2;
     }
-    bush.finish();
+    starts[polylines.length] = total;
 
-    let loadedBounds = null;
-
-    function queryVisible() {
-      loadedBounds = getPaddedBounds();
-
-      const indices = [];
-      for (const [minX, minY, maxX, maxY] of getPaddedBoxes()) {
-        for (const index of bush.search(minX, minY, maxX, maxY)) {
-          indices.push(index);
-        }
-      }
-
-      let total = 0;
-      for (const index of indices) {
-        total += polylines[index].length;
-      }
-
-      const visiblePositions = new Float32Array(total);
-      const visibleStarts = new Uint32Array(indices.length);
-
-      let vertices = 0;
-      for (const [i, index] of indices.entries()) {
-        visibleStarts[i] = vertices;
-        visiblePositions.set(polylines[index], vertices * 2);
-        vertices += polylines[index].length / 2;
-      }
-
-      return {
-        length: indices.length,
-        startIndices: visibleStarts,
-        attributes: { getPath: { value: visiblePositions, size: 2 } },
-      };
+    const positions = new Float32Array(total * 2);
+    for (let i = 0; i < polylines.length; i++) {
+      positions.set(polylines[i], starts[i] * 2);
     }
 
-    let data = queryVisible();
-
-    const makeLayer = () => {
-      return new PathLayer({
-        id,
-        data,
-        getColor: [color.r, color.g, color.b, 0xff],
-        getWidth: 1,
-        widthUnits: 'pixels',
-        widthScale: scale(),
-        jointRounded: true,
-        capRounded: true,
-        beforeId,
-      });
-    };
-
-    const update = () => {
-      if (isLeavingPaddedBounds(loadedBounds)) {
-        (async () => {
-          console.time('W');
-          data = queryVisible();
-          updateLayer(makeLayer());
-          console.timeEnd('W');
-        })();
-      }
-    };
-
-    map.on('move', update);
-
-    addLayer(makeLayer(), () => {
-      map.off('move', update);
+    addTiledLayer({
+      id,
+      beforeId,
+      init: { kind: 'way', positions, starts },
+      transfer: [positions.buffer, starts.buffer],
+      toData: ({ length, positions, startIndices }) =>
+        length === 0
+          ? null
+          : { length, startIndices, attributes: { getPath: { value: positions, size: 2 } } },
+      renderTile: (props, size) =>
+        new PathLayer({
+          id: props.id,
+          data: props.data,
+          getColor: [color.r, color.g, color.b, 0xff],
+          getWidth: 1,
+          widthUnits: 'pixels',
+          widthScale: size,
+          jointRounded: true,
+          capRounded: true,
+          pickable: false,
+          _pathType: 'open', // tile pieces are clipped open polylines; skips loop detection
+        }),
     });
   };
 
