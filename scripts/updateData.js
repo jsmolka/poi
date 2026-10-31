@@ -136,8 +136,8 @@ function encodePoi(elements) {
   for (const element of elements) {
     // prettier-ignore
     polyline.push([
-      element.lat ?? element.center.lat,
-      element.lon ?? element.center.lon
+      element.lon ?? element.center.lon,
+      element.lat ?? element.center.lat
     ]);
 
     const name = element.tags.name ?? element.tags.brand ?? null;
@@ -155,14 +155,14 @@ function encodePoi(elements) {
 function encodeWay(elements) {
   return encode(
     elements.map((element) => {
-      const polyline = element.geometry.map(({ lat, lon }) => [lat, lon]);
+      const polyline = element.geometry.map(({ lat, lon }) => [lon, lat]);
       const degToMetersLat = 110574;
-      const degToMetersLng = 111320 * Math.cos(polyline[0][0] * (Math.PI / 180));
+      const degToMetersLng = 111320 * Math.cos(polyline[0][1] * (Math.PI / 180));
 
       return simplify(
         polyline.map((coordinates) => ({
-          x: coordinates[0] * degToMetersLat,
-          y: coordinates[1] * degToMetersLng,
+          x: coordinates[1] * degToMetersLat,
+          y: coordinates[0] * degToMetersLng,
           coordinates,
         })),
         0.5,
