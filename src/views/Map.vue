@@ -34,7 +34,7 @@ onMounted(() => {
 
   emit('mounted', map);
 
-  map.on('load', () => {
+  map.once('load', () => {
     onLoaded(map);
   });
 
