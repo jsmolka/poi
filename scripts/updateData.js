@@ -1,8 +1,7 @@
 import { compress, encode } from '../common/codec.js';
 import axios, { AxiosError } from 'axios';
 import { config } from 'dotenv';
-import { mkdirSync, writeFileSync } from 'fs';
-import { dirname } from 'path';
+import { writeFileSync } from 'fs';
 import simplify from 'simplify-js';
 import { chain } from 'stream-chain';
 import { parser } from 'stream-json';
@@ -14,14 +13,8 @@ config();
 
 const nextgisOverpassApiKey = process.env.NEXTGIS_OVERPASS_API_KEY;
 
-function relative(path) {
-  return fileURLToPath(new URL(path, import.meta.url));
-}
-
 function write(path, data) {
-  path = relative(path);
-  mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, data);
+  writeFileSync(fileURLToPath(new URL(path, import.meta.url)), data);
 }
 
 async function query(queries, countries, out) {
@@ -163,24 +156,20 @@ function encodeWay(elements) {
   return encode(
     elements.map((element) => {
       const polyline = element.geometry.map(({ lat, lon }) => [lat, lon]);
-      if (polyline.length <= 2) {
-        return polyline;
-      }
-
-      const lat = (polyline[0][0] * Math.PI) / 180;
       const degToMetersLat = 110574;
-      const degToMetersLng = 111320 * Math.cos(lat);
+      const degToMetersLng = 111320 * Math.cos(polyline[0][0] * (Math.PI / 180));
 
       return simplify(
-        polyline.map((coordinates, i) => ({
+        polyline.map((coordinates) => ({
           x: coordinates[0] * degToMetersLat,
           y: coordinates[1] * degToMetersLng,
-          i,
+          coordinates,
         })),
-        1,
+        0.5,
         true,
-      ).map(({ i }) => polyline[i]);
+      ).map(({ coordinates }) => coordinates);
     }),
+    [],
   );
 }
 

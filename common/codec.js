@@ -1,6 +1,4 @@
-// https://wiki.openstreetmap.org/wiki/Precision_of_coordinates
 const PRECISION = 5;
-const SCALE = 10 ** PRECISION;
 
 function zigzag(value) {
   return value >= 0 ? value * 2 : -value * 2 - 1;
@@ -18,22 +16,17 @@ function writeVarint(out, value) {
   out.push(value);
 }
 
-function readVarint(buffer, position) {
+function readVarint(buffer, state) {
   let value = 0;
   let shift = 0;
   let byte;
   do {
-    byte = buffer[position.value++];
+    byte = buffer[state.position++];
     if (byte === undefined) {
       throw new Error('Unexpected end of data');
     }
-
     value |= (byte & 0x7f) << shift;
-
     shift += 7;
-    if (shift > 35) {
-      throw new Error('Corrupt data: varint too long');
-    }
   } while (byte & 0x80);
   return value >>> 0;
 }
@@ -55,47 +48,30 @@ function writeString(out, string) {
 
 const textDecoder = new TextDecoder('utf-8', { fatal: true });
 
-function readString(buffer, position) {
-  const size = readVarint(buffer, position);
+function readString(buffer, state) {
+  const size = readVarint(buffer, state);
   if (size === 0) {
     return null;
   }
 
   const length = size - 1;
-  if (position.value + length > buffer.length) {
-    throw new Error('Unexpected end of data');
-  }
-
-  const string = textDecoder.decode(buffer.subarray(position.value, position.value + length));
-  position.value += length;
+  const string = textDecoder.decode(buffer.subarray(state.position, state.position + length));
+  state.position += length;
   return string;
 }
 
-/**
- * @param {Array<Array<[number, number]>>} polylines
- * @param {Array<Array<string|null>>} metadata
- * @returns {Uint8Array}
- */
-export function encode(polylines, metadata = []) {
+export function encode(polylines, metadata) {
   const out = [];
 
+  const previous = [0, 0];
   writeVarint(out, polylines.length);
   for (const polyline of polylines) {
     writeVarint(out, polyline.length);
-  }
-
-  for (const axis of [0, 1]) {
-    let previous = 0;
-    for (const polyline of polylines) {
-      for (const coordinates of polyline) {
-        const coordinate = coordinates[axis];
-        if (!Number.isFinite(coordinate)) {
-          throw new Error('Coordinates must be finite numbers');
-        }
-
-        const quantized = Math.round(coordinate * SCALE);
-        writeVarint(out, zigzag(quantized - previous));
-        previous = quantized;
+    for (const coordinates of polyline) {
+      for (const [index, coordinate] of coordinates.entries()) {
+        const quantized = Math.round(coordinate * 10 ** PRECISION);
+        writeVarint(out, zigzag(quantized - previous[index]));
+        previous[index] = quantized;
       }
     }
   }
@@ -111,63 +87,26 @@ export function encode(polylines, metadata = []) {
   return Uint8Array.from(out);
 }
 
-/**
- * @param {Uint8Array} buffer
- * @returns {{ polylines: Array<Array<[number, number]>>, metadata: Array<Array<string|null>> }}
- */
 export function decode(buffer) {
-  if (!(buffer instanceof Uint8Array)) {
-    throw new Error('Invalid data');
-  }
+  const previous = [0, 0];
+  const state = { position: 0 };
 
-  const position = { value: 0 };
+  return {
+    polylines: Array.from({ length: readVarint(buffer, state) }, () => {
+      return Array.from({ length: readVarint(buffer, state) }, () => {
+        return Array.from({ length: 2 }, (_, index) => {
+          previous[index] += unzigzag(readVarint(buffer, state));
+          return previous[index] / 10 ** PRECISION;
+        });
+      });
+    }),
 
-  const polylineCount = readVarint(buffer, position);
-  if (buffer.length - position.value < polylineCount) {
-    throw new Error('Corrupt data: polyline count too large');
-  }
-
-  const polylineLengths = [];
-  for (let i = 0; i < polylineCount; i++) {
-    polylineLengths.push(readVarint(buffer, position));
-  }
-
-  const totalCoordinates = polylineLengths.reduce((a, b) => a + b, 0);
-  if (buffer.length - position.value < totalCoordinates * 2) {
-    throw new Error('Corrupt data: point count too large');
-  }
-
-  const polylines = polylineLengths.map((length) => Array.from({ length }, () => [0, 0]));
-
-  for (const axis of [0, 1]) {
-    let previous = 0;
-    for (const polyline of polylines) {
-      for (let i = 0; i < polyline.length; i++) {
-        previous += unzigzag(readVarint(buffer, position));
-        polyline[i][axis] = previous / SCALE;
-      }
-    }
-  }
-
-  const metadataCount = readVarint(buffer, position);
-  if (buffer.length - position.value < metadataCount) {
-    throw new Error('Corrupt data: metadata count too large');
-  }
-
-  const metadata = Array.from({ length: metadataCount }, () => {
-    const length = readVarint(buffer, position);
-    if (buffer.length - position.value < length) {
-      throw new Error('Corrupt data: string count too large');
-    }
-
-    const strings = [];
-    for (let i = 0; i < length; i++) {
-      strings.push(readString(buffer, position));
-    }
-    return strings;
-  });
-
-  return { polylines, metadata };
+    metadata: Array.from({ length: readVarint(buffer, state) }, () => {
+      return Array.from({ length: readVarint(buffer, state) }, () => {
+        return readString(buffer, state);
+      });
+    }),
+  };
 }
 
 async function pipe(bytes, stream) {
