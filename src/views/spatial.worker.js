@@ -1,13 +1,6 @@
 import { clamp } from '@/utils/numeric';
 import Flatbush from 'flatbush';
 
-// Margin around each tile (in screen px) so line caps/joins don't show seams at tile edges.
-const BUFFER_PX = 16;
-// Vertex simplification tolerance in screen px. Features are never dropped, only redundant
-// vertices (collinear, duplicate, or within this distance of the line). 0.25px is invisible;
-// raise it (e.g. 1) for lighter tiles at low zoom, or set 0 to send every vertex.
-const SIMPLIFY_PX = 1;
-
 const datasets = new Map();
 
 self.onmessage = ({ data: message }) => {
@@ -27,8 +20,8 @@ self.onmessage = ({ data: message }) => {
   }
 };
 
-function index({ kind, positions, starts }) {
-  return { kind, ...(kind === 'poi' ? indexPoi(positions) : indexWay(positions, starts)) };
+function index({ kind, positions, startIndices }) {
+  return { kind, ...(kind === 'poi' ? indexPoi(positions) : indexWay(positions, startIndices)) };
 }
 
 function indexPoi(positions) {
@@ -43,15 +36,15 @@ function indexPoi(positions) {
   return { bush, positions };
 }
 
-function indexWay(positions, starts) {
-  const length = starts.length - 1;
+function indexWay(positions, startIndices) {
+  const length = startIndices.length - 1;
   const vertices = positions.length / 2;
   const bush = new Flatbush(length, undefined, Float32Array);
   const weights = new Float32Array(vertices);
 
   for (let i = 0; i < length; i++) {
-    const start = starts[i];
-    const end = starts[i + 1];
+    const start = startIndices[i];
+    const end = startIndices[i + 1];
 
     let minX = +Infinity;
     let maxX = -Infinity;
@@ -71,7 +64,7 @@ function indexWay(positions, starts) {
   }
   bush.finish();
 
-  return { bush, positions, starts, weights };
+  return { bush, positions, starts: startIndices, weights };
 }
 
 function simplify(positions, start, end, weights) {
@@ -136,20 +129,21 @@ function tile({ key, id, bbox, size, zoom, maxZoom }) {
   } else {
     const pxToLng = 360 / (size * 2 ** zoom);
     const pxToLat = Math.max(0.05, Math.cos((((south + north) / 2) * Math.PI) / 180)) * pxToLng;
-    const fullDetail = zoom >= maxZoom || SIMPLIFY_PX === 0;
+    const fullDetail = zoom >= maxZoom;
     tileWay(dataset, id, west, south, east, north, pxToLng, pxToLat, fullDetail);
   }
 }
 
 function tilePoi(dataset, id, west, south, east, north) {
   const { bush, positions } = dataset;
+
   const indices = bush.search(west, south, east, north);
-  const visible = new Float32Array(indices.length * 2);
+  const visiblePositions = new Float32Array(indices.length * 2);
   for (const [i, index] of indices.entries()) {
-    visible[2 * i] = positions[2 * index];
-    visible[2 * i + 1] = positions[2 * index + 1];
+    visiblePositions[2 * i] = positions[2 * index];
+    visiblePositions[2 * i + 1] = positions[2 * index + 1];
   }
-  self.postMessage({ id, positions: visible }, [visible.buffer]);
+  self.postMessage({ id, positions: visiblePositions }, [visiblePositions.buffer]);
 }
 
 function clipSegment(ax, ay, bx, by, x0, y0, x1, y1) {
@@ -177,79 +171,83 @@ function clipSegment(ax, ay, bx, by, x0, y0, x1, y1) {
 
     if (p === 0) {
       if (q < 0) {
-        return { visible: false, t0, t1 };
+        return null;
       }
     } else {
       const r = q / p;
       if (p < 0) {
-        if (r > t1) return { visible: false, t0, t1 };
+        if (r > t1) return null;
         if (r > t0) t0 = r;
       } else {
-        if (r < t0) return { visible: false, t0, t1 };
+        if (r < t0) return null;
         if (r < t1) t1 = r;
       }
     }
   }
-  return { visible: true, t0, t1 };
+  return [t0, t1];
 }
 
 function tileWay(dataset, id, west, south, east, north, pxToLng, pxToLat, fullDetail) {
   const { bush, positions, starts, weights } = dataset;
 
-  const threshold = fullDetail ? 0 : (SIMPLIFY_PX * Math.min(pxToLng, pxToLat)) ** 2;
+  const outPositions = [];
+  const outStartIndices = [];
 
-  const bx = BUFFER_PX * pxToLng;
-  const by = BUFFER_PX * pxToLat;
-  const x0 = west - bx;
-  const x1 = east + bx;
-  const y0 = south - by;
-  const y1 = north + by;
-
-  const outPos = [];
-  const outStarts = [];
-
-  const beginPiece = () => outStarts.push(outPos.length >> 1);
+  const startPiece = () => {
+    outStartIndices.push(outPositions.length / 2);
+  };
   const endPiece = () => {
-    const s0 = outStarts[outStarts.length - 1];
-    if ((outPos.length >> 1) - s0 < 2) {
-      outPos.length = s0 * 2; // piece with a single vertex: discard
-      outStarts.pop();
+    const start = outStartIndices.at(-1);
+    if (outPositions.length / 2 - start <= 1) {
+      outPositions.length = 2 * start;
+      outStartIndices.pop();
     }
   };
 
-  const hits = bush.search(x0, y0, x1, y1);
-  for (let k = 0; k < hits.length; k++) {
-    const w = hits[k];
-    const s = starts[w];
-    const e = starts[w + 1];
-    if (e - s < 2) continue;
+  const buffer = 16;
+  const minX = west - buffer * pxToLng;
+  const maxX = east + buffer * pxToLng;
+  const minY = south - buffer * pxToLat;
+  const maxY = north + buffer * pxToLat;
+  const indices = bush.search(minX, minY, maxX, maxY);
+  const threshold = fullDetail ? 0 : Math.min(pxToLng, pxToLat) ** 2;
+  for (const index of indices) {
+    const start = starts[index];
+    const end = starts[index + 1];
 
     let have = false;
     let open = false;
     let ax = 0;
     let ay = 0;
 
-    for (let v = s; v < e; v++) {
-      if (weights[v] < threshold) {
+    for (let vertex = start; vertex < end; vertex++) {
+      if (weights[vertex] < threshold) {
         continue;
       }
 
-      const x = positions[2 * v];
-      const y = positions[2 * v + 1];
+      const x = positions[2 * vertex];
+      const y = positions[2 * vertex + 1];
 
       if (have) {
-        const { visible, t0, t1 } = clipSegment(ax, ay, x, y, x0, y0, x1, y1);
-        if (visible) {
+        const clip = clipSegment(ax, ay, x, y, minX, minY, maxX, maxY);
+        if (clip) {
+          const [t0, t1] = clip;
           const dx = x - ax;
           const dy = y - ay;
           if (!open || t0 > 0) {
-            if (open) endPiece();
-            beginPiece();
-            outPos.push(ax + t0 * dx, ay + t0 * dy);
+            if (open) {
+              endPiece();
+            }
+            startPiece();
+            outPositions.push(ax + t0 * dx, ay + t0 * dy);
           }
-          outPos.push(ax + t1 * dx, ay + t1 * dy);
+
+          outPositions.push(ax + t1 * dx, ay + t1 * dy);
+
           open = t1 >= 1;
-          if (!open) endPiece(); // the line left the (buffered) tile
+          if (!open) {
+            endPiece();
+          }
         } else if (open) {
           endPiece();
           open = false;
@@ -260,10 +258,15 @@ function tileWay(dataset, id, west, south, east, north, pxToLng, pxToLat, fullDe
       ay = y;
       have = true;
     }
-    if (open) endPiece();
+    if (open) {
+      endPiece();
+    }
   }
 
-  const result = Float32Array.from(outPos);
-  const startIndices = Uint32Array.from(outStarts);
-  self.postMessage({ id, positions: result, startIndices }, [result.buffer, startIndices.buffer]);
+  const visiblePositions = Float32Array.from(outPositions);
+  const visibleStartIndices = Uint32Array.from(outStartIndices);
+  self.postMessage({ id, positions: visiblePositions, startIndices: visibleStartIndices }, [
+    visiblePositions.buffer,
+    visibleStartIndices.buffer,
+  ]);
 }

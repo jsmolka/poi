@@ -254,24 +254,24 @@ export function useDeck(map) {
   const addLayerWay = (id, polylines, color, beforeId = undefined, getPopup = defaultGetPopup) => {
     let total = 0;
 
-    const starts = new Uint32Array(polylines.length + 1);
+    const startIndices = new Uint32Array(polylines.length + 1);
     for (const [i, polyline] of polylines.entries()) {
-      starts[i] = total;
+      startIndices[i] = total;
       total += polyline.length / 2;
     }
-    starts[polylines.length] = total;
+    startIndices[polylines.length] = total;
 
     const positions = new Float32Array(2 * total);
     for (const [i, polyline] of polylines.entries()) {
-      positions.set(polyline, 2 * starts[i]);
+      positions.set(polyline, 2 * startIndices[i]);
     }
 
     addTiledLayer({
       id,
       beforeId,
       getPopup,
-      init: { kind: 'way', positions, starts },
-      transfer: [positions.buffer, starts.buffer],
+      init: { kind: 'way', positions, startIndices },
+      transfer: [positions.buffer, startIndices.buffer],
       toData: ({ positions, startIndices }) =>
         positions == null
           ? null
