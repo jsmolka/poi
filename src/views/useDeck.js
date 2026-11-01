@@ -64,53 +64,11 @@ export function useDeck(map) {
 
   // Single source of truth for the cursor. Deck also writes the cursor on pointer events, so we
   // hand it this same state via getCursor (below) and mirror it on the canvas: both always agree.
-  const HOVER_RELEASE_MS = 80; // ignore one-frame pick misses (thin lines, tiles refining)
-  let hovering = false;
-  let releaseTimer = null;
-
-  const applyCursor = () => {
-    const canvas = map.getCanvas();
-    const cursor = hovering ? 'pointer' : '';
-    if (canvas.style.cursor !== cursor) {
-      canvas.style.cursor = cursor;
-    }
-  };
-
-  const setHovering = (on) => {
-    if (on) {
-      clearTimeout(releaseTimer);
-      releaseTimer = null;
-      if (!hovering) {
-        hovering = true;
-        applyCursor();
-      }
-      return;
-    }
-    if (!hovering || releaseTimer != null) {
-      return;
-    }
-    releaseTimer = setTimeout(() => {
-      releaseTimer = null;
-      hovering = false;
-      applyCursor();
-    }, HOVER_RELEASE_MS);
-  };
-
-  const resetHovering = () => {
-    clearTimeout(releaseTimer);
-    releaseTimer = null;
-    hovering = false;
-    applyCursor();
-  };
-
-  // popupLngLat and showPopup stay exactly as before
 
   const overlay = new MapboxOverlay({
     interleaved: true,
-    getCursor: ({ isDragging }) => (hovering && !isDragging ? 'pointer' : ''),
-    onHover: (info) => {
-      setHovering(Boolean(info.picked && popupContent.has(info.layer?.id)));
-    },
+    pickingRadius: 1,
+    getCursor: ({ isHovering, isDragging }) => (isHovering && !isDragging ? 'pointer' : ''),
     onClick: (info) => {
       const getPopup = info.picked ? popupContent.get(info.layer?.id) : null;
       if (getPopup) {
@@ -122,10 +80,6 @@ export function useDeck(map) {
   });
 
   map.addControl(overlay);
-
-  // Hover events stop while dragging or when the mouse leaves the map, so don't leave the pointer stuck.
-  map.on('dragstart', resetHovering);
-  map.on('mouseout', resetHovering);
 
   // ---- layer management -------------------------------------------------------
 
@@ -151,7 +105,6 @@ export function useDeck(map) {
     if (popupLayerId === id) {
       popup.remove();
     }
-    resetHovering();
 
     syncLayers();
   };
