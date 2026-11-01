@@ -2,6 +2,7 @@ import { clamp, lerp } from '@/utils/numeric';
 import { TileLayer } from '@deck.gl/geo-layers';
 import { PathLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { MapboxOverlay } from '@deck.gl/mapbox';
+import { Popup } from 'mapbox-gl';
 
 // Must match what the worker assumes: tiles are 512px, so tile zoom == map zoom.
 const TILE_SIZE = 512;
@@ -9,13 +10,124 @@ const TILE_SIZE = 512;
 // Lower it if tiles get heavy in dense areas.
 const MAX_ZOOM = 14;
 
+// Default popup body: layer id + clicked coordinates. Return a string (rendered as text),
+// an HTMLElement (rendered as DOM), or null (no popup).
+const defaultGetPopup = (info) => {
+  const [lng, lat] = info.coordinate ?? [];
+  return `${info.layer.id}\n${lat?.toFixed(5)}, ${lng?.toFixed(5)}`;
+};
+
 export function useDeck(map) {
-  const overlay = new MapboxOverlay({ interleaved: true });
+  const layers = new Map();
+  const cleanups = new Map();
+
+  // ---- popup + cursor ---------------------------------------------------------
+
+  const popupContent = new Map(); // layer id -> getPopup(info)
+  const popup = new Popup({
+    closeButton: true,
+    closeOnClick: false,
+    maxWidth: '280px',
+    offset: 6,
+  });
+  let popupLayerId = null;
+  popup.on('close', () => {
+    popupLayerId = null;
+  });
+
+  // POIs: snap the popup to the point itself. Ways (and fallback): use the click location.
+  const popupLngLat = (info) => {
+    const attr = info.sourceLayer?.props.data?.attributes?.getPosition;
+    if (attr && info.index >= 0) {
+      return [attr.value[2 * info.index], attr.value[2 * info.index + 1]];
+    }
+    return info.coordinate;
+  };
+
+  const showPopup = (info, getPopup) => {
+    const content = getPopup(info);
+    const lngLat = popupLngLat(info);
+    if (content == null || !lngLat) {
+      popup.remove();
+      return;
+    }
+
+    popup.setLngLat(lngLat);
+    if (typeof content === 'string') {
+      popup.setText(content);
+    } else {
+      popup.setDOMContent(content);
+    }
+    popup.addTo(map);
+    popupLayerId = info.layer.id; // after addTo: re-adding fires 'close', which resets this
+  };
+
+  // Single source of truth for the cursor. Deck also writes the cursor on pointer events, so we
+  // hand it this same state via getCursor (below) and mirror it on the canvas: both always agree.
+  const HOVER_RELEASE_MS = 80; // ignore one-frame pick misses (thin lines, tiles refining)
+  let hovering = false;
+  let releaseTimer = null;
+
+  const applyCursor = () => {
+    const canvas = map.getCanvas();
+    const cursor = hovering ? 'pointer' : '';
+    if (canvas.style.cursor !== cursor) {
+      canvas.style.cursor = cursor;
+    }
+  };
+
+  const setHovering = (on) => {
+    if (on) {
+      clearTimeout(releaseTimer);
+      releaseTimer = null;
+      if (!hovering) {
+        hovering = true;
+        applyCursor();
+      }
+      return;
+    }
+    if (!hovering || releaseTimer != null) {
+      return;
+    }
+    releaseTimer = setTimeout(() => {
+      releaseTimer = null;
+      hovering = false;
+      applyCursor();
+    }, HOVER_RELEASE_MS);
+  };
+
+  const resetHovering = () => {
+    clearTimeout(releaseTimer);
+    releaseTimer = null;
+    hovering = false;
+    applyCursor();
+  };
+
+  // popupLngLat and showPopup stay exactly as before
+
+  const overlay = new MapboxOverlay({
+    interleaved: true,
+    getCursor: ({ isDragging }) => (hovering && !isDragging ? 'pointer' : ''),
+    onHover: (info) => {
+      setHovering(Boolean(info.picked && popupContent.has(info.layer?.id)));
+    },
+    onClick: (info) => {
+      const getPopup = info.picked ? popupContent.get(info.layer?.id) : null;
+      if (getPopup) {
+        showPopup(info, getPopup);
+      } else {
+        popup.remove();
+      }
+    },
+  });
 
   map.addControl(overlay);
 
-  const layers = new Map();
-  const cleanups = new Map();
+  // Hover events stop while dragging or when the mouse leaves the map, so don't leave the pointer stuck.
+  map.on('dragstart', resetHovering);
+  map.on('mouseout', resetHovering);
+
+  // ---- layer management -------------------------------------------------------
 
   const addLayer = (layer, cleanup) => {
     removeLayer(layer.id);
@@ -34,6 +146,12 @@ export function useDeck(map) {
     layers.delete(id);
     cleanups.get(id)?.();
     cleanups.delete(id);
+
+    popupContent.delete(id);
+    if (popupLayerId === id) {
+      popup.remove();
+    }
+    resetHovering();
 
     syncLayers();
   };
@@ -103,7 +221,7 @@ export function useDeck(map) {
 
   // ---- shared tiled-layer helper ---------------------------------------------
 
-  const addTiledLayer = ({ id, beforeId, init, transfer, toData, renderTile }) => {
+  const addTiledLayer = ({ id, beforeId, getPopup, init, transfer, toData, renderTile }) => {
     // unique per registration so a re-add with the same id can't touch the new dataset
     const key = `${id}#${nextKey++}`;
     worker.postMessage({ type: 'init', key, ...init }, transfer);
@@ -116,7 +234,7 @@ export function useDeck(map) {
       new TileLayer({
         id,
         beforeId,
-        pickable: false,
+        pickable: true,
         tileSize: TILE_SIZE,
         minZoom: 0,
         maxZoom: MAX_ZOOM,
@@ -142,16 +260,20 @@ export function useDeck(map) {
       map.off('zoom', onZoom);
       worker.postMessage({ type: 'dispose', key });
     });
+
+    // Register after addLayer: addLayer -> removeLayer(id) clears any previous handler for this id.
+    popupContent.set(id, getPopup);
   };
 
   // ---- public API -------------------------------------------------------------
 
-  const addLayerPoi = (id, polyline, color, beforeId = undefined) => {
+  const addLayerPoi = (id, polyline, color, beforeId = undefined, getPopup = defaultGetPopup) => {
     const positions = Float32Array.from(polyline); // copy: the buffer is transferred away
 
     addTiledLayer({
       id,
       beforeId,
+      getPopup,
       init: { kind: 'poi', positions },
       transfer: [positions.buffer],
       toData: ({ positions }) =>
@@ -171,12 +293,12 @@ export function useDeck(map) {
           getRadius: 2,
           radiusUnits: 'pixels',
           radiusScale: scale,
-          pickable: false,
+          pickable: true,
         }),
     });
   };
 
-  const addLayerWay = (id, polylines, color, beforeId = undefined) => {
+  const addLayerWay = (id, polylines, color, beforeId = undefined, getPopup = defaultGetPopup) => {
     let total = 0;
 
     const starts = new Uint32Array(polylines.length + 1);
@@ -194,6 +316,7 @@ export function useDeck(map) {
     addTiledLayer({
       id,
       beforeId,
+      getPopup,
       init: { kind: 'way', positions, starts },
       transfer: [positions.buffer, starts.buffer],
       toData: ({ positions, startIndices }) =>
@@ -214,7 +337,7 @@ export function useDeck(map) {
           widthScale: scale,
           jointRounded: true,
           capRounded: true,
-          pickable: false,
+          pickable: true,
           _pathType: 'open', // tile pieces are clipped open polylines; skips loop detection
         }),
     });
