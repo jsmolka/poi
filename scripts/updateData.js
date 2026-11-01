@@ -101,12 +101,11 @@ async function query(queries, country, out) {
     } catch (error) {
       let message;
       if (axios.isAxiosError(error)) {
-        let data = '';
-        for await (const chunk of error.response.data) {
-          data += chunk.toString('utf-8');
-        }
-
         try {
+          let data = '';
+          for await (const chunk of error.response.data) {
+            data += chunk.toString('utf-8');
+          }
           message = data.match(/Error<\/strong>:\s*([^<]+)/)[1].trim();
         } catch {
           message = error.message;
