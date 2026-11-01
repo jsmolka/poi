@@ -24,5 +24,4 @@ for (const value of Country.$values) {
 for (const value of Object.keys(pois)) {
   schema[value] = primitive();
 }
-
 defineSchema(Settings, schema);

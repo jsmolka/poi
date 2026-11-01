@@ -7,7 +7,7 @@ export class Tiler {
     this.worker = new TilerWorker();
     this.worker.onmessage = ({ data }) => {
       const resolve = this.pending.get(data.id);
-      if (resolve) {
+      if (resolve != null) {
         this.pending.delete(data.id);
         resolve(data);
       }
@@ -24,7 +24,7 @@ export class Tiler {
     this.worker.postMessage({ type: 'dispose', key });
   }
 
-  tile(key, bbox, size, zoom, maxZoom, signal) {
+  async tile(key, bbox, size, zoom, maxZoom, signal) {
     return new Promise((resolve, reject) => {
       if (signal.aborted) {
         reject(new DOMException('Aborted', 'AbortError'));
@@ -43,15 +43,7 @@ export class Tiler {
         { once: true },
       );
 
-      this.worker.postMessage({
-        type: 'tile',
-        key,
-        id,
-        bbox: [bbox.west, bbox.south, bbox.east, bbox.north],
-        size,
-        zoom,
-        maxZoom,
-      });
+      this.worker.postMessage({ type: 'tile', key, id, bbox, size, zoom, maxZoom });
     });
   }
 }

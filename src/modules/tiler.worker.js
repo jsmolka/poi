@@ -27,7 +27,6 @@ function index({ kind, positions, startIndices }) {
 function indexPoi(positions) {
   const vertices = positions.length / 2;
   const bush = new Flatbush(vertices, undefined, Float32Array);
-
   for (let i = 0; i < positions.length; i += 2) {
     bush.add(positions[i], positions[i + 1]);
   }
@@ -37,14 +36,14 @@ function indexPoi(positions) {
 }
 
 function indexWay(positions, startIndices) {
-  const length = startIndices.length - 1;
+  const count = startIndices.length - 1;
   const vertices = positions.length / 2;
-  const bush = new Flatbush(length, undefined, Float32Array);
+  const bush = new Flatbush(count, undefined, Float32Array);
   const weights = new Float32Array(vertices);
-
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < count; i++) {
     const start = startIndices[i];
     const end = startIndices[i + 1];
+    simplify(positions, start, end, weights);
 
     let minX = +Infinity;
     let maxX = -Infinity;
@@ -59,12 +58,10 @@ function indexWay(positions, startIndices) {
       if (y > maxY) maxY = y;
     }
     bush.add(minX, minY, maxX, maxY);
-
-    simplify(positions, start, end, weights);
   }
   bush.finish();
 
-  return { bush, positions, starts: startIndices, weights };
+  return { bush, positions, startIndices, weights };
 }
 
 function simplify(positions, start, end, weights) {
@@ -123,23 +120,22 @@ function tile({ key, id, bbox, size, zoom, maxZoom }) {
     return;
   }
 
-  const [west, south, east, north] = bbox;
   if (dataset.kind === 'poi') {
-    tilePoi(dataset, id, west, south, east, north);
+    tilePoi(dataset, id, bbox);
   } else {
+    const lat = (bbox.north + bbox.south) / 2;
     const pxToLng = 360 / (size * 2 ** zoom);
-    const pxToLat = Math.max(0.05, Math.cos((((south + north) / 2) * Math.PI) / 180)) * pxToLng;
+    const pxToLat = Math.max(0.05, Math.cos(lat * (Math.PI / 180))) * pxToLng;
     const fullDetail = zoom >= maxZoom;
-    tileWay(dataset, id, west, south, east, north, pxToLng, pxToLat, fullDetail);
+    tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail);
   }
 }
 
-function tilePoi(dataset, id, west, south, east, north) {
+function tilePoi(dataset, id, bbox) {
   const { bush, positions } = dataset;
-
-  const indices = bush.search(west, south, east, north);
-  const visiblePositions = new Float32Array(indices.length * 2);
-  for (const [i, index] of indices.entries()) {
+  const visible = bush.search(bbox.west, bbox.south, bbox.east, bbox.north);
+  const visiblePositions = new Float32Array(2 * visible.length);
+  for (const [i, index] of visible.entries()) {
     visiblePositions[2 * i] = positions[2 * index];
     visiblePositions[2 * i + 1] = positions[2 * index + 1];
   }
@@ -187,33 +183,32 @@ function clipSegment(ax, ay, bx, by, x0, y0, x1, y1) {
   return [t0, t1];
 }
 
-function tileWay(dataset, id, west, south, east, north, pxToLng, pxToLat, fullDetail) {
-  const { bush, positions, starts, weights } = dataset;
+function tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail) {
+  const { bush, positions, startIndices, weights } = dataset;
+  const threshold = fullDetail ? 0 : Math.min(pxToLng, pxToLat) ** 2;
 
   const outPositions = [];
   const outStartIndices = [];
-
-  const startPiece = () => {
+  const startLine = () => {
     outStartIndices.push(outPositions.length / 2);
   };
-  const endPiece = () => {
+  const endLine = () => {
     const start = outStartIndices.at(-1);
-    if (outPositions.length / 2 - start <= 1) {
+    if (outPositions.length / 2 - start < 2) {
       outPositions.length = 2 * start;
       outStartIndices.pop();
     }
   };
 
-  const buffer = 16;
-  const minX = west - buffer * pxToLng;
-  const maxX = east + buffer * pxToLng;
-  const minY = south - buffer * pxToLat;
-  const maxY = north + buffer * pxToLat;
-  const indices = bush.search(minX, minY, maxX, maxY);
-  const threshold = fullDetail ? 0 : Math.min(pxToLng, pxToLat) ** 2;
-  for (const index of indices) {
-    const start = starts[index];
-    const end = starts[index + 1];
+  const padding = 16;
+  const minX = bbox.west - padding * pxToLng;
+  const maxX = bbox.east + padding * pxToLng;
+  const minY = bbox.south - padding * pxToLat;
+  const maxY = bbox.north + padding * pxToLat;
+  const visible = bush.search(minX, minY, maxX, maxY);
+  for (const index of visible) {
+    const start = startIndices[index];
+    const end = startIndices[index + 1];
 
     let have = false;
     let open = false;
@@ -230,15 +225,15 @@ function tileWay(dataset, id, west, south, east, north, pxToLng, pxToLat, fullDe
 
       if (have) {
         const clip = clipSegment(ax, ay, x, y, minX, minY, maxX, maxY);
-        if (clip) {
+        if (clip != null) {
           const [t0, t1] = clip;
           const dx = x - ax;
           const dy = y - ay;
           if (!open || t0 > 0) {
             if (open) {
-              endPiece();
+              endLine();
             }
-            startPiece();
+            startLine();
             outPositions.push(ax + t0 * dx, ay + t0 * dy);
           }
 
@@ -246,10 +241,10 @@ function tileWay(dataset, id, west, south, east, north, pxToLng, pxToLat, fullDe
 
           open = t1 >= 1;
           if (!open) {
-            endPiece();
+            endLine();
           }
         } else if (open) {
-          endPiece();
+          endLine();
           open = false;
         }
       }
@@ -259,7 +254,7 @@ function tileWay(dataset, id, west, south, east, north, pxToLng, pxToLat, fullDe
       have = true;
     }
     if (open) {
-      endPiece();
+      endLine();
     }
   }
 
