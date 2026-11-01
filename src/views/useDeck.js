@@ -1,3 +1,4 @@
+import { Tiler } from '@/modules/tiler';
 import { clamp, lerp } from '@/utils/numeric';
 import { TileLayer } from '@deck.gl/geo-layers';
 import { PathLayer, ScatterplotLayer } from '@deck.gl/layers';
@@ -127,61 +128,16 @@ export function useDeck(map) {
     return lerp(minSize, maxSize, clamp((map.getZoom() - minZoom) / (maxZoom - minZoom), 0, 1));
   };
 
-  // ---- worker plumbing ------------------------------------------------------
-
-  const worker = new Worker(new URL('./spatial.worker.js', import.meta.url), { type: 'module' });
-  const pending = new Map();
-  let nextReq = 0;
-  let nextKey = 0;
-
-  worker.onmessage = ({ data }) => {
-    const resolve = pending.get(data.id);
-    if (resolve) {
-      pending.delete(data.id);
-      resolve(data);
-    }
-  };
-
-  const requestTile = (key, bbox, zoom, signal) =>
-    new Promise((resolve, reject) => {
-      if (signal?.aborted) {
-        reject(new DOMException('Aborted', 'AbortError'));
-        return;
-      }
-
-      const id = nextReq++;
-      pending.set(id, resolve);
-      signal?.addEventListener(
-        'abort',
-        () => {
-          if (pending.delete(id)) {
-            reject(new DOMException('Aborted', 'AbortError'));
-          }
-        },
-        { once: true },
-      );
-
-      worker.postMessage({
-        type: 'tile',
-        key,
-        id,
-        bbox: [bbox.west, bbox.south, bbox.east, bbox.north],
-        size: TILE_SIZE,
-        zoom,
-        maxZoom: MAX_ZOOM,
-      });
-    });
+  const tiler = new Tiler();
 
   // ---- shared tiled-layer helper ---------------------------------------------
 
   const addTiledLayer = ({ id, beforeId, getPopup, init, transfer, toData, renderTile }) => {
-    // unique per registration so a re-add with the same id can't touch the new dataset
-    const key = `${id}#${nextKey++}`;
-    worker.postMessage({ type: 'init', key, ...init }, transfer);
+    const key = tiler.init(init, transfer);
 
-    // Size is quantised so the layer is only rebuilt when it visibly changes.
-    const quantisedScale = () => Math.round(scale() * 10) / 10;
-    let size = quantisedScale();
+    // Size is quantized so the layer is only rebuilt when it visibly changes.
+    const quantizedScale = () => Math.round(scale() * 10) / 10;
+    let size = quantizedScale();
 
     const makeLayer = () =>
       new TileLayer({
@@ -194,14 +150,14 @@ export function useDeck(map) {
         maxRequests: 3, // tiles that scroll out of view before they're requested never reach the worker
         refinementStrategy: 'best-available', // keep showing parent/child tiles while new ones load
         getTileData: async ({ bbox, index, signal }) =>
-          toData(await requestTile(key, bbox, index.z, signal)),
+          toData(await tiler.tile(key, bbox, TILE_SIZE, index.z, MAX_ZOOM, signal)),
         renderSubLayers: (props) => (props.data ? renderTile(props, size) : null),
         // Changing this regenerates the sublayers from the cached tile data (no refetch).
         updateTriggers: { renderSubLayers: [size] },
       });
 
     const onZoom = () => {
-      const next = quantisedScale();
+      const next = quantizedScale();
       if (next !== size) {
         size = next;
         updateLayer(makeLayer());
@@ -211,7 +167,7 @@ export function useDeck(map) {
     map.on('zoom', onZoom);
     addLayer(makeLayer(), () => {
       map.off('zoom', onZoom);
-      worker.postMessage({ type: 'dispose', key });
+      tiler.dispose(key);
     });
 
     // Register after addLayer: addLayer -> removeLayer(id) clears any previous handler for this id.

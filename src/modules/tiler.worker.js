@@ -3,18 +3,18 @@ import Flatbush from 'flatbush';
 
 const datasets = new Map();
 
-self.onmessage = ({ data: message }) => {
-  switch (message.type) {
+self.onmessage = ({ data }) => {
+  switch (data.type) {
     case 'init': {
-      datasets.set(message.key, index(message));
+      datasets.set(data.key, index(data));
       break;
     }
     case 'tile': {
-      tile(message);
+      tile(data);
       break;
     }
     case 'dispose': {
-      datasets.delete(message.key);
+      datasets.delete(data.key);
       break;
     }
   }
