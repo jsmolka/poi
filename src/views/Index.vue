@@ -9,6 +9,7 @@
 </template>
 
 <script setup>
+import { useDeck } from '@/composables/useDeck';
 import { useLocation } from '@/composables/useLocation';
 import { Country } from '@/modules/country';
 import { pois } from '@/modules/pois';
@@ -16,7 +17,6 @@ import { useSettingsStore } from '@/stores/settings';
 import Map from '@/views/Map.vue';
 import MapLegend from '@/views/MapLegend.vue';
 import MapToolbar from '@/views/MapToolbar.vue';
-import { useDeck } from '@/views/useDeck';
 import { decode, decompress } from '@common/codec';
 import axios from 'axios';
 import { createElement, MapPin } from 'lucide';
