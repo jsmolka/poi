@@ -1,15 +1,9 @@
 import { Tiler } from '@/modules/tiler';
-import { clamp, lerp } from '@/utils/numeric';
+import { mapRange, roundTo } from '@/utils/numeric';
 import { TileLayer } from '@deck.gl/geo-layers';
 import { PathLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { MapboxOverlay } from '@deck.gl/mapbox';
 import { Popup } from 'mapbox-gl';
-
-// Must match what the worker assumes: tiles are 512px, so tile zoom == map zoom.
-const TILE_SIZE = 512;
-// Tiles at this zoom (and when overzooming past it) are sent at full detail.
-// Lower it if tiles get heavy in dense areas.
-const MAX_ZOOM = 14;
 
 // Default popup body: layer id + clicked coordinates. Return a string (rendered as text),
 // an HTMLElement (rendered as DOM), or null (no popup).
@@ -68,7 +62,6 @@ export function useDeck(map) {
 
   const overlay = new MapboxOverlay({
     interleaved: true,
-    pickingRadius: 1,
     getCursor: ({ isHovering, isDragging }) => (isHovering && !isDragging ? 'pointer' : ''),
     onClick: (info) => {
       const getPopup = info.picked ? popupContent.get(info.layer?.id) : null;
@@ -120,46 +113,47 @@ export function useDeck(map) {
     overlay.setProps({ layers: Array.from(layers.values()) });
   };
 
-  const scale = () => {
-    const minZoom = 6;
-    const maxZoom = 18;
-    const minSize = 0.5;
-    const maxSize = 8;
-    return lerp(minSize, maxSize, clamp((map.getZoom() - minZoom) / (maxZoom - minZoom), 0, 1));
+  const getScale = () => {
+    return mapRange(map.getZoom(), 6, 18, 0.5, 8);
+  };
+
+  const getQuantizedScale = () => {
+    return roundTo(getScale(), 0.25);
   };
 
   const tiler = new Tiler();
 
   // ---- shared tiled-layer helper ---------------------------------------------
 
-  const addTiledLayer = ({ id, beforeId, getPopup, init, transfer, toData, renderTile }) => {
+  const addTiledLayer = ({ id, beforeId, getPopup, init, transfer, data, render }) => {
     const key = tiler.init(init, transfer);
 
-    // Size is quantized so the layer is only rebuilt when it visibly changes.
-    const quantizedScale = () => Math.round(scale() * 10) / 10;
-    let size = quantizedScale();
+    let scale = getQuantizedScale();
 
-    const makeLayer = () =>
-      new TileLayer({
+    const makeLayer = () => {
+      const minZoom = 0;
+      const maxZoom = 14;
+      const tileSize = 512;
+      return new TileLayer({
         id,
         beforeId,
-        pickable: true,
-        tileSize: TILE_SIZE,
-        minZoom: 0,
-        maxZoom: MAX_ZOOM,
-        maxRequests: 3, // tiles that scroll out of view before they're requested never reach the worker
-        refinementStrategy: 'best-available', // keep showing parent/child tiles while new ones load
-        getTileData: async ({ bbox, index, signal }) =>
-          toData(await tiler.tile(key, bbox, TILE_SIZE, index.z, MAX_ZOOM, signal)),
-        renderSubLayers: (props) => (props.data ? renderTile(props, size) : null),
-        // Changing this regenerates the sublayers from the cached tile data (no refetch).
-        updateTriggers: { renderSubLayers: [size] },
+        minZoom,
+        maxZoom,
+        tileSize,
+        getTileData: async ({ bbox, index, signal }) => {
+          return data(await tiler.tile(key, bbox, tileSize, index.z, maxZoom, signal));
+        },
+        renderSubLayers: (props) => {
+          return props.data ? render(props.id, props.data, scale) : null;
+        },
+        updateTriggers: { renderSubLayers: [scale] },
       });
+    };
 
     const onZoom = () => {
-      const next = quantizedScale();
-      if (next !== size) {
-        size = next;
+      const next = getQuantizedScale();
+      if (next !== scale) {
+        scale = next;
         updateLayer(makeLayer());
       }
     };
@@ -185,7 +179,7 @@ export function useDeck(map) {
       getPopup,
       init: { kind: 'poi', positions },
       transfer: [positions.buffer],
-      toData: ({ positions }) =>
+      data: ({ positions }) =>
         positions == null
           ? null
           : {
@@ -194,10 +188,10 @@ export function useDeck(map) {
                 getPosition: { value: positions, size: 2 },
               },
             },
-      renderTile: (props, scale) =>
+      render: (id, data, scale) =>
         new ScatterplotLayer({
-          id: props.id,
-          data: props.data,
+          id,
+          data,
           getFillColor: [color.r, color.g, color.b, 0xff],
           getRadius: 2,
           radiusUnits: 'pixels',
@@ -228,18 +222,20 @@ export function useDeck(map) {
       getPopup,
       init: { kind: 'way', positions, startIndices },
       transfer: [positions.buffer, startIndices.buffer],
-      toData: ({ positions, startIndices }) =>
-        positions == null
-          ? null
-          : {
-              startIndices,
-              length: startIndices.length,
-              attributes: { getPath: { value: positions, size: 2 } },
-            },
-      renderTile: (props, scale) =>
+      data: ({ positions, startIndices }) => {
+        if (positions == null) {
+          return null;
+        }
+        return {
+          startIndices,
+          length: startIndices.length,
+          attributes: { getPath: { value: positions, size: 2 } },
+        };
+      },
+      render: (id, data, scale) =>
         new PathLayer({
-          id: props.id,
-          data: props.data,
+          id,
+          data,
           getColor: [color.r, color.g, color.b, 0xff],
           getWidth: 1,
           widthUnits: 'pixels',

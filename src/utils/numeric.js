@@ -1,3 +1,7 @@
+export function roundTo(value, step) {
+  return Math.round(value / step) * step;
+}
+
 export function clamp(x, min, max) {
   return Math.min(Math.max(x, min), max);
 }
@@ -13,6 +17,10 @@ export function nthRoot(x, root) {
 
 export function lerp(x, y, ratio) {
   return x + ratio * (y - x);
+}
+
+export function mapRange(value, inMin, inMax, outMin, outMax) {
+  return lerp(outMin, outMax, clamp((value - inMin) / (inMax - inMin), 0, 1));
 }
 
 // Based on https://github.com/josdejong/mathjs/blob/v12.4.3/src/utils/number.js#L626
