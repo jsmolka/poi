@@ -154,10 +154,15 @@ export function useDeck(map) {
       beforeId,
       init: { kind: 'poi', positions },
       transfer: [positions.buffer],
-      toData: ({ length, positions }) =>
-        length === 0
+      toData: ({ positions }) =>
+        positions == null
           ? null
-          : { length, attributes: { getPosition: { value: positions, size: 2 } } },
+          : {
+              length: positions.length / 2,
+              attributes: {
+                getPosition: { value: positions, size: 2 },
+              },
+            },
       renderTile: (props, scale) =>
         new ScatterplotLayer({
           id: props.id,
@@ -191,10 +196,14 @@ export function useDeck(map) {
       beforeId,
       init: { kind: 'way', positions, starts },
       transfer: [positions.buffer, starts.buffer],
-      toData: ({ length, positions, startIndices }) =>
-        length === 0
+      toData: ({ positions, startIndices }) =>
+        positions == null
           ? null
-          : { length, startIndices, attributes: { getPath: { value: positions, size: 2 } } },
+          : {
+              startIndices,
+              length: startIndices.length,
+              attributes: { getPath: { value: positions, size: 2 } },
+            },
       renderTile: (props, scale) =>
         new PathLayer({
           id: props.id,

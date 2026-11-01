@@ -126,7 +126,7 @@ function simplify(positions, start, end, weights) {
 function tile({ key, id, bbox, size, zoom, maxZoom }) {
   const dataset = datasets.get(key);
   if (dataset == null) {
-    self.postMessage({ id, length: 0 });
+    self.postMessage({ id, positions: null });
     return;
   }
 
@@ -149,7 +149,7 @@ function tilePoi(dataset, id, west, south, east, north) {
     visible[2 * i] = positions[2 * index];
     visible[2 * i + 1] = positions[2 * index + 1];
   }
-  self.postMessage({ id, length: indices.length, positions: visible }, [visible.buffer]);
+  self.postMessage({ id, positions: visible }, [visible.buffer]);
 }
 
 function clipSegment(ax, ay, bx, by, x0, y0, x1, y1) {
@@ -265,8 +265,5 @@ function tileWay(dataset, id, west, south, east, north, pxToLng, pxToLat, fullDe
 
   const result = Float32Array.from(outPos);
   const startIndices = Uint32Array.from(outStarts);
-  self.postMessage({ id, length: outStarts.length, positions: result, startIndices }, [
-    result.buffer,
-    startIndices.buffer,
-  ]);
+  self.postMessage({ id, positions: result, startIndices }, [result.buffer, startIndices.buffer]);
 }
