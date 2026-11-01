@@ -179,17 +179,17 @@ export function useDeck(map) {
       getPopup,
       init: { kind: 'poi', positions },
       transfer: [positions.buffer],
-      data: ({ positions }) =>
-        positions == null
-          ? null
-          : {
-              length: positions.length / 2,
-              attributes: {
-                getPosition: { value: positions, size: 2 },
-              },
-            },
-      render: (id, data, scale) =>
-        new ScatterplotLayer({
+      data: ({ positions }) => {
+        if (positions == null) {
+          return null;
+        }
+        return {
+          length: positions.length / 2,
+          attributes: { getPosition: { value: positions, size: 2 } },
+        };
+      },
+      render: (id, data, scale) => {
+        return new ScatterplotLayer({
           id,
           data,
           getFillColor: [color.r, color.g, color.b, 0xff],
@@ -197,7 +197,8 @@ export function useDeck(map) {
           radiusUnits: 'pixels',
           radiusScale: scale,
           pickable: true,
-        }),
+        });
+      },
     });
   };
 
@@ -232,10 +233,11 @@ export function useDeck(map) {
           attributes: { getPath: { value: positions, size: 2 } },
         };
       },
-      render: (id, data, scale) =>
-        new PathLayer({
+      render: (id, data, scale) => {
+        return new PathLayer({
           id,
           data,
+          _pathType: 'open',
           getColor: [color.r, color.g, color.b, 0xff],
           getWidth: 1,
           widthUnits: 'pixels',
@@ -243,8 +245,8 @@ export function useDeck(map) {
           jointRounded: true,
           capRounded: true,
           pickable: true,
-          _pathType: 'open', // tile pieces are clipped open polylines; skips loop detection
-        }),
+        });
+      },
     });
   };
 
