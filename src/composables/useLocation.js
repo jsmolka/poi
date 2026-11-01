@@ -1,7 +1,7 @@
-import { useGeolocation } from '@vueuse/core';
+import { createSharedComposable, useGeolocation } from '@vueuse/core';
 import { computed } from 'vue';
 
-export function useLocation() {
+export const useLocation = createSharedComposable(() => {
   const { coords, isSupported } = useGeolocation();
 
   const location = computed(() => {
@@ -21,4 +21,4 @@ export function useLocation() {
   });
 
   return { location };
-}
+});
