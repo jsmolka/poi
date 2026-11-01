@@ -17,7 +17,7 @@ function write(path, data) {
   writeFileSync(fileURLToPath(new URL(path, import.meta.url)), data);
 }
 
-async function query(queries, countries, out) {
+async function query(queries, country, out) {
   let interpreters = [
     'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
     'https://overpass.private.coffee/api/interpreter',
@@ -44,12 +44,8 @@ async function query(queries, countries, out) {
         interpreter,
         [
           '[out:json][timeout:3600];',
-          // Combine area of countries
-          '(',
-          ...countries.map(
-            (country) => `area["ISO3166-1"="${country.toUpperCase()}"][admin_level=2];`,
-          ),
-          ');',
+          // Select area
+          `area["ISO3166-1"="${country.toUpperCase()}"][admin_level=2];`,
           // Run queries
           ...queries.map((query, index) => `${query} -> .q${index};`),
           // Combine queries
@@ -193,7 +189,7 @@ async function main() {
       console.log(path);
       console.time(path);
       try {
-        const elements = await query(queries, [country], 'out tags center qt;');
+        const elements = await query(queries, country, 'out tags center qt;');
         write(`../src/assets/data/${path}.bin`, await compress(encodePoi(elements)));
       } finally {
         console.timeEnd(path);
@@ -214,7 +210,7 @@ async function main() {
       console.log(path);
       console.time(path);
       try {
-        const elements = await query(queries, [country], 'out geom;');
+        const elements = await query(queries, country, 'out geom;');
         write(`../src/assets/data/${path}.bin`, await compress(encodeWay(elements)));
       } finally {
         console.timeEnd(path);
