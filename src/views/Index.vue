@@ -125,9 +125,19 @@ const onMapLoaded = (map) => {
       }
 
       if (type === 'poi') {
-        addLayerPoi(id, polylines[0], color, `${id}-order`);
+        addLayerPoi({
+          id,
+          polyline: polylines[0],
+          color,
+          beforeId: `${id}-order`,
+        });
       } else {
-        addLayerWay(id, polylines, color, `${id}-order`);
+        addLayerWay({
+          id,
+          polylines,
+          color,
+          beforeId: `${id}-order`,
+        });
       }
     } catch (error) {
       if (!axios.isCancel(error)) {
@@ -140,7 +150,7 @@ const onMapLoaded = (map) => {
     }
   };
 
-  watchEffect(() => {
+  const stop = watchEffect(() => {
     for (const [poi, { type, color, urls }] of Object.entries(pois)) {
       for (const country of Country.$values) {
         const id = `${poi}/${country}`;
@@ -159,6 +169,10 @@ const onMapLoaded = (map) => {
         load(id, type, color, urls[country]);
       }
     }
+  });
+
+  map.on('remove', () => {
+    stop();
   });
 };
 </script>

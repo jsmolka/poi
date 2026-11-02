@@ -9,7 +9,7 @@ import { pois } from '@/modules/pois';
 import { pairs } from '@/utils/iterator';
 import { useResizeObserver } from '@vueuse/core';
 import { Map } from 'mapbox-gl';
-import { onBeforeUnmount, onMounted, shallowRef, useTemplateRef } from 'vue';
+import { onBeforeUnmount, onMounted, useTemplateRef } from 'vue';
 
 const props = defineProps({
   center: { type: Object, required: true },
@@ -18,11 +18,10 @@ const props = defineProps({
 
 const emit = defineEmits(['mounted', 'loaded']);
 
-const map = shallowRef(null);
 const container = useTemplateRef('container');
 
 onMounted(() => {
-  map.value = new Map({
+  const map = new Map({
     container: container.value,
     accessToken: env.mapboxAccessToken,
     style: 'mapbox://styles/juliansmolka/clzwx15zy002n01qs7yrr9zsr',
@@ -31,24 +30,24 @@ onMounted(() => {
     ...props,
   });
 
-  map.value.dragRotate.disable();
-  map.value.touchZoomRotate.disableRotation();
-  map.value.touchPitch.disable();
+  map.dragRotate.disable();
+  map.touchZoomRotate.disableRotation();
+  map.touchPitch.disable();
 
-  emit('mounted', map.value);
-
-  map.value.once('load', (event) => {
-    onLoaded(event.target);
+  const { stop } = useResizeObserver(container, () => {
+    map.resize();
   });
-});
 
-useResizeObserver(container, () => {
-  map.value?.resize();
-});
+  emit('mounted', map);
 
-onBeforeUnmount(() => {
-  map.value?.remove();
-  map.value = null;
+  map.once('load', () => {
+    onLoaded(map);
+  });
+
+  onBeforeUnmount(() => {
+    stop();
+    map.remove();
+  });
 });
 
 const onLoaded = (map) => {
