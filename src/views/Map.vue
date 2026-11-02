@@ -9,7 +9,7 @@ import { pois } from '@/modules/pois';
 import { pairs } from '@/utils/iterator';
 import { useResizeObserver } from '@vueuse/core';
 import { Map } from 'mapbox-gl';
-import { onMounted, onUnmounted, useTemplateRef } from 'vue';
+import { onBeforeUnmount, onMounted, useTemplateRef } from 'vue';
 
 const props = defineProps({
   center: { type: Object, required: true },
@@ -40,11 +40,12 @@ onMounted(() => {
     onLoaded(map);
   });
 
-  useResizeObserver(container, () => {
+  const { stop } = useResizeObserver(container, () => {
     map.resize();
   });
 
-  onUnmounted(() => {
+  onBeforeUnmount(() => {
+    stop();
     map.remove();
   });
 });
