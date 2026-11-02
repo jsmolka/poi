@@ -209,7 +209,7 @@ async function main() {
       console.log(path);
       console.time(path);
       try {
-        const elements = await query(queries, country, 'out geom;');
+        const elements = await query(queries, country, 'out skel geom qt;');
         write(`../src/assets/data/${path}.bin`, await compress(encodeWay(elements)));
       } finally {
         console.timeEnd(path);
