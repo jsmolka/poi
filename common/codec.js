@@ -1,4 +1,5 @@
 const PRECISION = 5;
+const SCALE = 10 ** PRECISION;
 
 function zigzag(value) {
   return value >= 0 ? value * 2 : -value * 2 - 1;
@@ -69,7 +70,7 @@ export function encode(polylines, metadata) {
     writeVarint(out, polyline.length);
     for (const coordinates of polyline) {
       for (const [index, coordinate] of coordinates.entries()) {
-        const quantized = Math.round(coordinate * 10 ** PRECISION);
+        const quantized = Math.round(coordinate * SCALE);
         writeVarint(out, zigzag(quantized - previous[index]));
         previous[index] = quantized;
       }
@@ -95,7 +96,7 @@ export function decode(buffer) {
     polylines: Array.from({ length: readVarint(buffer, state) }, () => {
       return Float32Array.from({ length: 2 * readVarint(buffer, state) }, (_, index) => {
         previous[index & 0x1] += unzigzag(readVarint(buffer, state));
-        return previous[index & 0x1] / 10 ** PRECISION;
+        return previous[index & 0x1] / SCALE;
       });
     }),
 

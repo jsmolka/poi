@@ -145,13 +145,13 @@ function encodeWay(elements) {
   return encode(
     elements.map((element) => {
       const polyline = element.geometry.map(({ lat, lon }) => [lon, lat]);
-      const latToMeters = 110574;
       const lngToMeters = 111320 * Math.cos(polyline[0][1] * (Math.PI / 180));
+      const latToMeters = 110574;
 
       return simplify(
         polyline.map((coordinates) => ({
-          x: coordinates[1] * latToMeters,
-          y: coordinates[0] * lngToMeters,
+          x: coordinates[0] * lngToMeters,
+          y: coordinates[1] * latToMeters,
           coordinates,
         })),
         0.5,
