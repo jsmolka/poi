@@ -200,11 +200,11 @@ function tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail) {
     }
   };
 
-  const padding = 16;
-  const minX = bbox.west - padding * pxToLng;
-  const maxX = bbox.east + padding * pxToLng;
-  const minY = bbox.south - padding * pxToLat;
-  const maxY = bbox.north + padding * pxToLat;
+  const buffer = 16;
+  const minX = bbox.west - buffer * pxToLng;
+  const maxX = bbox.east + buffer * pxToLng;
+  const minY = bbox.south - buffer * pxToLat;
+  const maxY = bbox.north + buffer * pxToLat;
   const visible = bush.search(minX, minY, maxX, maxY);
   for (const index of visible) {
     const start = startIndices[index];
