@@ -1,3 +1,4 @@
+import { useEvent } from '@/composables/useEvent';
 import { Tiler } from '@/modules/tiler';
 import { mapRange, roundTo } from '@/utils/numeric';
 import { TileLayer } from '@deck.gl/geo-layers';
@@ -123,10 +124,8 @@ export function useDeck(map) {
 
   const tiler = new Tiler();
 
-  // ---- shared tiled-layer helper ---------------------------------------------
-
-  const addTiledLayer = ({ id, beforeId, getPopup, init, transfer, data, render }) => {
-    const key = tiler.init(init, transfer);
+  const addTiledLayer = ({ id, init, getTileData, renderSubLayers, beforeId }) => {
+    const key = tiler.init(init.data, init.transfer);
 
     let scale = getQuantizedScale();
 
@@ -134,52 +133,50 @@ export function useDeck(map) {
       const minZoom = 0;
       const maxZoom = 14;
       const tileSize = 512;
+
       return new TileLayer({
         id,
-        beforeId,
         minZoom,
         maxZoom,
         tileSize,
         getTileData: async ({ bbox, index, signal }) => {
-          return data(await tiler.tile(key, bbox, tileSize, index.z, maxZoom, signal));
+          return getTileData(await tiler.tile(key, bbox, tileSize, index.z, maxZoom, signal));
         },
         renderSubLayers: (props) => {
-          return props.data ? render(props.id, props.data, scale) : null;
+          return renderSubLayers({ ...props, scale });
         },
-        updateTriggers: { renderSubLayers: [scale] },
+        updateTriggers: {
+          renderSubLayers: [scale],
+        },
+        beforeId,
       });
     };
 
-    const onZoom = () => {
-      const next = getQuantizedScale();
-      if (next !== scale) {
-        scale = next;
+    const stop = useEvent(map, 'zoom', () => {
+      const value = getQuantizedScale();
+      if (value !== scale) {
+        scale = value;
         updateLayer(makeLayer());
       }
-    };
+    });
 
-    map.on('zoom', onZoom);
     addLayer(makeLayer(), () => {
-      map.off('zoom', onZoom);
+      stop();
       tiler.dispose(key);
     });
 
     // Register after addLayer: addLayer -> removeLayer(id) clears any previous handler for this id.
-    popupContent.set(id, getPopup);
+    popupContent.set(id, defaultGetPopup);
   };
 
-  // ---- public API -------------------------------------------------------------
-
-  const addLayerPoi = ({ id, positions, color, beforeId = undefined }) => {
-    positions = positions.slice();
-
+  const addLayerPoi = ({ id, positions, color, beforeId }) => {
     addTiledLayer({
       id,
-      beforeId,
-      getPopup: defaultGetPopup,
-      init: { kind: 'poi', positions },
-      transfer: [positions.buffer],
-      data: ({ positions }) => {
+      init: {
+        data: { kind: 'poi', positions },
+        transfer: [positions.buffer],
+      },
+      getTileData: ({ positions }) => {
         if (positions == null) {
           return null;
         }
@@ -188,31 +185,29 @@ export function useDeck(map) {
           attributes: { getPosition: { value: positions, size: 2 } },
         };
       },
-      render: (id, data, scale) => {
+      renderSubLayers: (props) => {
         return new ScatterplotLayer({
-          id,
-          data,
+          id: props.id,
+          data: props.data,
           getFillColor: [color.r, color.g, color.b, 0xff],
           getRadius: 2,
           radiusUnits: 'pixels',
-          radiusScale: scale,
+          radiusScale: props.scale,
           pickable: true,
         });
       },
+      beforeId,
     });
   };
 
-  const addLayerWay = ({ id, positions, startIndices, color, beforeId = undefined }) => {
-    positions = positions.slice();
-    startIndices = startIndices.slice();
-
+  const addLayerWay = ({ id, positions, startIndices, color, beforeId }) => {
     addTiledLayer({
       id,
-      beforeId,
-      getPopup: defaultGetPopup,
-      init: { kind: 'way', positions, startIndices },
-      transfer: [positions.buffer, startIndices.buffer],
-      data: ({ positions, startIndices }) => {
+      init: {
+        data: { kind: 'way', positions, startIndices },
+        transfer: [positions.buffer, startIndices.buffer],
+      },
+      getTileData: ({ positions, startIndices }) => {
         if (positions == null) {
           return null;
         }
@@ -222,20 +217,21 @@ export function useDeck(map) {
           attributes: { getPath: { value: positions, size: 2 } },
         };
       },
-      render: (id, data, scale) => {
+      renderSubLayers: (props) => {
         return new PathLayer({
-          id,
-          data,
+          id: props.id,
+          data: props.data,
           _pathType: 'open',
           getColor: [color.r, color.g, color.b, 0xff],
           getWidth: 1,
           widthUnits: 'pixels',
-          widthScale: scale,
+          widthScale: props.scale,
           jointRounded: true,
           capRounded: true,
           pickable: true,
         });
       },
+      beforeId,
     });
   };
 
