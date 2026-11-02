@@ -119,7 +119,7 @@ const onMapLoaded = (map) => {
         signal: controller.signal,
       });
 
-      const { polylines } = decode(await decompress(response.data));
+      const { positions, startIndices } = decode(await decompress(response.data));
       if (controller.signal.aborted) {
         return;
       }
@@ -127,14 +127,15 @@ const onMapLoaded = (map) => {
       if (type === 'poi') {
         addLayerPoi({
           id,
-          polyline: polylines[0],
+          positions,
           color,
           beforeId: `${id}-order`,
         });
       } else {
         addLayerWay({
           id,
-          polylines,
+          positions,
+          startIndices,
           color,
           beforeId: `${id}-order`,
         });

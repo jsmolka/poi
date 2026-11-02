@@ -18,33 +18,29 @@ function write(path, data) {
 }
 
 async function query(queries, country, out) {
-  let interpreters = [
-    'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
-    'https://overpass.private.coffee/api/interpreter',
-    'https://overpass-api.de/api/interpreter',
+  const overpasses = [
+    'https://maps.mail.ru/osm/tools/overpass',
+    'https://overpass.private.coffee',
+    'https://overpass-api.de',
   ];
 
   if (nextgisOverpassApiKey) {
-    interpreters = [
-      `https://overpass.nextgis.com/${nextgisOverpassApiKey}/api/interpreter`,
-      ...interpreters,
-    ];
+    overpasses.unshift(`https://overpass.nextgis.com/${nextgisOverpassApiKey}`);
   }
 
-  for (const [i, interpreter] of interpreters.entries()) {
-    console.log(
-      '>',
-      nextgisOverpassApiKey
-        ? interpreter.replaceAll(nextgisOverpassApiKey, 'API_KEY')
-        : interpreter,
-    );
+  for (const [i, overpass] of overpasses.entries()) {
+    console.log('>', overpass.replaceAll(nextgisOverpassApiKey, 'API_KEY'));
+
+    try {
+      await axios.get(`${overpass}/api/kill_my_queries`);
+    } catch {}
 
     try {
       const response = await axios.post(
-        interpreter,
+        `${overpass}/api/interpreter`,
         [
           '[out:json][timeout:3600];',
-          // Select area
+          // Area
           `area["ISO3166-1"="${country.toUpperCase()}"][admin_level=2];`,
           // Run queries
           ...queries.map((query, index) => `${query} -> .q${index};`),
@@ -112,7 +108,7 @@ async function query(queries, country, out) {
 
       console.log('x', message);
 
-      if (i === interpreters.length - 1) {
+      if (i === overpasses.length - 1) {
         throw new Error(message);
       }
     }

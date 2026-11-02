@@ -170,8 +170,8 @@ export function useDeck(map) {
 
   // ---- public API -------------------------------------------------------------
 
-  const addLayerPoi = ({ id, polyline, color, beforeId = undefined }) => {
-    const positions = Float32Array.from(polyline); // copy: the buffer is transferred away
+  const addLayerPoi = ({ id, positions, color, beforeId = undefined }) => {
+    positions = positions.slice();
 
     addTiledLayer({
       id,
@@ -202,20 +202,9 @@ export function useDeck(map) {
     });
   };
 
-  const addLayerWay = ({ id, polylines, color, beforeId = undefined }) => {
-    let total = 0;
-
-    const startIndices = new Uint32Array(polylines.length + 1);
-    for (const [i, polyline] of polylines.entries()) {
-      startIndices[i] = total;
-      total += polyline.length / 2;
-    }
-    startIndices[polylines.length] = total;
-
-    const positions = new Float32Array(2 * total);
-    for (const [i, polyline] of polylines.entries()) {
-      positions.set(polyline, 2 * startIndices[i]);
-    }
+  const addLayerWay = ({ id, positions, startIndices, color, beforeId = undefined }) => {
+    positions = positions.slice();
+    startIndices = startIndices.slice();
 
     addTiledLayer({
       id,

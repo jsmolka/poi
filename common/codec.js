@@ -64,10 +64,14 @@ function readString(buffer, state) {
 export function encode(polylines, metadata) {
   const out = [];
 
-  const previous = [0, 0];
-  writeVarint(out, polylines.length);
+  writeVarint(out, polylines.length + 1);
+  writeVarint(out, 0);
   for (const polyline of polylines) {
     writeVarint(out, polyline.length);
+  }
+
+  const previous = [0, 0];
+  for (const polyline of polylines) {
     for (const coordinates of polyline) {
       for (const [index, coordinate] of coordinates.entries()) {
         const quantized = Math.round(coordinate * SCALE);
@@ -89,23 +93,27 @@ export function encode(polylines, metadata) {
 }
 
 export function decode(buffer) {
-  const previous = [0, 0];
   const state = { position: 0 };
 
-  return {
-    polylines: Array.from({ length: readVarint(buffer, state) }, () => {
-      return Float32Array.from({ length: 2 * readVarint(buffer, state) }, (_, index) => {
-        previous[index & 0x1] += unzigzag(readVarint(buffer, state));
-        return previous[index & 0x1] / SCALE;
-      });
-    }),
+  let startIndex = 0;
+  const startIndices = Uint32Array.from({ length: readVarint(buffer, state) }, () => {
+    startIndex += readVarint(buffer, state);
+    return startIndex;
+  });
 
-    metadata: Array.from({ length: readVarint(buffer, state) }, () => {
-      return Array.from({ length: readVarint(buffer, state) }, () => {
-        return readString(buffer, state);
-      });
-    }),
-  };
+  const previous = [0, 0];
+  const positions = Float32Array.from({ length: 2 * startIndices.at(-1) }, (_, index) => {
+    previous[index & 0x1] += unzigzag(readVarint(buffer, state));
+    return previous[index & 0x1] / SCALE;
+  });
+
+  const metadata = Array.from({ length: readVarint(buffer, state) }, () => {
+    return Array.from({ length: readVarint(buffer, state) }, () => {
+      return readString(buffer, state);
+    });
+  });
+
+  return { positions, startIndices, metadata };
 }
 
 async function pipe(bytes, stream) {
