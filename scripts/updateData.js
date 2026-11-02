@@ -68,36 +68,30 @@ async function query(queries, country, out) {
         throw new AxiosError(undefined, undefined, undefined, undefined, response);
       }
 
-      return new Promise((resolve, reject) => {
-        const pipeline = chain([
-          response.data,
-          parser(),
-          pick({ filter: /^(remark|elements\.\d+)$/ }),
-          streamValues(),
-        ]);
+      const pipeline = chain([
+        response.data,
+        parser(),
+        pick({ filter: /^(remark|elements\.\d+)$/ }),
+        streamValues(),
+      ]);
 
-        const elements = [];
-
-        pipeline.on('data', ({ value }) => {
-          if (typeof value === 'object') {
-            elements.push(value);
-          } else {
-            response.data.destroy();
-            pipeline.destroy();
-            reject(value);
+      const elements = [];
+      try {
+        for await (const { value } of pipeline) {
+          if (typeof value !== 'object') {
+            throw new Error(value);
           }
-        });
+          elements.push(value);
+        }
+      } finally {
+        pipeline.destroy();
+        response.data.destroy();
+      }
 
-        pipeline.on('end', () => {
-          if (elements.length > 0) {
-            resolve(elements);
-          } else {
-            reject('No elements');
-          }
-        });
-
-        pipeline.on('error', reject);
-      });
+      if (elements.length === 0) {
+        throw new Error('No elements');
+      }
+      return elements;
     } catch (error) {
       let message;
       if (axios.isAxiosError(error)) {
