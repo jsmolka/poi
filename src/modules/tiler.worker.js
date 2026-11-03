@@ -26,7 +26,7 @@ function index({ kind, positions, startIndices }) {
 
 function indexPoi(positions) {
   const vertices = positions.length / 2;
-  const bush = new Flatbush(vertices, undefined, Float32Array);
+  const bush = new Flatbush(vertices, 16, Float32Array);
   for (let i = 0; i < positions.length; i += 2) {
     bush.add(positions[i], positions[i + 1]);
   }
@@ -38,7 +38,7 @@ function indexPoi(positions) {
 function indexWay(positions, startIndices) {
   const count = startIndices.length - 1;
   const vertices = positions.length / 2;
-  const bush = new Flatbush(count, undefined, Float32Array);
+  const bush = new Flatbush(count, 16, Float32Array);
   const weights = new Float32Array(vertices);
   for (let i = 0; i < count; i++) {
     const start = startIndices[i];
