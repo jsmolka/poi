@@ -31,6 +31,10 @@ export function useDeck(map) {
     popupLayerId = null;
   });
 
+  const getFeatureIndex = (info) => {
+    return info.index >= 0 ? (info.sourceLayer?.props.data?.indices?.[info.index] ?? null) : null;
+  };
+
   // POIs: snap the popup to the point itself. Ways (and fallback): use the click location.
   const popupLngLat = (info) => {
     const attr = info.sourceLayer?.props.data?.attributes?.getPosition;
@@ -176,13 +180,14 @@ export function useDeck(map) {
         data: { kind: 'poi', positions },
         transfer: [positions.buffer],
       },
-      getTileData: ({ positions }) => {
+      getTileData: ({ positions, indices }) => {
         if (positions == null) {
           return null;
         }
         return {
           length: positions.length / 2,
           attributes: { getPosition: { value: positions, size: 2 } },
+          indices,
         };
       },
       renderSubLayers: (props) => {
@@ -207,7 +212,7 @@ export function useDeck(map) {
         data: { kind: 'way', positions, startIndices },
         transfer: [positions.buffer, startIndices.buffer],
       },
-      getTileData: ({ positions, startIndices }) => {
+      getTileData: ({ positions, startIndices, indices }) => {
         if (positions == null) {
           return null;
         }
@@ -215,6 +220,7 @@ export function useDeck(map) {
           startIndices,
           length: startIndices.length,
           attributes: { getPath: { value: positions, size: 2 } },
+          indices,
         };
       },
       renderSubLayers: (props) => {

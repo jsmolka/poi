@@ -133,13 +133,16 @@ function tile({ key, id, bbox, size, zoom, maxZoom }) {
 
 function tilePoi(dataset, id, bbox) {
   const { bush, positions } = dataset;
-  const visible = bush.search(bbox.west, bbox.south, bbox.east, bbox.north);
-  const visiblePositions = new Float32Array(2 * visible.length);
-  for (const [i, index] of visible.entries()) {
+  const visibleIndices = new Uint32Array(bush.search(bbox.west, bbox.south, bbox.east, bbox.north));
+  const visiblePositions = new Float32Array(2 * visibleIndices.length);
+  for (const [i, index] of visibleIndices.entries()) {
     visiblePositions[2 * i] = positions[2 * index];
     visiblePositions[2 * i + 1] = positions[2 * index + 1];
   }
-  self.postMessage({ id, positions: visiblePositions }, [visiblePositions.buffer]);
+  self.postMessage({ id, positions: visiblePositions, indices: visibleIndices }, [
+    visiblePositions.buffer,
+    visibleIndices.buffer,
+  ]);
 }
 
 function clipSegment(ax, ay, bx, by, x0, y0, x1, y1) {
@@ -189,14 +192,18 @@ function tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail) {
 
   const outPositions = [];
   const outStartIndices = [];
-  const startLine = () => {
+  const outIndices = [];
+
+  const startLine = (index) => {
     outStartIndices.push(outPositions.length / 2);
+    outIndices.push(index);
   };
   const endLine = () => {
     const start = outStartIndices.at(-1);
     if (outPositions.length / 2 - start < 2) {
       outPositions.length = 2 * start;
       outStartIndices.pop();
+      outIndices.pop();
     }
   };
 
@@ -233,7 +240,7 @@ function tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail) {
             if (open) {
               endLine();
             }
-            startLine();
+            startLine(index);
             outPositions.push(ax + t0 * dx, ay + t0 * dy);
           }
 
@@ -260,8 +267,9 @@ function tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail) {
 
   const visiblePositions = Float32Array.from(outPositions);
   const visibleStartIndices = Uint32Array.from(outStartIndices);
-  self.postMessage({ id, positions: visiblePositions, startIndices: visibleStartIndices }, [
-    visiblePositions.buffer,
-    visibleStartIndices.buffer,
-  ]);
+  const visibleIndices = Uint32Array.from(outIndices);
+  self.postMessage(
+    { id, positions: visiblePositions, startIndices: visibleStartIndices, indices: visibleIndices },
+    [visiblePositions.buffer, visibleStartIndices.buffer, visibleIndices.buffer],
+  );
 }
