@@ -109,7 +109,7 @@ const onMapLoaded = (map) => {
 
   const { addLayerPoi, addLayerWay, removeLayer } = useDeck(map);
 
-  const load = async (id, type, color, url) => {
+  const load = async (id, type, name, color, url) => {
     const controller = new AbortController();
     pending.set(id, controller);
 
@@ -119,7 +119,7 @@ const onMapLoaded = (map) => {
         signal: controller.signal,
       });
 
-      const { positions, startIndices } = decode(await decompress(response.data));
+      const { positions, startIndices, metadata } = decode(await decompress(response.data));
       if (controller.signal.aborted) {
         return;
       }
@@ -127,13 +127,16 @@ const onMapLoaded = (map) => {
       if (type === 'poi') {
         addLayerPoi({
           id,
+          name,
           positions,
+          metadata,
           color,
           beforeId: `${id}-order`,
         });
       } else {
         addLayerWay({
           id,
+          name,
           positions,
           startIndices,
           color,
@@ -152,7 +155,7 @@ const onMapLoaded = (map) => {
   };
 
   const stop = watchEffect(() => {
-    for (const [poi, { type, color, urls }] of Object.entries(pois)) {
+    for (const [poi, { type, name, color, urls }] of Object.entries(pois)) {
       for (const country of Country.$values) {
         const id = `${poi}/${country}`;
 
@@ -167,7 +170,7 @@ const onMapLoaded = (map) => {
           continue;
         }
 
-        load(id, type, color, urls[country]);
+        load(id, type, name, color, urls[country]);
       }
     }
   });
