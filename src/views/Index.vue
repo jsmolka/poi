@@ -79,21 +79,6 @@ const onMapMounted = (map) => {
 };
 
 const onMapLoaded = (map) => {
-  const ids = ['paths'];
-  for (const poi of Object.keys(pois)) {
-    for (const country of Country.$values) {
-      ids.push(`${poi}/${country}`);
-    }
-  }
-
-  map.on('mouseenter', ids, () => {
-    map.getCanvas().style.cursor = 'pointer';
-  });
-
-  map.on('mouseleave', ids, () => {
-    map.getCanvas().style.cursor = '';
-  });
-
   const pending = new window.Map();
 
   const { hasLayer, addLayerPoi, addLayerWay, removeLayer } = useDeck(map);
