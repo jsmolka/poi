@@ -117,19 +117,19 @@ const onMapLoaded = (map) => {
         addLayerPoi({
           id,
           name,
+          color,
           positions,
           metadata,
-          color,
           beforeId: `${id}-order`,
         });
       } else {
         addLayerWay({
           id,
           name,
+          color,
           positions,
           startIndices,
           metadata,
-          color,
           beforeId: `${id}-order`,
         });
       }
