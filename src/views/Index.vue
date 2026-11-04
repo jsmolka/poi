@@ -96,7 +96,7 @@ const onMapLoaded = (map) => {
 
   const pending = new window.Map();
 
-  const { addLayerPoi, addLayerWay, removeLayer } = useDeck(map);
+  const { hasLayer, addLayerPoi, addLayerWay, removeLayer } = useDeck(map);
 
   const load = async (id, type, name, color, url) => {
     const controller = new AbortController();
@@ -113,26 +113,16 @@ const onMapLoaded = (map) => {
         return;
       }
 
-      if (type === 'poi') {
-        addLayerPoi({
-          id,
-          name,
-          color,
-          positions,
-          metadata,
-          beforeId: `${id}-order`,
-        });
-      } else {
-        addLayerWay({
-          id,
-          name,
-          color,
-          positions,
-          startIndices,
-          metadata,
-          beforeId: `${id}-order`,
-        });
-      }
+      const addLayer = type === 'poi' ? addLayerPoi : addLayerWay;
+      addLayer({
+        id,
+        name,
+        color,
+        positions,
+        startIndices,
+        metadata,
+        beforeId: `${id}-order`,
+      });
     } catch (error) {
       if (!axios.isCancel(error)) {
         throw error;
@@ -156,7 +146,7 @@ const onMapLoaded = (map) => {
           continue;
         }
 
-        if (pending.has(id) || map.getLayer(id)) {
+        if (pending.has(id) || hasLayer(id)) {
           continue;
         }
 
@@ -165,8 +155,6 @@ const onMapLoaded = (map) => {
     }
   });
 
-  map.on('remove', () => {
-    stop();
-  });
+  map.on('remove', stop);
 };
 </script>

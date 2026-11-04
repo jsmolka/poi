@@ -45,6 +45,10 @@ export function useDeck(map) {
   const layers = new Map();
   const cleanups = new Map();
 
+  const hasLayer = (id) => {
+    return layers.has(id);
+  };
+
   const addLayer = (layer, cleanup) => {
     removeLayer(layer.id);
 
@@ -55,7 +59,7 @@ export function useDeck(map) {
   };
 
   const removeLayer = (id) => {
-    if (!layers.has(id)) {
+    if (!hasLayer(id)) {
       return;
     }
 
@@ -221,6 +225,7 @@ export function useDeck(map) {
   };
 
   return {
+    hasLayer,
     addLayerPoi,
     addLayerWay,
     removeLayer,
