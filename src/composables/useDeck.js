@@ -13,37 +13,70 @@ export function useDeck(map) {
     closeOnClick: false,
   });
 
+  const getPopupLngLat = (info) => {
+    if (info.sourceLayer instanceof ScatterplotLayer) {
+      const data = info.sourceLayer.props.data;
+      const positions = data.attributes.getPosition.value;
+      return [positions[2 * info.index], positions[2 * info.index + 1]];
+    }
+
+    if (info.sourceLayer instanceof PathLayer) {
+      const data = info.sourceLayer.props.data;
+      const positions = data.attributes.getPath.value;
+      const startIndices = data.startIndices;
+      const start = startIndices[info.index];
+      const end = startIndices[info.index + 1] ?? positions.length / 2;
+      const line = [];
+      for (let vertex = start; vertex < end; vertex++) {
+        line.push([positions[2 * vertex], positions[2 * vertex + 1]]);
+      }
+      return turf.nearestPointOnLine(turf.lineString(line), info.coordinate).geometry.coordinates;
+    }
+
+    return info.coordinate;
+  };
+
+  const satelliteUrl = (lng, lat, zoom = 21) => {
+    const params = new URLSearchParams({
+      api: '1',
+      map_action: 'map',
+      center: `${lat},${lng}`,
+      zoom: String(zoom),
+      basemap: 'satellite',
+    });
+    return `https://www.google.com/maps/@?${params}`;
+  };
+
+  const getPopupContent = (info, lngLat) => {
+    const [name, openingHours] =
+      info.sourceLayer.props.metadata[info.sourceLayer.props.data.indices[info.index]] ?? [];
+    return `
+      <a href="${satelliteUrl(lngLat[0], lngLat[1])}" target="_blank" class="underline">
+        ${name || info.sourceLayer.props.name}
+      </a>
+      ${openingHours ? `<br>Opening hours: ${openingHours}` : ''}
+    `;
+  };
+
   const overlay = new MapboxOverlay({
     interleaved: true,
     getCursor: ({ isHovering, isDragging }) => {
       return isHovering && !isDragging ? 'pointer' : '';
     },
     onClick: (info) => {
-      const data = info.sourceLayer?.props?.data;
-      if (!(data && info.picked && info.coordinate)) {
+      if (!info.picked) {
         popup.remove();
         return;
       }
 
-      let lngLat;
-      if (data.startIndices != null) {
-        const positions = data.attributes.getPath.value;
-        const begin = data.startIndices[info.index];
-        const end = data.startIndices[info.index + 1] ?? positions.length / 2;
-
-        const line = [];
-        for (let vertex = begin; vertex < end; vertex++) {
-          line.push([positions[2 * vertex], positions[2 * vertex + 1]]);
-        }
-        lngLat = turf.nearestPointOnLine(turf.lineString(line), info.coordinate).geometry
-          .coordinates;
-      } else {
-        const positions = data.attributes.getPosition.value;
-        lngLat = [positions[2 * info.index], positions[2 * info.index + 1]];
+      const lngLat = getPopupLngLat(info);
+      if (lngLat == null) {
+        popup.remove();
+        return;
       }
 
       popup.setLngLat(lngLat);
-      popup.setText(data.indices[info.index]);
+      popup.setHTML(getPopupContent(info, lngLat));
       popup.addTo(map);
     },
   });
@@ -148,8 +181,6 @@ export function useDeck(map) {
           return null;
         }
         return {
-          name,
-          metadata,
           length: positions.length / 2,
           attributes: { getPosition: { value: positions, size: 2 } },
           indices,
@@ -159,6 +190,8 @@ export function useDeck(map) {
         return new ScatterplotLayer({
           id: props.id,
           data: props.data,
+          name,
+          metadata,
           getFillColor: [color.r, color.g, color.b, 0xff],
           getRadius: 2,
           radiusUnits: 'pixels',
@@ -170,7 +203,7 @@ export function useDeck(map) {
     });
   };
 
-  const addLayerWay = ({ id, name, positions, startIndices, color, beforeId }) => {
+  const addLayerWay = ({ id, name, positions, startIndices, metadata, color, beforeId }) => {
     addTiledLayer({
       id,
       init: {
@@ -182,7 +215,6 @@ export function useDeck(map) {
           return null;
         }
         return {
-          name,
           startIndices,
           length: startIndices.length,
           attributes: { getPath: { value: positions, size: 2 } },
@@ -193,6 +225,8 @@ export function useDeck(map) {
         return new PathLayer({
           id: props.id,
           data: props.data,
+          name,
+          metadata,
           _pathType: 'open',
           getColor: [color.r, color.g, color.b, 0xff],
           getWidth: 1,

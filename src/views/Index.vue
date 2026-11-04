@@ -78,17 +78,6 @@ const onMapMounted = (map) => {
   }
 };
 
-const satelliteUrl = (lat, lng, zoom = 21) => {
-  const params = new URLSearchParams({
-    api: '1',
-    map_action: 'map',
-    center: `${lat},${lng}`,
-    zoom: String(zoom),
-    basemap: 'satellite',
-  });
-  return `https://www.google.com/maps/@?${params}`;
-};
-
 const onMapLoaded = (map) => {
   const ids = ['paths'];
   for (const poi of Object.keys(pois)) {
@@ -139,6 +128,7 @@ const onMapLoaded = (map) => {
           name,
           positions,
           startIndices,
+          metadata,
           color,
           beforeId: `${id}-order`,
         });
