@@ -184,16 +184,15 @@ export function useDeck(map) {
           line(index) {
             const start = startIndices[index];
             const end = startIndices[index + 1] ?? positions.length / 2;
-            const line = [];
+            const coordinates = [];
             for (let vertex = start; vertex < end; vertex++) {
-              line.push([positions[2 * vertex], positions[2 * vertex + 1]]);
+              coordinates.push([positions[2 * vertex], positions[2 * vertex + 1]]);
             }
-            return line;
+            return turf.lineString(coordinates);
           },
 
           snapTo(index, coordinate) {
-            const point = turf.nearestPointOnLine(turf.lineString(this.line(index)), coordinate);
-            return point.geometry.coordinates;
+            return turf.nearestPointOnLine(this.line(index), coordinate).geometry.coordinates;
           },
         };
       },
@@ -216,9 +215,5 @@ export function useDeck(map) {
     });
   };
 
-  return {
-    addLayerPoi,
-    addLayerWay,
-    removeLayer,
-  };
+  return { addLayerPoi, addLayerWay, removeLayer };
 }

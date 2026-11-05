@@ -15,16 +15,16 @@ export class Tiler {
   }
 
   init(data, transfer) {
-    data = { type: 'init', key: this.id++, ...data };
-    this.worker.postMessage(data, transfer);
-    return data.key;
+    const key = this.id++;
+    this.worker.postMessage({ type: 'init', key, ...data }, transfer);
+    return key;
   }
 
   dispose(key) {
     this.worker.postMessage({ type: 'dispose', key });
   }
 
-  async tile(key, bbox, size, zoom, maxZoom, signal) {
+  async tile(key, bbox, tileSize, zoom, maxZoom, signal) {
     return new Promise((resolve, reject) => {
       if (signal.aborted) {
         reject(new DOMException('Aborted', 'AbortError'));
@@ -43,7 +43,7 @@ export class Tiler {
         { once: true },
       );
 
-      this.worker.postMessage({ type: 'tile', key, id, bbox, size, zoom, maxZoom });
+      this.worker.postMessage({ type: 'tile', key, id, bbox, tileSize, zoom, maxZoom });
     });
   }
 }

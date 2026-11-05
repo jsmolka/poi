@@ -113,7 +113,7 @@ function simplify(positions, start, end, weights) {
   }
 }
 
-function tile({ key, id, bbox, size, zoom, maxZoom }) {
+function tile({ key, id, bbox, tileSize, zoom, maxZoom }) {
   const dataset = datasets.get(key);
   if (dataset == null) {
     self.postMessage({ id, positions: null });
@@ -124,7 +124,7 @@ function tile({ key, id, bbox, size, zoom, maxZoom }) {
     tilePoi(dataset, id, bbox);
   } else {
     const lat = (bbox.north + bbox.south) / 2;
-    const pxToLng = 360 / (size * 2 ** zoom);
+    const pxToLng = 360 / (tileSize * 2 ** zoom);
     const pxToLat = Math.max(0.05, Math.cos(lat * (Math.PI / 180))) * pxToLng;
     const fullDetail = zoom >= maxZoom;
     tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail);
