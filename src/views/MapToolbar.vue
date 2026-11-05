@@ -45,7 +45,7 @@
       :title="name"
       v-model="settings[poi]"
     >
-      <div class="size-4 rounded-full" :style="{ background: color.hex }" />
+      <PhCircle weight="fill" class="size-4" :style="{ color }" />
     </Toggle>
   </div>
 </template>
@@ -68,7 +68,7 @@ import { colors } from '@/utils/colors';
 import { readAsText, selectFile } from '@/utils/filesystem';
 import { gpxToGeoJson } from '@/utils/geoJson';
 import { cn } from '@/utils/ui';
-import { PhGear, PhGpsFix, PhPath, PhRuler } from '@phosphor-icons/vue';
+import { PhCircle, PhGear, PhGpsFix, PhPath, PhRuler } from '@phosphor-icons/vue';
 import * as turf from '@turf/turf';
 import { useMagicKeys } from '@vueuse/core';
 import { Map, Marker } from 'mapbox-gl';
