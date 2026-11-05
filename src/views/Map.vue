@@ -3,7 +3,6 @@
 </template>
 
 <script setup>
-import { env } from '@/common/env';
 import { Country } from '@/modules/country';
 import { pois } from '@/modules/pois';
 import { pairs } from '@/utils/iterator';
@@ -23,7 +22,7 @@ const container = useTemplateRef('container');
 onMounted(() => {
   const map = new Map({
     container: container.value,
-    accessToken: env.mapboxAccessToken,
+    accessToken: import.meta.env.VITE_MAPBOX_ACCESS_TOKEN,
     style: 'mapbox://styles/juliansmolka/clzwx15zy002n01qs7yrr9zsr',
     projection: 'mercator',
     antialias: true,
