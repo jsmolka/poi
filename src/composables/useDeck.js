@@ -94,7 +94,7 @@ export function useDeck(map) {
 
     const makeLayer = () => {
       const maxZoom = 14;
-      const tileSize = 512;
+      const tileSize = 2048;
 
       return new TileLayer({
         id,
