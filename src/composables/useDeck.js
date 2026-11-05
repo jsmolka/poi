@@ -93,13 +93,11 @@ export function useDeck(map) {
     let scale = getQuantizedScale();
 
     const makeLayer = () => {
-      const minZoom = 0;
       const maxZoom = 14;
       const tileSize = 512;
 
       return new TileLayer({
         id,
-        minZoom,
         maxZoom,
         tileSize,
         getTileData: async ({ bbox, index, signal }) => {
