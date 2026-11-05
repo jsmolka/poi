@@ -100,8 +100,8 @@ export function useDeck(map) {
         id,
         maxZoom,
         tileSize,
-        getTileData: async ({ bbox, index, signal }) => {
-          return getTileData(await tiler.tile(key, bbox, tileSize, index.z, maxZoom, signal));
+        getTileData: async ({ bbox, zoom, signal }) => {
+          return getTileData(await tiler.tile(key, bbox, tileSize, zoom, maxZoom, signal));
         },
         renderSubLayers: (props) => {
           return props.data ? renderSubLayers({ ...props, scale }) : null;
