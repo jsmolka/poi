@@ -22,7 +22,7 @@ import axios from 'axios';
 import { createElement, MapPin } from 'lucide';
 import { Marker, ScaleControl } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
-import { computed, createApp, effectScope, watch } from 'vue';
+import { computed, createApp, watch } from 'vue';
 
 const { settings } = storeToRefs(useSettingsStore());
 const { location } = useLocation();
@@ -81,51 +81,46 @@ const onMapMounted = (map) => {
 const onMapLoaded = (map) => {
   const { addLayerPoi, addLayerWay, removeLayer } = useDeck(map);
 
-  const scope = effectScope();
-  scope.run(() => {
-    for (const [poi, { type, name, color, urls }] of Object.entries(pois)) {
-      const addLayer = type === 'poi' ? addLayerPoi : addLayerWay;
+  for (const [poi, { type, name, color, urls }] of Object.entries(pois)) {
+    const addLayer = type === 'poi' ? addLayerPoi : addLayerWay;
 
-      for (const country of Country.$values) {
-        const id = `${poi}/${country}`;
+    for (const country of Country.$values) {
+      const id = `${poi}/${country}`;
 
-        watch(
-          computed(() => settings.value[poi] && settings.value[country]),
-          async (enabled, _, onCleanup) => {
-            if (!enabled) {
+      watch(
+        computed(() => settings.value[poi] && settings.value[country]),
+        async (enabled, _, onCleanup) => {
+          if (!enabled) {
+            return;
+          }
+
+          const controller = new AbortController();
+          onCleanup(() => {
+            controller.abort();
+            removeLayer(id);
+          });
+
+          try {
+            const response = await axios.get(urls[country], {
+              responseType: 'arraybuffer',
+              signal: controller.signal,
+            });
+
+            const { positions, startIndices, metadata } = decode(await decompress(response.data));
+            if (controller.signal.aborted) {
               return;
             }
 
-            const controller = new AbortController();
-            onCleanup(() => {
-              controller.abort();
-              removeLayer(id);
-            });
-
-            try {
-              const response = await axios.get(urls[country], {
-                responseType: 'arraybuffer',
-                signal: controller.signal,
-              });
-
-              const { positions, startIndices, metadata } = decode(await decompress(response.data));
-              if (controller.signal.aborted) {
-                return;
-              }
-
-              addLayer({ id, name, color, positions, startIndices, metadata });
-            } catch (error) {
-              if (!axios.isCancel(error)) {
-                throw error;
-              }
+            addLayer({ id, name, color, positions, startIndices, metadata });
+          } catch (error) {
+            if (!axios.isCancel(error)) {
+              throw error;
             }
-          },
-          { immediate: true },
-        );
-      }
+          }
+        },
+        { immediate: true },
+      );
     }
-  });
-
-  map.on('remove', () => scope.stop());
+  }
 };
 </script>
