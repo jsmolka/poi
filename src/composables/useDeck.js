@@ -106,7 +106,7 @@ export function useDeck(map) {
           return getTileData(await tiler.tile(key, bbox, tileSize, index.z, maxZoom, signal));
         },
         renderSubLayers: (props) => {
-          return renderSubLayers({ ...props, scale });
+          return props.data ? renderSubLayers({ ...props, scale }) : null;
         },
         updateTriggers: {
           renderSubLayers: [scale],
@@ -137,7 +137,7 @@ export function useDeck(map) {
         transfer: [positions.buffer],
       },
       getTileData: ({ positions, indices }) => {
-        if (positions == null) {
+        if (positions == null || positions.length === 0) {
           return null;
         }
         return {
@@ -174,7 +174,7 @@ export function useDeck(map) {
         transfer: [positions.buffer, startIndices.buffer],
       },
       getTileData: ({ positions, startIndices, indices }) => {
-        if (positions == null) {
+        if (positions == null || positions.length === 0) {
           return null;
         }
         return {
