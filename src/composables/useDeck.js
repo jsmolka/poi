@@ -91,7 +91,7 @@ export function useDeck(map) {
 
   const tiler = new Tiler();
 
-  const addTileLayer = ({ id, init, getTileData, renderSubLayers, beforeId }) => {
+  const addTileLayer = ({ id, init, getTileData, renderSubLayers }) => {
     const key = tiler.init(init.data, init.transfer);
 
     let scale = getQuantizedScale();
@@ -115,7 +115,7 @@ export function useDeck(map) {
         updateTriggers: {
           renderSubLayers: [scale],
         },
-        beforeId,
+        beforeId: `${id}-order`,
       });
     };
 
@@ -133,7 +133,7 @@ export function useDeck(map) {
     });
   };
 
-  const addLayerPoi = ({ id, name, color, positions, metadata, beforeId }) => {
+  const addLayerPoi = ({ id, name, color, positions, metadata }) => {
     addTileLayer({
       id,
       init: {
@@ -167,11 +167,10 @@ export function useDeck(map) {
           pickable: true,
         });
       },
-      beforeId,
     });
   };
 
-  const addLayerWay = ({ id, name, color, positions, startIndices, metadata, beforeId }) => {
+  const addLayerWay = ({ id, name, color, positions, startIndices, metadata }) => {
     addTileLayer({
       id,
       init: {
@@ -220,7 +219,6 @@ export function useDeck(map) {
           pickable: true,
         });
       },
-      beforeId,
     });
   };
 

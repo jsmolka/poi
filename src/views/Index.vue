@@ -106,7 +106,6 @@ const onMapLoaded = (map) => {
         positions,
         startIndices,
         metadata,
-        beforeId: `${id}-order`,
       });
     } catch (error) {
       if (!axios.isCancel(error)) {
