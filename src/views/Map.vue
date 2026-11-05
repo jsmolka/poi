@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" />
+  <div ref="container" class="h-full" />
 </template>
 
 <script setup>
@@ -8,7 +8,7 @@ import { pois } from '@/modules/pois';
 import { pairs } from '@/utils/iterator';
 import { useResizeObserver } from '@vueuse/core';
 import { Map } from 'mapbox-gl';
-import { onBeforeUnmount, onMounted, useTemplateRef } from 'vue';
+import { onMounted, useTemplateRef } from 'vue';
 
 const props = defineProps({
   center: { type: Object, required: true },
@@ -16,7 +16,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['mounted', 'loaded']);
-
 const container = useTemplateRef('container');
 
 onMounted(() => {
@@ -34,47 +33,38 @@ onMounted(() => {
   map.touchZoomRotate.disableRotation();
   map.touchPitch.disable();
 
-  const { stop } = useResizeObserver(container, () => {
+  useResizeObserver(container, () => {
     map.resize();
   });
 
   emit('mounted', map);
 
   map.once('load', () => {
-    onLoaded(map);
-  });
+    const text = map.getStyle().layers.find((layer) => {
+      return layer.type === 'symbol';
+    });
 
-  onBeforeUnmount(() => {
-    stop();
-    map.remove();
+    const ids = [text.id];
+    for (const poi of Object.keys(pois)) {
+      for (const country of Country.$values) {
+        ids.push(`${poi}/${country}-anchor`);
+      }
+    }
+
+    ids.push('route-anchor');
+
+    for (const [previousId, id] of pairs(ids)) {
+      map.addLayer(
+        {
+          id,
+          type: 'background',
+          layout: { visibility: 'none' },
+        },
+        previousId,
+      );
+    }
+
+    emit('loaded', map);
   });
 });
-
-const onLoaded = (map) => {
-  const text = map.getStyle().layers.find((layer) => {
-    return layer.type === 'symbol';
-  });
-
-  const ids = [text.id];
-  for (const poi of Object.keys(pois)) {
-    for (const country of Country.$values) {
-      ids.push(`${poi}/${country}-order`);
-    }
-  }
-
-  ids.push('route-order');
-
-  for (const [beforeId, id] of pairs(ids)) {
-    map.addLayer(
-      {
-        id,
-        type: 'background',
-        layout: { visibility: 'none' },
-      },
-      beforeId,
-    );
-  }
-
-  emit('loaded', map);
-};
 </script>

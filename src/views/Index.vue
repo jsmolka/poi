@@ -1,11 +1,5 @@
 <template>
-  <Map
-    class="bg-shade-6 size-full"
-    :center="location ?? leipzig"
-    :zoom="10"
-    @mounted="onMapMounted"
-    @loaded="onMapLoaded"
-  />
+  <Map :center="location ?? leipzig" :zoom="10" @mounted="onMapMounted" @loaded="onMapLoaded" />
 </template>
 
 <script setup>

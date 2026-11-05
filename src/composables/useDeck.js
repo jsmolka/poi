@@ -109,7 +109,7 @@ export function useDeck(map) {
         updateTriggers: {
           renderSubLayers: [scale],
         },
-        beforeId: `${id}-order`,
+        beforeId: `${id}-anchor`,
       });
     };
 

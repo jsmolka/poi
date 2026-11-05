@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="bg-shade-8 flex max-w-[calc(100vw-20px)] flex-wrap items-center gap-2 rounded-sm border p-2"
-  >
+  <div class="bg-shade-8 flex max-w-[calc(100vw-20px)] flex-wrap gap-2 rounded-sm border p-2">
     <Button variant="ghost" size="icon" title="Locate" :disabled="location == null" @click="locate">
       <PhGpsFix class="size-4" />
     </Button>
@@ -21,8 +19,8 @@
 
     <DropdownMenu>
       <DropdownMenuTrigger as-child>
-        <Button variant="ghost" size="icon" title="Settings">
-          <PhGear class="size-4" />
+        <Button variant="ghost" size="icon" title="Countries">
+          <PhFlag class="size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -68,7 +66,7 @@ import { colors } from '@/utils/colors';
 import { readAsText, selectFile } from '@/utils/filesystem';
 import { gpxToGeoJson } from '@/utils/geoJson';
 import { cn } from '@/utils/ui';
-import { PhCircle, PhGear, PhGpsFix, PhPath, PhRuler } from '@phosphor-icons/vue';
+import { PhCircle, PhFlag, PhGpsFix, PhPath, PhRuler } from '@phosphor-icons/vue';
 import * as turf from '@turf/turf';
 import { useMagicKeys } from '@vueuse/core';
 import { Map, Marker } from 'mapbox-gl';
@@ -85,7 +83,7 @@ const { location } = useLocation();
 const locate = () => {
   props.map.flyTo({
     center: [location.value.lng, location.value.lat],
-    zoom: 15,
+    zoom: 14,
   });
 };
 
@@ -102,7 +100,8 @@ const uploadRoute = async () => {
   }
 
   route = null;
-  updateDistanceMarker(markerEvent);
+  marker?.remove();
+  marker = null;
 
   const content = await readAsText(await selectFile('gpx'));
   const geojson = gpxToGeoJson(content);
@@ -114,7 +113,6 @@ const uploadRoute = async () => {
     }
   });
   if (coordinates.length === 0) {
-    route = null;
     return;
   }
 
@@ -142,7 +140,7 @@ const uploadRoute = async () => {
         },
       },
     },
-    `${id}-order`,
+    `${id}-anchor`,
   );
 
   const w = window.innerWidth;
@@ -169,12 +167,12 @@ const updateDistanceMarker = (event) => {
     return;
   }
 
-  const cursor = turf.point([event.lngLat.lng, event.lngLat.lat]);
-  const closestPoint = turf.nearestPointOnLine(route, cursor, { units: 'kilometers' });
+  const point = turf.point([event.lngLat.lng, event.lngLat.lat]);
+  const closestPoint = turf.nearestPointOnLine(route, point, { units: 'kilometers' });
 
   if (marker == null) {
     const element = document.createElement('div');
-    element.className = cn('bg-shade-2 text-shade-8 rounded-sm p-1 text-xs');
+    element.className = cn('bg-shade-2 text-shade-8 rounded-sm px-1 py-0.5 text-xs');
 
     marker = new Marker({ element, closeOnClick: false, anchor: 'center' })
       .setLngLat(closestPoint.geometry.coordinates)
