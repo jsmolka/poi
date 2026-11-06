@@ -84,10 +84,11 @@ const { settings } = storeToRefs(useSettingsStore());
 const { location } = useLocation();
 
 const locate = () => {
-  props.map.flyTo({
-    center: [location.value.lng, location.value.lat],
-    zoom: 14,
-  });
+  if (props.map.getZoom() < 10) {
+    props.map.flyTo({ center: location.value, zoom: 14 });
+  } else {
+    props.map.panTo(location.value);
+  }
 };
 
 let route = null;
