@@ -77,12 +77,16 @@ export function useDeck(map) {
     overlay.setProps({ layers: Array.from(layers.values()) });
   };
 
-  const getScale = () => {
-    return mapRange(map.getZoom(), 6, 18, 0.5, 8);
+  const getQuantizedZoom = () => {
+    return roundTo(map.getZoom(), 0.25);
   };
 
-  const getQuantizedScale = () => {
-    return roundTo(getScale(), 0.25);
+  const getScale = () => {
+    return mapRange(getQuantizedZoom(), 6, 18, 0.5, 8);
+  };
+
+  const getDetailed = () => {
+    return getQuantizedZoom() >= 8;
   };
 
   const tiler = new Tiler();
@@ -90,7 +94,8 @@ export function useDeck(map) {
   const addTileLayer = ({ id, init, getTileData, renderSubLayers }) => {
     const key = tiler.init(init.data, init.transfer);
 
-    let scale = getQuantizedScale();
+    let scale = getScale();
+    let detailed = getDetailed();
 
     const makeLayer = () => {
       const maxZoom = 12;
@@ -104,23 +109,25 @@ export function useDeck(map) {
           return getTileData(await tiler.tile(key, bbox, tileSize, zoom, maxZoom, signal));
         },
         renderSubLayers: (props) => {
-          return props.data
-            ? renderSubLayers({ ...props, scale, detailed: map.getZoom() >= 8 })
-            : null;
+          return props.data ? renderSubLayers({ ...props, scale, detailed }) : null;
         },
         updateTriggers: {
-          renderSubLayers: [scale],
+          renderSubLayers: [scale, detailed],
         },
         beforeId: `${id}-anchor`,
       });
     };
 
     const stop = useEvent(map, 'zoom', () => {
-      const next = getQuantizedScale();
-      if (next !== scale) {
-        scale = next;
-        updateLayer(makeLayer());
+      const nextScale = getScale();
+      const nextDetailed = getDetailed();
+      if (scale === nextScale && detailed === nextDetailed) {
+        return;
       }
+
+      scale = nextScale;
+      detailed = nextDetailed;
+      updateLayer(makeLayer());
     });
 
     addLayer(makeLayer(), () => {
