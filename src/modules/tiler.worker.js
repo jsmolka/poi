@@ -1,3 +1,4 @@
+import { Vector } from '@/utils/vector';
 import Flatbush from 'flatbush';
 
 const datasets = new Map();
@@ -178,10 +179,6 @@ function tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail) {
   const { bush, positions, startIndices, weights } = dataset;
   const threshold = fullDetail ? 0 : Math.min(pxToLng, pxToLat) ** 2;
 
-  const outPositions = [];
-  const outStartIndices = [];
-  const outIndices = [];
-
   const buffer = 16;
   const visible = bush.search(
     bbox.west - buffer * pxToLng,
@@ -189,6 +186,11 @@ function tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail) {
     bbox.east + buffer * pxToLng,
     bbox.north + buffer * pxToLat,
   );
+
+  const outPositions = new Vector(Float32Array, 16 * visible.length);
+  const outStartIndices = new Vector(Uint32Array, visible.length);
+  const outIndices = new Vector(Uint32Array, visible.length);
+
   for (const index of visible) {
     const startLength = outPositions.length;
     const start = startIndices[index];
@@ -210,9 +212,9 @@ function tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail) {
     }
   }
 
-  const visiblePositions = Float32Array.from(outPositions);
-  const visibleStartIndices = Uint32Array.from(outStartIndices);
-  const visibleIndices = Uint32Array.from(outIndices);
+  const visiblePositions = outPositions.view();
+  const visibleStartIndices = outStartIndices.view();
+  const visibleIndices = outIndices.view();
   self.postMessage(
     {
       id,
