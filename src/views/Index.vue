@@ -8,6 +8,7 @@ import { useLocation } from '@/composables/useLocation';
 import { Country } from '@/modules/country';
 import { pois } from '@/modules/pois';
 import { useSettingsStore } from '@/stores/settings';
+import { cn } from '@/utils/ui';
 import Map from '@/views/Map.vue';
 import MapLegend from '@/views/MapLegend.vue';
 import MapToolbar from '@/views/MapToolbar.vue';
@@ -50,9 +51,7 @@ const onMapMounted = (map) => {
 
   const initMarker = (coordinates) => {
     const element = createElement(MapPin);
-    element.classList.add('size-8');
-    element.classList.add('text-shade-8');
-    element.classList.add('fill-shade-2');
+    element.classList.value = cn('text-shade-8 fill-shade-2 size-8');
 
     const marker = new Marker({ element });
     marker.setLngLat(coordinates);
