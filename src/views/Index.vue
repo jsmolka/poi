@@ -49,8 +49,6 @@ const onMapMounted = (map) => {
   map.addControl(new ScaleControl(), 'bottom-left');
 
   const initMarker = (coordinates) => {
-    map.setCenter(coordinates);
-
     const element = createElement(MapPin);
     element.classList.add('size-8');
     element.classList.add('text-shade-8');
