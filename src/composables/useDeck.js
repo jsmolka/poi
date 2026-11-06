@@ -5,7 +5,7 @@ import { mapRange, roundTo } from '@/utils/numeric';
 import { TileLayer } from '@deck.gl/geo-layers';
 import { PathLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { MapboxOverlay } from '@deck.gl/mapbox';
-import * as turf from '@turf/turf';
+import { lineString, nearestPointOnLine } from '@turf/turf';
 import { Popup } from 'mapbox-gl';
 
 export function useDeck(map) {
@@ -190,11 +190,11 @@ export function useDeck(map) {
             for (let vertex = start; vertex < end; vertex++) {
               coordinates.push([positions[2 * vertex], positions[2 * vertex + 1]]);
             }
-            return turf.lineString(coordinates);
+            return lineString(coordinates);
           },
 
           snapTo(index, coordinate) {
-            return turf.nearestPointOnLine(this.line(index), coordinate).geometry.coordinates;
+            return nearestPointOnLine(this.line(index), coordinate).geometry.coordinates;
           },
         };
       },

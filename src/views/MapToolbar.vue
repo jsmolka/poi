@@ -67,7 +67,7 @@ import { readAsText, selectFile } from '@/utils/filesystem';
 import { gpxToGeoJson } from '@/utils/geoJson';
 import { cn } from '@/utils/ui';
 import { PhCircle, PhFlag, PhGpsFix, PhPath, PhRuler } from '@phosphor-icons/vue';
-import * as turf from '@turf/turf';
+import { bbox, featureEach, lineString, nearestPointOnLine, point } from '@turf/turf';
 import { useMagicKeys } from '@vueuse/core';
 import { Map, Marker } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
@@ -107,7 +107,7 @@ const uploadRoute = async () => {
   const geojson = gpxToGeoJson(content);
 
   const coordinates = [];
-  turf.featureEach(geojson, (feature) => {
+  featureEach(geojson, (feature) => {
     if (feature.geometry?.type === 'LineString') {
       coordinates.push(...feature.geometry.coordinates);
     }
@@ -116,7 +116,7 @@ const uploadRoute = async () => {
     return;
   }
 
-  route = turf.lineString(coordinates);
+  route = lineString(coordinates);
 
   props.map.addLayer(
     {
@@ -145,7 +145,7 @@ const uploadRoute = async () => {
 
   const w = window.innerWidth;
   const h = window.innerHeight;
-  props.map.fitBounds(turf.bbox(geojson), { padding: 0.1 * Math.min(w, h) });
+  props.map.fitBounds(bbox(geojson), { padding: 0.1 * Math.min(w, h) });
 };
 
 let marker = null;
@@ -167,8 +167,8 @@ const updateDistanceMarker = (event) => {
     return;
   }
 
-  const point = turf.point([event.lngLat.lng, event.lngLat.lat]);
-  const closestPoint = turf.nearestPointOnLine(route, point, { units: 'kilometers' });
+  const coordinate = point([event.lngLat.lng, event.lngLat.lat]);
+  const closestPoint = nearestPointOnLine(route, coordinate, { units: 'kilometers' });
 
   if (marker == null) {
     const element = document.createElement('div');
