@@ -114,9 +114,9 @@ export function useDeck(map) {
     };
 
     const stop = useEvent(map, 'zoom', () => {
-      const value = getQuantizedScale();
-      if (value !== scale) {
-        scale = value;
+      const next = getQuantizedScale();
+      if (next !== scale) {
+        scale = next;
         updateLayer(makeLayer());
       }
     });
