@@ -212,9 +212,9 @@ function tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail) {
     }
   }
 
-  const visiblePositions = outPositions.view();
-  const visibleStartIndices = outStartIndices.view();
-  const visibleIndices = outIndices.view();
+  const visiblePositions = outPositions.toArray();
+  const visibleStartIndices = outStartIndices.toArray();
+  const visibleIndices = outIndices.toArray();
   self.postMessage(
     {
       id,

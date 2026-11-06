@@ -13,7 +13,7 @@ export class Vector {
     this.data[this.length++] = value;
   }
 
-  view() {
+  toArray() {
     return this.data.slice(0, this.length);
   }
 }
