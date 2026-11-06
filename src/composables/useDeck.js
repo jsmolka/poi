@@ -74,8 +74,18 @@ export function useDeck(map) {
     syncLayers();
   };
 
+  let queued = false;
+
   const syncLayers = () => {
-    overlay.setProps({ layers: Array.from(layers.values()) });
+    if (queued) {
+      return;
+    }
+
+    queued = true;
+    queueMicrotask(() => {
+      queued = false;
+      overlay.setProps({ layers: Array.from(layers.values()) });
+    });
   };
 
   const getQuantizedZoom = () => {
@@ -114,6 +124,7 @@ export function useDeck(map) {
           return props.data ? renderSubLayers({ ...props, scale, detailed }) : null;
         },
         updateTriggers: {
+          getTileData: key,
           renderSubLayers: [scale, detailed],
         },
         beforeId: `${id}-anchor`,
