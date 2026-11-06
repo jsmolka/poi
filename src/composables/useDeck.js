@@ -104,7 +104,9 @@ export function useDeck(map) {
           return getTileData(await tiler.tile(key, bbox, tileSize, zoom, maxZoom, signal));
         },
         renderSubLayers: (props) => {
-          return props.data ? renderSubLayers({ ...props, scale }) : null;
+          return props.data
+            ? renderSubLayers({ ...props, scale, detailed: map.getZoom() >= 8 })
+            : null;
         },
         updateTriggers: {
           renderSubLayers: [scale],
@@ -148,7 +150,7 @@ export function useDeck(map) {
           },
         };
       },
-      renderSubLayers: ({ id, data, scale }) => {
+      renderSubLayers: ({ id, data, scale, detailed }) => {
         return new ScatterplotLayer({
           id,
           data,
@@ -158,7 +160,7 @@ export function useDeck(map) {
           getRadius: 2,
           radiusUnits: 'pixels',
           radiusScale: scale,
-          pickable: true,
+          pickable: detailed,
         });
       },
     });
@@ -196,7 +198,7 @@ export function useDeck(map) {
           },
         };
       },
-      renderSubLayers: ({ id, data, scale }) => {
+      renderSubLayers: ({ id, data, scale, detailed }) => {
         return new PathLayer({
           id,
           data,
@@ -207,9 +209,9 @@ export function useDeck(map) {
           getWidth: 1,
           widthUnits: 'pixels',
           widthScale: scale,
-          jointRounded: map.getZoom() > 8,
-          capRounded: map.getZoom() > 8,
-          pickable: true,
+          jointRounded: detailed,
+          capRounded: detailed,
+          pickable: detailed,
         });
       },
     });
