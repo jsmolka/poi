@@ -93,7 +93,7 @@ export function useDeck(map) {
     let scale = getQuantizedScale();
 
     const makeLayer = () => {
-      const maxZoom = 14;
+      const maxZoom = 12;
       const tileSize = 2048;
 
       return new TileLayer({
@@ -207,8 +207,8 @@ export function useDeck(map) {
           getWidth: 1,
           widthUnits: 'pixels',
           widthScale: scale,
-          jointRounded: true,
-          capRounded: true,
+          jointRounded: map.getZoom() > 8,
+          capRounded: map.getZoom() > 8,
           pickable: true,
         });
       },
