@@ -5,7 +5,8 @@ import { mapRange, roundTo } from '@/utils/numeric';
 import { TileLayer } from '@deck.gl/geo-layers';
 import { PathLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { MapboxOverlay } from '@deck.gl/mapbox';
-import { lineString, nearestPointOnLine } from '@turf/turf';
+import { lineString } from '@turf/helpers';
+import { nearestPointOnLine } from '@turf/nearest-point-on-line';
 import { Popup } from 'mapbox-gl';
 
 export function useDeck(map) {
