@@ -174,47 +174,6 @@ function tilePoi(dataset, id, bbox) {
   ]);
 }
 
-function clipSegment(ax, ay, bx, by, x0, y0, x1, y1) {
-  const dx = bx - ax;
-  const dy = by - ay;
-
-  let t0 = 0;
-  let t1 = 1;
-  for (let k = 0; k < 4; k++) {
-    let p;
-    let q;
-    if (k === 0) {
-      p = -dx;
-      q = ax - x0;
-    } else if (k === 1) {
-      p = dx;
-      q = x1 - ax;
-    } else if (k === 2) {
-      p = -dy;
-      q = ay - y0;
-    } else {
-      p = dy;
-      q = y1 - ay;
-    }
-
-    if (p === 0) {
-      if (q < 0) {
-        return null;
-      }
-    } else {
-      const r = q / p;
-      if (p < 0) {
-        if (r > t1) return null;
-        if (r > t0) t0 = r;
-      } else {
-        if (r < t0) return null;
-        if (r < t1) t1 = r;
-      }
-    }
-  }
-  return [t0, t1];
-}
-
 function tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail) {
   const { bush, positions, startIndices, weights } = dataset;
   const threshold = fullDetail ? 0 : Math.min(pxToLng, pxToLat) ** 2;
@@ -223,74 +182,31 @@ function tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail) {
   const outStartIndices = [];
   const outIndices = [];
 
-  const startLine = (index) => {
-    outStartIndices.push(outPositions.length / 2);
-    outIndices.push(index);
-  };
-  const endLine = () => {
-    const start = outStartIndices.at(-1);
-    if (outPositions.length / 2 - start < 2) {
-      outPositions.length = 2 * start;
-      outStartIndices.pop();
-      outIndices.pop();
-    }
-  };
-
   const buffer = 16;
-  const minX = bbox.west - buffer * pxToLng;
-  const maxX = bbox.east + buffer * pxToLng;
-  const minY = bbox.south - buffer * pxToLat;
-  const maxY = bbox.north + buffer * pxToLat;
-  const visible = bush.search(minX, minY, maxX, maxY);
+  const visible = bush.search(
+    bbox.west - buffer * pxToLng,
+    bbox.south - buffer * pxToLat,
+    bbox.east + buffer * pxToLng,
+    bbox.north + buffer * pxToLat,
+  );
   for (const index of visible) {
+    const startLength = outPositions.length;
     const start = startIndices[index];
     const end = startIndices[index + 1];
-
-    let have = false;
-    let open = false;
-    let ax = 0;
-    let ay = 0;
 
     for (let vertex = start; vertex < end; vertex++) {
       if (weights[vertex] < threshold) {
         continue;
       }
-
-      const x = positions[2 * vertex];
-      const y = positions[2 * vertex + 1];
-
-      if (have) {
-        const clip = clipSegment(ax, ay, x, y, minX, minY, maxX, maxY);
-        if (clip != null) {
-          const [t0, t1] = clip;
-          const dx = x - ax;
-          const dy = y - ay;
-          if (!open || t0 > 0) {
-            if (open) {
-              endLine();
-            }
-            startLine(index);
-            outPositions.push(ax + t0 * dx, ay + t0 * dy);
-          }
-
-          outPositions.push(ax + t1 * dx, ay + t1 * dy);
-
-          open = t1 >= 1;
-          if (!open) {
-            endLine();
-          }
-        } else if (open) {
-          endLine();
-          open = false;
-        }
-      }
-
-      ax = x;
-      ay = y;
-      have = true;
+      outPositions.push(positions[2 * vertex]);
+      outPositions.push(positions[2 * vertex + 1]);
     }
-    if (open) {
-      endLine();
+
+    if (outPositions.length - startLength >= 4) {
+      outStartIndices.push(startLength / 2);
+      outIndices.push(index);
+    } else {
+      outPositions.length = startLength;
     }
   }
 
@@ -298,7 +214,12 @@ function tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail) {
   const visibleStartIndices = Uint32Array.from(outStartIndices);
   const visibleIndices = Uint32Array.from(outIndices);
   self.postMessage(
-    { id, positions: visiblePositions, startIndices: visibleStartIndices, indices: visibleIndices },
+    {
+      id,
+      positions: visiblePositions,
+      startIndices: visibleStartIndices,
+      indices: visibleIndices,
+    },
     [visiblePositions.buffer, visibleStartIndices.buffer, visibleIndices.buffer],
   );
 }
