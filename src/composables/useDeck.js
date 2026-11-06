@@ -106,6 +106,7 @@ export function useDeck(map) {
         id,
         maxZoom,
         tileSize,
+        debounceTime: 100,
         getTileData: async ({ bbox, zoom, signal }) => {
           return getTileData(await tiler.tile(key, bbox, tileSize, zoom, maxZoom, signal));
         },
