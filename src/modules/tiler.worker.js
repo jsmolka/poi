@@ -1,4 +1,3 @@
-import { clamp } from '@/utils/numeric';
 import Flatbush from 'flatbush';
 
 const datasets = new Map();
@@ -64,51 +63,81 @@ function indexWay(positions, startIndices) {
   return { bush, positions, startIndices, weights };
 }
 
+const stack = new Float32Array(1024);
+
 function simplify(positions, start, end, weights) {
   const last = end - 1;
   weights[start] = Infinity;
   weights[last] = Infinity;
 
-  const stack = [start, last, Infinity];
-  while (stack.length > 0) {
-    const parentWeight = stack.pop();
-    const hi = stack.pop();
-    const lo = stack.pop();
-    if (hi - lo < 2) {
-      continue;
-    }
+  let sp = 0;
+  if (last - start >= 2) {
+    stack[sp++] = start;
+    stack[sp++] = last;
+    stack[sp++] = Infinity;
+  }
+
+  while (sp > 0) {
+    sp -= 3;
+    const lo = stack[sp];
+    const hi = stack[sp + 1];
+    const parentWeight = stack[sp + 2];
 
     const ax = positions[2 * lo];
-    const bx = positions[2 * lo + 1];
+    const ay = positions[2 * lo + 1];
     const dx = positions[2 * hi] - ax;
-    const dy = positions[2 * hi + 1] - bx;
-    const lenSq = dx ** 2 + dy ** 2;
+    const dy = positions[2 * hi + 1] - ay;
+    const lenSq = dx * dx + dy * dy;
+    const invLenSq = lenSq === 0 ? 0 : 1 / lenSq;
 
     let maxDistSq = 0;
-    let maxVertex = null;
+    let maxVertex = -1;
     for (let vertex = lo + 1; vertex < hi; vertex++) {
       const ox = positions[2 * vertex] - ax;
-      const oy = positions[2 * vertex + 1] - bx;
+      const oy = positions[2 * vertex + 1] - ay;
 
-      let distSq;
-      if (lenSq === 0) {
-        distSq = ox ** 2 + oy ** 2;
-      } else {
-        const t = clamp((ox * dx + oy * dy) / lenSq, 0, 1);
-        const gx = ox - t * dx;
-        const ty = oy - t * dy;
-        distSq = gx ** 2 + ty ** 2;
-      }
+      let t = (ox * dx + oy * dy) * invLenSq;
+      t = t < 0 ? 0 : t > 1 ? 1 : t;
+
+      const ex = ox - t * dx;
+      const ey = oy - t * dy;
+      const distSq = ex * ex + ey * ey;
+
       if (distSq > maxDistSq) {
         maxDistSq = distSq;
         maxVertex = vertex;
       }
     }
 
-    if (maxVertex != null) {
-      const weight = Math.min(maxDistSq, parentWeight);
+    if (maxVertex !== -1) {
+      const weight = maxDistSq < parentWeight ? maxDistSq : parentWeight;
       weights[maxVertex] = weight;
-      stack.push(lo, maxVertex, weight, maxVertex, hi, weight);
+
+      const lenLeft = maxVertex - lo;
+      const lenRight = hi - maxVertex;
+      if (lenLeft > lenRight) {
+        if (lenLeft >= 2) {
+          stack[sp++] = lo;
+          stack[sp++] = maxVertex;
+          stack[sp++] = weight;
+        }
+        if (lenRight >= 2) {
+          stack[sp++] = maxVertex;
+          stack[sp++] = hi;
+          stack[sp++] = weight;
+        }
+      } else {
+        if (lenRight >= 2) {
+          stack[sp++] = maxVertex;
+          stack[sp++] = hi;
+          stack[sp++] = weight;
+        }
+        if (lenLeft >= 2) {
+          stack[sp++] = lo;
+          stack[sp++] = maxVertex;
+          stack[sp++] = weight;
+        }
+      }
     }
   }
 }
