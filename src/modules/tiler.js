@@ -20,10 +20,6 @@ export class Tiler {
     return key;
   }
 
-  dispose(key) {
-    this.worker.postMessage({ type: 'dispose', key });
-  }
-
   async tile(key, bbox, tileSize, zoom, maxZoom, signal) {
     return new Promise((resolve, reject) => {
       if (signal.aborted) {
@@ -45,5 +41,15 @@ export class Tiler {
 
       this.worker.postMessage({ type: 'tile', key, id, bbox, tileSize, zoom, maxZoom });
     });
+  }
+
+  dispose(key) {
+    this.worker.postMessage({ type: 'dispose', key });
+  }
+
+  terminate() {
+    this.worker.postMessage({ type: 'terminate' });
+    this.worker = null;
+    this.pending.clear();
   }
 }

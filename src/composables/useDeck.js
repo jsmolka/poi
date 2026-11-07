@@ -1,5 +1,5 @@
-import { useEvent } from '@/composables/useEvent';
 import { Tiler } from '@/modules/tiler';
+import { onEvent } from '@/utils/event';
 import { satelliteUrl } from '@/utils/google';
 import { mapRange, roundTo } from '@/utils/numeric';
 import { TileLayer } from '@deck.gl/geo-layers';
@@ -8,6 +8,7 @@ import { MapboxOverlay } from '@deck.gl/mapbox';
 import { lineString } from '@turf/helpers';
 import { nearestPointOnLine } from '@turf/nearest-point-on-line';
 import { Popup } from 'mapbox-gl';
+import { onScopeDispose } from 'vue';
 
 export function useDeck(map) {
   const popup = new Popup({
@@ -27,16 +28,16 @@ export function useDeck(map) {
       }
 
       const props = info.sourceLayer.props;
-      const coordinate = props.data.snapTo(info.index, info.coordinate);
+      const lngLat = props.data.snapTo(info.index, info.coordinate);
       const [name, openingHours] = props.metadata[props.data.indices[info.index]] ?? [];
 
       popup.setHTML(`
-        <a href="${satelliteUrl(coordinate)}" target="_blank" class="underline">
+        <a href="${satelliteUrl(lngLat)}" target="_blank" class="underline">
           ${name || props.name}
         </a>
         ${openingHours ? `<br>Opening hours: ${openingHours}` : ''}
       `);
-      popup.setLngLat(coordinate);
+      popup.setLngLat(lngLat);
       popup.addTo(map);
     },
   });
@@ -102,7 +103,7 @@ export function useDeck(map) {
 
   const tiler = new Tiler();
 
-  const addTileLayer = ({ id, init, getTileData, renderSubLayers }) => {
+  const addTileLayer = ({ id, init, getTileData, renderSubLayers, beforeId }) => {
     const key = tiler.init(init.data, init.transfer);
 
     let scale = getScale();
@@ -127,11 +128,11 @@ export function useDeck(map) {
           getTileData: key,
           renderSubLayers: [scale, detailed],
         },
-        beforeId: `${id}-anchor`,
+        beforeId,
       });
     };
 
-    const stop = useEvent(map, 'zoom', () => {
+    const off = onEvent(map, 'zoom', () => {
       const nextScale = getScale();
       const nextDetailed = getDetailed();
       if (scale === nextScale && detailed === nextDetailed) {
@@ -145,11 +146,11 @@ export function useDeck(map) {
 
     addLayer(makeLayer(), () => {
       tiler.dispose(key);
-      stop();
+      off();
     });
   };
 
-  const addLayerPoi = ({ id, name, color, positions, metadata }) => {
+  const addLayerPoi = ({ id, name, color, positions, metadata, beforeId }) => {
     addTileLayer({
       id,
       init: {
@@ -183,10 +184,11 @@ export function useDeck(map) {
           pickable: detailed,
         });
       },
+      beforeId,
     });
   };
 
-  const addLayerWay = ({ id, name, color, positions, startIndices, metadata }) => {
+  const addLayerWay = ({ id, name, color, positions, startIndices, metadata, beforeId }) => {
     addTileLayer({
       id,
       init: {
@@ -213,8 +215,8 @@ export function useDeck(map) {
             return lineString(coordinates);
           },
 
-          snapTo(index, coordinate) {
-            return nearestPointOnLine(this.line(index), coordinate).geometry.coordinates;
+          snapTo(index, lngLat) {
+            return nearestPointOnLine(this.line(index), lngLat).geometry.coordinates;
           },
         };
       },
@@ -234,8 +236,21 @@ export function useDeck(map) {
           pickable: detailed,
         });
       },
+      beforeId,
     });
   };
+
+  onScopeDispose(() => {
+    layers.clear();
+    for (const cleanup of cleanups.values()) {
+      cleanup();
+    }
+    cleanups.clear();
+
+    popup.remove();
+    tiler.terminate();
+    map.removeControl(overlay);
+  });
 
   return { addLayerPoi, addLayerWay, removeLayer };
 }

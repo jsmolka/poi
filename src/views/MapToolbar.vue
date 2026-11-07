@@ -58,6 +58,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Toggle } from '@/components/ui/toggle';
+import { useEvent } from '@/composables/useEvent';
 import { useLocation } from '@/composables/useLocation';
 import { Country } from '@/modules/country';
 import { pois } from '@/modules/pois';
@@ -68,26 +69,26 @@ import { gpxToGeoJson } from '@/utils/geoJson';
 import { cn } from '@/utils/ui';
 import { PhCircle, PhFlag, PhGpsFix, PhPath, PhRuler } from '@phosphor-icons/vue';
 import { bbox } from '@turf/bbox';
-import { lineString, point } from '@turf/helpers';
+import { lineString } from '@turf/helpers';
 import { featureEach } from '@turf/meta';
 import { nearestPointOnLine } from '@turf/nearest-point-on-line';
 import { useMagicKeys } from '@vueuse/core';
 import { Map, Marker } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
-import { watch } from 'vue';
+import { onUnmounted, watch } from 'vue';
 
-const props = defineProps({
+const { map } = defineProps({
   map: { type: Map, required: true },
 });
 
-const { settings } = storeToRefs(useSettingsStore());
 const { location } = useLocation();
+const { settings } = storeToRefs(useSettingsStore());
 
 const locate = () => {
-  if (props.map.getZoom() < 10) {
-    props.map.flyTo({ center: location.value, zoom: 14 });
+  if (map.getZoom() < 10) {
+    map.flyTo({ center: location.value, zoom: 14 });
   } else {
-    props.map.panTo(location.value);
+    map.panTo(location.value);
   }
 };
 
@@ -96,16 +97,15 @@ let route = null;
 const uploadRoute = async () => {
   const id = 'route';
 
-  if (props.map.getLayer(id)) {
-    props.map.removeLayer(id);
+  if (map.getLayer(id)) {
+    map.removeLayer(id);
   }
-  if (props.map.getSource(id)) {
-    props.map.removeSource(id);
+  if (map.getSource(id)) {
+    map.removeSource(id);
   }
 
   route = null;
-  marker?.remove();
-  marker = null;
+  removeDistanceMarker();
 
   const content = await readAsText(await selectFile('gpx'));
   const geojson = gpxToGeoJson(content);
@@ -122,7 +122,7 @@ const uploadRoute = async () => {
 
   route = lineString(coordinates);
 
-  props.map.addLayer(
+  map.addLayer(
     {
       id,
       type: 'line',
@@ -149,7 +149,7 @@ const uploadRoute = async () => {
 
   const w = window.innerWidth;
   const h = window.innerHeight;
-  props.map.fitBounds(bbox(geojson), { padding: 0.1 * Math.min(w, h) });
+  map.fitBounds(bbox(geojson), { padding: 0.1 * Math.min(w, h) });
 };
 
 let marker = null;
@@ -166,25 +166,26 @@ const updateDistanceMarker = (event) => {
 
   const showDistanceMarker = settings.value.showDistanceMarker || ctrl.value;
   if (route == null || !showDistanceMarker) {
-    marker?.remove();
-    marker = null;
+    removeDistanceMarker();
     return;
   }
 
-  const coordinate = point([event.lngLat.lng, event.lngLat.lat]);
-  const closestPoint = nearestPointOnLine(route, coordinate, { units: 'kilometers' });
+  const nearestPoint = nearestPointOnLine(route, [event.lngLat.lng, event.lngLat.lat], {
+    units: 'kilometers',
+  });
 
   if (marker == null) {
     const element = document.createElement('div');
     element.className = cn('bg-shade-2 text-shade-8 rounded-sm px-1 py-0.5 text-xs');
 
-    marker = new Marker({ element, closeOnClick: false, anchor: 'center' })
-      .setLngLat(closestPoint.geometry.coordinates)
-      .addTo(props.map);
+    marker = new Marker({ element, closeOnClick: false, anchor: 'center' });
+    marker.setLngLat(nearestPoint.geometry.coordinates);
+    marker.addTo(map);
+  } else {
+    marker.setLngLat(nearestPoint.geometry.coordinates);
   }
 
-  marker.setLngLat(closestPoint.geometry.coordinates);
-  marker.getElement().textContent = closestPoint.properties.totalDistance.toLocaleString(
+  marker.getElement().textContent = nearestPoint.properties.totalDistance.toLocaleString(
     undefined,
     {
       maximumFractionDigits: 1,
@@ -194,11 +195,14 @@ const updateDistanceMarker = (event) => {
   );
 };
 
-watch(ctrl, () => updateDistanceMarker(markerEvent));
-watch(
-  () => settings.value.showDistanceMarker,
-  () => updateDistanceMarker(markerEvent),
-);
+const removeDistanceMarker = () => {
+  marker?.remove();
+  marker = null;
+};
 
-props.map.on('mousemove', updateDistanceMarker);
+onUnmounted(removeDistanceMarker);
+
+watch([ctrl, () => settings.value.showDistanceMarker], () => updateDistanceMarker(markerEvent));
+
+useEvent(map, 'mousemove', updateDistanceMarker);
 </script>

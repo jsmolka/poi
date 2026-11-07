@@ -17,6 +17,11 @@ self.onmessage = ({ data }) => {
       datasets.delete(data.key);
       break;
     }
+    case 'terminate': {
+      datasets.clear();
+      self.close();
+      break;
+    }
   }
 };
 

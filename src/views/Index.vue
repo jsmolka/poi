@@ -1,82 +1,109 @@
 <template>
-  <Map :center="location ?? leipzig" :zoom="10" @mounted="onMapMounted" @loaded="onMapLoaded" />
+  <div ref="container" class="h-full" />
 </template>
 
 <script setup>
 import { useDeck } from '@/composables/useDeck';
 import { useLocation } from '@/composables/useLocation';
+import { useMap } from '@/composables/useMap';
 import { Country } from '@/modules/country';
 import { pois } from '@/modules/pois';
 import { useSettingsStore } from '@/stores/settings';
-import { cn } from '@/utils/ui';
-import Map from '@/views/Map.vue';
+import { pairs } from '@/utils/iterator';
 import MapLegend from '@/views/MapLegend.vue';
 import MapToolbar from '@/views/MapToolbar.vue';
 import { decode, decompress } from '@common/codec';
+import { whenever } from '@vueuse/core';
 import axios from 'axios';
 import { createElement, MapPin } from 'lucide';
 import { Marker, ScaleControl } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
-import { computed, createApp, watch } from 'vue';
+import { computed, effectScope, onScopeDispose, useTemplateRef, watch, watchEffect } from 'vue';
 
-const { settings } = storeToRefs(useSettingsStore());
 const { location } = useLocation();
+const { settings } = storeToRefs(useSettingsStore());
+const { map, createControl } = useMap(useTemplateRef('container'));
 
-const leipzig = {
-  lat: 51.34482272560187,
-  lng: 12.381337332992878,
-};
+const scope = effectScope();
 
-const createControl = (component) => {
-  return {
-    onAdd(map) {
-      this.div = document.createElement('div');
-      this.div.classList.add('mapboxgl-ctrl');
-      this.app = createApp(component, { map });
-      this.app.mount(this.div);
-      return this.div;
-    },
+whenever(map, (map) => {
+  scope.run(() => {
+    initToolbar(map);
+    initMarker(map);
+    initAnchors(map);
+    initLayers(map);
+  });
+});
 
-    onRemove() {
-      this.app.unmount();
-      this.div.remove();
-    },
-  };
-};
+const initToolbar = (map) => {
+  for (const { control, position } of [
+    { control: createControl(MapToolbar), position: 'top-left' },
+    { control: createControl(MapLegend), position: 'bottom-left' },
+    { control: new ScaleControl(), position: 'bottom-left' },
+  ]) {
+    map.addControl(control, position);
 
-const onMapMounted = (map) => {
-  map.addControl(createControl(MapToolbar), 'top-left');
-  map.addControl(createControl(MapLegend), 'bottom-left');
-  map.addControl(new ScaleControl(), 'bottom-left');
-
-  const initMarker = (coordinates) => {
-    const element = createElement(MapPin);
-    element.classList.value = cn('text-shade-8 fill-shade-2 size-8');
-
-    const marker = new Marker({ element });
-    marker.setLngLat(coordinates);
-    marker.addTo(map);
-
-    watch(location, (coordinates) => {
-      marker.setLngLat(coordinates);
-    });
-  };
-
-  if (location.value) {
-    initMarker(location.value);
-  } else {
-    watch(location, initMarker, { once: true });
+    onScopeDispose(() => map.removeControl(control));
   }
 };
 
-const onMapLoaded = (map) => {
+const initMarker = (map) => {
+  let marker;
+
+  watchEffect(() => {
+    if (location.value == null) {
+      return;
+    }
+
+    if (marker == null) {
+      const element = createElement(MapPin);
+      element.classList.add('size-8', 'text-shade-8', 'fill-shade-2');
+      marker = new Marker({ element }).setLngLat(location.value).addTo(map);
+    } else {
+      marker.setLngLat(location.value);
+    }
+  });
+
+  onScopeDispose(() => {
+    marker?.remove();
+    marker = null;
+  });
+};
+
+const initAnchors = (map) => {
+  const text = map.getStyle().layers.find((layer) => {
+    return layer.type === 'symbol';
+  });
+
+  const ids = [text.id];
+  for (const poi of Object.keys(pois)) {
+    for (const country of Country.$values) {
+      ids.push(`${poi}-${country}-anchor`);
+    }
+  }
+
+  ids.push('route-anchor');
+
+  for (const [previousId, id] of pairs(ids)) {
+    map.addLayer(
+      {
+        id,
+        type: 'background',
+        layout: { visibility: 'none' },
+      },
+      previousId,
+    );
+  }
+};
+
+const initLayers = (map) => {
   const { addLayerPoi, addLayerWay, removeLayer } = useDeck(map);
 
   for (const [poi, { type, name, color, urls }] of Object.entries(pois)) {
     const addLayer = type === 'poi' ? addLayerPoi : addLayerWay;
 
     for (const country of Country.$values) {
-      const id = `${poi}/${country}`;
+      const id = `${poi}-${country}`;
 
       watch(
         computed(() => settings.value[poi] && settings.value[country]),
@@ -102,7 +129,15 @@ const onMapLoaded = (map) => {
               return;
             }
 
-            addLayer({ id, name, color, positions, startIndices, metadata });
+            addLayer({
+              id,
+              name,
+              color,
+              positions,
+              startIndices,
+              metadata,
+              beforeId: `${id}-anchor`,
+            });
           } catch (error) {
             if (!axios.isCancel(error)) {
               throw error;
