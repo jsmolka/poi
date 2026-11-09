@@ -151,6 +151,8 @@ export function useDeck(map) {
   };
 
   const addLayerPoi = ({ id, name, color, positions, metadata, beforeId }) => {
+    const getFillColor = new Uint8Array([color.r, color.g, color.b, 0xff]);
+
     addTileLayer({
       id,
       init: {
@@ -178,7 +180,7 @@ export function useDeck(map) {
           name,
           metadata,
           positionFormat: 'XY',
-          getFillColor: [color.r, color.g, color.b, 0xff],
+          getFillColor,
           getRadius: 2,
           radiusUnits: 'pixels',
           radiusScale: scale,
@@ -190,6 +192,8 @@ export function useDeck(map) {
   };
 
   const addLayerWay = ({ id, name, color, positions, startIndices, metadata, beforeId }) => {
+    const getColor = new Uint8Array([color.r, color.g, color.b, 0xff]);
+
     addTileLayer({
       id,
       init: {
@@ -229,7 +233,7 @@ export function useDeck(map) {
           metadata,
           _pathType: 'open',
           positionFormat: 'XY',
-          getColor: [color.r, color.g, color.b, 0xff],
+          getColor,
           getWidth: 1,
           widthUnits: 'pixels',
           widthScale: scale,
