@@ -16,7 +16,7 @@ import { decode, decompress } from '@common/codec';
 import { whenever } from '@vueuse/core';
 import axios from 'axios';
 import { createElement, MapPin } from 'lucide';
-import { Marker, ScaleControl } from 'mapbox-gl';
+import { AttributionControl, Marker, ScaleControl } from 'mapbox-gl';
 import { storeToRefs } from 'pinia';
 import { computed, effectScope, onScopeDispose, useTemplateRef, watch, watchEffect } from 'vue';
 
@@ -40,6 +40,7 @@ const initToolbar = (map) => {
     { control: createControl(MapToolbar), position: 'top-left' },
     { control: createControl(MapLegend), position: 'bottom-left' },
     { control: new ScaleControl(), position: 'bottom-left' },
+    { control: new AttributionControl({ compact: true }), position: 'bottom-right' },
   ]) {
     map.addControl(control, position);
 

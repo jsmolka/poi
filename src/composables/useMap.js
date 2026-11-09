@@ -27,6 +27,7 @@ export function useMap(container) {
       projection: 'mercator',
       antialias: true,
       hash: true,
+      attributionControl: false,
       center: location.value ?? leipzig,
       zoom: 10,
     });
