@@ -141,7 +141,15 @@ function encodeWay(elements) {
   return encode(
     elements.map((element) => {
       const polyline = element.geometry.map(({ lat, lon }) => [lon, lat]);
-      const lngToMeters = 111320 * Math.cos(polyline[0][1] * (Math.PI / 180));
+
+      let minLat = +Infinity;
+      let maxLat = -Infinity;
+      for (const [_, lat] of polyline) {
+        minLat = Math.min(minLat, lat);
+        maxLat = Math.max(maxLat, lat);
+      }
+
+      const lngToMeters = 111320 * Math.cos(((minLat + maxLat) / 2) * (Math.PI / 180));
       const latToMeters = 110574;
 
       return simplify(
