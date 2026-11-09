@@ -234,6 +234,7 @@ export function useDeck(map) {
           jointRounded: detailed,
           capRounded: detailed,
           pickable: detailed,
+          antialiasing: true,
         });
       },
       beforeId,

@@ -25,7 +25,6 @@ export function useMap(container) {
       accessToken: import.meta.env.VITE_MAPBOX_ACCESS_TOKEN,
       style: 'mapbox://styles/juliansmolka/clzwx15zy002n01qs7yrr9zsr',
       projection: 'mercator',
-      antialias: true,
       hash: true,
       attributionControl: false,
       center: location.value ?? leipzig,
