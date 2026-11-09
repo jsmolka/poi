@@ -69,7 +69,7 @@ function indexWay(positions, startIndices) {
   return { bush, positions, startIndices, weights };
 }
 
-const stack = new Float32Array(1024);
+const stack = new Uint32Array(256);
 
 function simplify(positions, start, end, weights) {
   const last = end - 1;
@@ -80,14 +80,14 @@ function simplify(positions, start, end, weights) {
   if (last - start >= 2) {
     stack[sp++] = start;
     stack[sp++] = last;
-    stack[sp++] = Infinity;
   }
 
   while (sp > 0) {
-    sp -= 3;
-    const lo = stack[sp];
-    const hi = stack[sp + 1];
-    const parentWeight = stack[sp + 2];
+    const hi = stack[--sp];
+    const lo = stack[--sp];
+    const loWeight = weights[lo];
+    const hiWeight = weights[hi];
+    const parentWeight = loWeight < hiWeight ? loWeight : hiWeight;
 
     const ax = positions[2 * lo];
     const ay = positions[2 * lo + 1];
@@ -116,8 +116,7 @@ function simplify(positions, start, end, weights) {
     }
 
     if (maxVertex !== -1) {
-      const weight = maxDistSq < parentWeight ? maxDistSq : parentWeight;
-      weights[maxVertex] = weight;
+      weights[maxVertex] = maxDistSq < parentWeight ? maxDistSq : parentWeight;
 
       const lenLeft = maxVertex - lo;
       const lenRight = hi - maxVertex;
@@ -125,23 +124,19 @@ function simplify(positions, start, end, weights) {
         if (lenLeft >= 2) {
           stack[sp++] = lo;
           stack[sp++] = maxVertex;
-          stack[sp++] = weight;
         }
         if (lenRight >= 2) {
           stack[sp++] = maxVertex;
           stack[sp++] = hi;
-          stack[sp++] = weight;
         }
       } else {
         if (lenRight >= 2) {
           stack[sp++] = maxVertex;
           stack[sp++] = hi;
-          stack[sp++] = weight;
         }
         if (lenLeft >= 2) {
           stack[sp++] = lo;
           stack[sp++] = maxVertex;
-          stack[sp++] = weight;
         }
       }
     }
