@@ -1,3 +1,4 @@
+import { mapRange } from '@/utils/numeric';
 import { Vector } from '@/utils/vector';
 import Flatbush from 'flatbush';
 
@@ -44,7 +45,7 @@ function indexWay(positions, startIndices) {
   const count = startIndices.length - 1;
   const vertices = positions.length / 2;
   const bush = new Flatbush(count);
-  const weights = new Float32Array(vertices);
+  const weights = new Float64Array(vertices);
   for (let i = 0; i < count; i++) {
     const start = startIndices[i];
     const end = startIndices[i + 1];
@@ -153,11 +154,7 @@ function tile({ key, id, bbox, tileSize, zoom, maxZoom }) {
   if (dataset.kind === 'poi') {
     tilePoi(dataset, id, bbox);
   } else {
-    const lat = (bbox.north + bbox.south) / 2;
-    const pxToLng = 360 / (tileSize * 2 ** zoom);
-    const pxToLat = Math.max(0.05, Math.cos(lat * (Math.PI / 180))) * pxToLng;
-    const fullDetail = zoom >= maxZoom;
-    tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail);
+    tileWay(dataset, id, bbox, tileSize, zoom, maxZoom);
   }
 }
 
@@ -175,9 +172,17 @@ function tilePoi(dataset, id, bbox) {
   ]);
 }
 
-function tileWay(dataset, id, bbox, pxToLng, pxToLat, fullDetail) {
+function tolerancePx(zoom) {
+  return mapRange(zoom, 2, 8, 16, 1);
+}
+
+function tileWay(dataset, id, bbox, tileSize, zoom, maxZoom) {
   const { bush, positions, startIndices, weights } = dataset;
-  const threshold = fullDetail ? 0 : Math.min(pxToLng, pxToLat) ** 2;
+  const meanLat = (bbox.north + bbox.south) / 2;
+  const pxToLng = 360 / (tileSize * 2 ** zoom);
+  const pxToLat = Math.max(0.05, Math.cos(meanLat * (Math.PI / 180))) * pxToLng;
+  const tolerance = tolerancePx(zoom) * Math.min(pxToLng, pxToLat);
+  const threshold = zoom >= maxZoom ? 0 : tolerance ** 2;
 
   const buffer = 16;
   const visible = bush.search(
