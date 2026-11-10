@@ -97,12 +97,17 @@ export function useDeck(map) {
     return mapRange(getQuantizedZoom(), 6, 18, 0.5, 8);
   };
 
+  const getDetailed = () => {
+    return getQuantizedZoom() >= 8;
+  };
+
   const tiler = new Tiler();
 
   const addTileLayer = ({ id, init, getTileData, renderSubLayers, beforeId }) => {
     const key = tiler.init(init.data, init.transfer);
 
     let scale = getScale();
+    let detailed = getDetailed();
 
     const makeLayer = () => {
       const maxZoom = 12;
@@ -117,22 +122,26 @@ export function useDeck(map) {
           return getTileData(await tiler.tile(key, bbox, tileSize, zoom, maxZoom, signal));
         },
         renderSubLayers: (props) => {
-          return props.data ? renderSubLayers({ ...props, scale }) : null;
+          return props.data ? renderSubLayers({ ...props, scale, detailed }) : null;
         },
         updateTriggers: {
           getTileData: key,
-          renderSubLayers: [scale],
+          renderSubLayers: [scale, detailed],
         },
         beforeId,
       });
     };
 
     const off = onEvent(map, 'zoom', () => {
-      const next = getScale();
-      if (next !== scale) {
-        scale = next;
-        updateLayer(makeLayer());
+      const nextScale = getScale();
+      const nextDetailed = getDetailed();
+      if (scale === nextScale && detailed === nextDetailed) {
+        return;
       }
+
+      scale = nextScale;
+      detailed = nextDetailed;
+      updateLayer(makeLayer());
     });
 
     addLayer(makeLayer(), () => {
@@ -216,7 +225,7 @@ export function useDeck(map) {
           },
         };
       },
-      renderSubLayers: ({ id, data, scale }) => {
+      renderSubLayers: ({ id, data, scale, detailed }) => {
         return new PathLayer({
           id,
           data,
@@ -228,10 +237,10 @@ export function useDeck(map) {
           getWidth: 1,
           widthUnits: 'pixels',
           widthScale: scale,
+          antialiasing: true,
           jointRounded: true,
           capRounded: true,
-          pickable: true,
-          antialiasing: true,
+          pickable: detailed,
         });
       },
       beforeId,
