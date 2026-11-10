@@ -33,6 +33,7 @@ export class Tiler {
         'abort',
         () => {
           if (this.pending.delete(id)) {
+            this.worker?.postMessage({ type: 'cancel', id });
             reject(new DOMException('Aborted', 'AbortError'));
           }
         },

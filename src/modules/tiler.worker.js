@@ -4,6 +4,26 @@ import Flatbush from 'flatbush';
 
 const datasets = new Map();
 
+let queue = [];
+let scheduled = false;
+
+function schedule() {
+  if (scheduled) {
+    return;
+  }
+
+  scheduled = true;
+  setTimeout(() => {
+    scheduled = false;
+    if (queue.length > 0) {
+      tile(queue.pop());
+    }
+    if (queue.length > 0) {
+      schedule();
+    }
+  });
+}
+
 self.onmessage = ({ data }) => {
   switch (data.type) {
     case 'init': {
@@ -11,7 +31,15 @@ self.onmessage = ({ data }) => {
       break;
     }
     case 'tile': {
-      tile(data);
+      queue.push(data);
+      schedule();
+      break;
+    }
+    case 'cancel': {
+      const index = queue.findIndex(({ id }) => id === data.id);
+      if (index !== -1) {
+        queue.splice(index, 1);
+      }
       break;
     }
     case 'dispose': {
