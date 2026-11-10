@@ -166,6 +166,7 @@ export function useDeck(map) {
         return {
           length: positions.length / 2,
           attributes: { getPosition: { value: positions, size: 2 } },
+          byteLength: positions.byteLength + indices.byteLength,
           indices,
 
           snapTo(index) {
@@ -208,6 +209,7 @@ export function useDeck(map) {
           startIndices,
           length: startIndices.length,
           attributes: { getPath: { value: positions, size: 2 } },
+          byteLength: positions.byteLength + startIndices.byteLength + indices.byteLength,
           indices,
 
           line(index) {
