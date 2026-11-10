@@ -60,7 +60,7 @@ function index({ kind, positions, startIndices }) {
 
 function indexPoi(positions) {
   const vertices = positions.length / 2;
-  const bush = new Flatbush(vertices);
+  const bush = new Flatbush(vertices, 16, Float32Array);
   for (let i = 0; i < positions.length; i += 2) {
     bush.add(positions[i], positions[i + 1]);
   }
@@ -72,8 +72,8 @@ function indexPoi(positions) {
 function indexWay(positions, startIndices) {
   const count = startIndices.length - 1;
   const vertices = positions.length / 2;
-  const bush = new Flatbush(count);
-  const weights = new Float64Array(vertices);
+  const bush = new Flatbush(count, 16, Float32Array);
+  const weights = new Float32Array(vertices);
   for (let i = 0; i < count; i++) {
     const start = startIndices[i];
     const end = startIndices[i + 1];
@@ -189,7 +189,7 @@ function tile({ key, id, bbox, tileSize, zoom, maxZoom }) {
 function tilePoi(dataset, id, bbox) {
   const { bush, positions } = dataset;
   const visibleIndices = new Uint32Array(bush.search(bbox.west, bbox.south, bbox.east, bbox.north));
-  const visiblePositions = new Float64Array(2 * visibleIndices.length);
+  const visiblePositions = new Float32Array(2 * visibleIndices.length);
   for (const [i, index] of visibleIndices.entries()) {
     visiblePositions[2 * i] = positions[2 * index];
     visiblePositions[2 * i + 1] = positions[2 * index + 1];
@@ -220,7 +220,7 @@ function tileWay(dataset, id, bbox, tileSize, zoom, maxZoom) {
     bbox.north + buffer * pxToLat,
   );
 
-  const outPositions = new Vector(Float64Array, 16 * visible.length);
+  const outPositions = new Vector(Float32Array, 16 * visible.length);
   const outStartIndices = new Vector(Uint32Array, visible.length);
   const outIndices = new Vector(Uint32Array, visible.length);
 

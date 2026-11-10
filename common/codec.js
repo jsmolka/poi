@@ -102,7 +102,7 @@ export function decode(buffer) {
   });
 
   const previous = [0, 0];
-  const positions = Float64Array.from({ length: 2 * startIndices.at(-1) }, (_, index) => {
+  const positions = Float32Array.from({ length: 2 * startIndices.at(-1) }, (_, index) => {
     previous[index & 0x1] += unzigzag(readVarint(buffer, state));
     return previous[index & 0x1] / SCALE;
   });
