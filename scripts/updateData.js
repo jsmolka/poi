@@ -1,6 +1,7 @@
 import { compress, encode } from '../common/codec.js';
 import axios, { AxiosError } from 'axios';
 import { config } from 'dotenv';
+import Flatbush from 'flatbush';
 import { writeFileSync } from 'fs';
 import simplify from 'simplify-js';
 import { chain } from 'stream-chain';
@@ -115,19 +116,42 @@ async function query(queries, country, out) {
   }
 }
 
-function encodePoi(elements) {
+function normalizePois(elements) {
+  return elements.map((element) => [
+    element.lon ?? element.center.lon,
+    element.lat ?? element.center.lat,
+    element.tags.name ?? element.tags.brand ?? null,
+    element.tags.opening_hours ?? null,
+  ]);
+}
+
+function sortPois(pois) {
+  const bush = new Flatbush(pois.length);
+  for (const [lng, lat] of pois) {
+    bush.add(lng, lat);
+  }
+  bush.finish();
+
+  const sorted = [];
+  const sortedIndices = new Set();
+  while (sorted.length < pois.length) {
+    const [lng, lat] = sorted.at(-1) ?? [0, 0];
+    const index = bush.neighbors(lng, lat, 1, Infinity, (index) => !sortedIndices.has(index))[0];
+
+    sorted.push(pois[index]);
+    sortedIndices.add(index);
+  }
+  return sorted;
+}
+
+function encodePois(elements) {
   const polyline = [];
   const metadata = [];
-  for (const element of elements) {
-    // prettier-ignore
-    polyline.push([
-      element.lon ?? element.center.lon,
-      element.lat ?? element.center.lat
-    ]);
+  for (const [lng, lat, name, openingHours] of sortPois(normalizePois(elements))) {
+    polyline.push([lng, lat]);
 
-    const name = element.tags.name ?? element.tags.brand ?? null;
-    if (element.tags.opening_hours) {
-      metadata.push([name, element.tags.opening_hours]);
+    if (openingHours) {
+      metadata.push([name, openingHours]);
     } else if (name) {
       metadata.push([name]);
     } else {
@@ -137,14 +161,35 @@ function encodePoi(elements) {
   return encode([polyline], metadata);
 }
 
-function encodeWay(elements) {
-  return encode(
-    elements.map((element) => {
-      const polyline = element.geometry.map(({ lat, lon }) => [lon, lat]);
+function normalizeWays(elements) {
+  return elements.map((element) => element.geometry.map(({ lat, lon }) => [lon, lat]));
+}
 
+function sortWays(ways) {
+  const bush = new Flatbush(ways.length);
+  for (const [[lng, lat]] of ways) {
+    bush.add(lng, lat);
+  }
+  bush.finish();
+
+  const sorted = [];
+  const sortedIndices = new Set();
+  while (sorted.length < ways.length) {
+    const [lng, lat] = sorted.at(-1)?.at(-1) ?? [0, 0];
+    const index = bush.neighbors(lng, lat, 1, Infinity, (index) => !sortedIndices.has(index))[0];
+
+    sorted.push(ways[index]);
+    sortedIndices.add(index);
+  }
+  return sorted;
+}
+
+function encodeWays(elements) {
+  return encode(
+    sortWays(normalizeWays(elements)).map((way) => {
       let minLat = +Infinity;
       let maxLat = -Infinity;
-      for (const [_, lat] of polyline) {
+      for (const [_, lat] of way) {
         minLat = Math.min(minLat, lat);
         maxLat = Math.max(maxLat, lat);
       }
@@ -153,7 +198,7 @@ function encodeWay(elements) {
       const latToMeters = 110574;
 
       return simplify(
-        polyline.map((coordinates) => ({
+        way.map((coordinates) => ({
           x: coordinates[0] * lngToMeters,
           y: coordinates[1] * latToMeters,
           coordinates,
@@ -186,8 +231,8 @@ async function main() {
       console.log(path);
       console.time(path);
       try {
-        const elements = await query(queries, country, 'out tags center qt;');
-        write(`../src/assets/data/${path}.bin`, await compress(encodePoi(elements)));
+        const elements = await query(queries, country, 'out tags center;');
+        write(`../src/assets/data/${path}.bin`, await compress(encodePois(elements)));
       } finally {
         console.timeEnd(path);
         console.log();
@@ -207,8 +252,8 @@ async function main() {
       console.log(path);
       console.time(path);
       try {
-        const elements = await query(queries, country, 'out skel geom qt;');
-        write(`../src/assets/data/${path}.bin`, await compress(encodeWay(elements)));
+        const elements = await query(queries, country, 'out skel geom;');
+        write(`../src/assets/data/${path}.bin`, await compress(encodeWays(elements)));
       } finally {
         console.timeEnd(path);
         console.log();
