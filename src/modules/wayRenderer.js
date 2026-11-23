@@ -8,15 +8,14 @@ const BIN_BUFFER = 1;
 const CORNERS = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
 const CORNERS_PER_SEGMENT = 6;
 const FLOATS_PER_SEGMENT = 8;
-const LOD_STRIDES = [1, 2, 4, 8, 16, 32];
-const LOD_TILE_ZOOMS = [17, 15, 13, 11, 9, 5];
-const LOD_ZOOMS = [10, 8, 6, 4, 2];
-const DEFAULT_MAX_LOD = LOD_STRIDES.length - 1;
+const LOD_STRIDES = [1, 4, 32];
+const LOD_TILE_ZOOMS = [17, 13, 5];
+const LOD_ZOOMS = [10, 6];
 
 function getLodIndex(zoom) {
-  let lodIndex = 0;
-  while (lodIndex < LOD_ZOOMS.length && zoom < LOD_ZOOMS[lodIndex]) lodIndex++;
-  return Math.min(DEFAULT_MAX_LOD, lodIndex);
+  if (zoom >= LOD_ZOOMS[0]) return 0;
+  if (zoom <= LOD_ZOOMS[1]) return 2;
+  return 1;
 }
 
 const vertexShader = `#version 300 es
