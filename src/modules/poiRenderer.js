@@ -264,29 +264,16 @@ export function usePoiRenderer(map) {
     popup.setLngLat(poi.coordinates).addTo(map);
   };
 
-  let lastPointer;
-  let hoverFrame;
-
-  const updateCursor = () => {
-    hoverFrame = null;
-    if (lastPointer && !map.isMoving()) {
-      map.getCanvasContainer().style.cursor = findPoi(lastPointer) ? 'pointer' : '';
-    }
-  };
-
   const onMouseMove = (event) => {
-    lastPointer = event.point;
-    if (map.isMoving() || event.originalEvent?.buttons !== 0 || hoverFrame != null) return;
-    hoverFrame = requestAnimationFrame(updateCursor);
-  };
+    if (map.isMoving()) {
+      return;
+    }
 
-  const onMoveEnd = () => {
-    if (lastPointer && hoverFrame == null) hoverFrame = requestAnimationFrame(updateCursor);
+    map.getCanvasContainer().style.cursor = findPoi(event.point) ? 'pointer' : '';
   };
 
   map.on('click', onClick);
   map.on('mousemove', onMouseMove);
-  map.on('moveend', onMoveEnd);
 
   const addLayerPoi = ({ id, name, color, positions, metadata, beforeId }) => {
     const result = createPoiLayer({ id, color, positions, beforeId });
@@ -315,8 +302,6 @@ export function usePoiRenderer(map) {
     popup.remove();
     map.off('click', onClick);
     map.off('mousemove', onMouseMove);
-    map.off('moveend', onMoveEnd);
-    if (hoverFrame != null) cancelAnimationFrame(hoverFrame);
     map.getCanvasContainer().style.cursor = '';
   };
 
