@@ -503,7 +503,7 @@ export function useWayRenderer(map) {
       return;
     }
 
-    map.getCanvasContainer().style.cursor = findWay(event.point) ? 'pointer' : '';
+    map.getCanvas().style.cursor = findWay(event.point) ? 'pointer' : '';
   };
 
   map.on('click', onClick);
@@ -532,7 +532,7 @@ export function useWayRenderer(map) {
     popup.remove();
     map.off('click', onClick);
     map.off('mousemove', onMouseMove);
-    map.getCanvasContainer().style.cursor = '';
+    map.getCanvas().style.cursor = '';
   };
 
   return { addLayerWay, removeLayerWay, dispose };

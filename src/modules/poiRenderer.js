@@ -269,7 +269,7 @@ export function usePoiRenderer(map) {
       return;
     }
 
-    map.getCanvasContainer().style.cursor = findPoi(event.point) ? 'pointer' : '';
+    map.getCanvas().style.cursor = findPoi(event.point) ? 'pointer' : '';
   };
 
   map.on('click', onClick);
@@ -302,7 +302,7 @@ export function usePoiRenderer(map) {
     popup.remove();
     map.off('click', onClick);
     map.off('mousemove', onMouseMove);
-    map.getCanvasContainer().style.cursor = '';
+    map.getCanvas().style.cursor = '';
   };
 
   return { addLayerPoi, removeLayerPoi, dispose };
