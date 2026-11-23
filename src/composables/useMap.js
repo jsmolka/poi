@@ -22,7 +22,9 @@ export function useMap(container) {
   onMounted(() => {
     const instance = new Map({
       container: container.value,
-      accessToken: import.meta.env.VITE_MAPBOX_ACCESS_TOKEN,
+      accessToken:
+        import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ??
+        'pk.eyJ1IjoianVsaWFuc21vbGthIiwiYSI6ImNtd3RwbzRraTAzYTMzMHMydXFsMTgxMnMifQ.6eKlgKNJwkSf_fUNXQ4hXA',
       style: 'mapbox://styles/juliansmolka/clzwx15zy002n01qs7yrr9zsr',
       projection: 'mercator',
       hash: true,
