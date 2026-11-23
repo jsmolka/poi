@@ -1,46 +1,17 @@
+import { usePoiRenderer } from '@/modules/poiRenderer';
 import { Tiler } from '@/modules/tiler';
 import { onEvent } from '@/utils/event';
-import { satelliteUrl } from '@/utils/google';
 import { mapRange, roundTo } from '@/utils/numeric';
 import { TileLayer } from '@deck.gl/geo-layers';
-import { PathLayer, ScatterplotLayer } from '@deck.gl/layers';
+import { PathLayer } from '@deck.gl/layers';
 import { MapboxOverlay } from '@deck.gl/mapbox';
 import { lineString } from '@turf/helpers';
 import { nearestPointOnLine } from '@turf/nearest-point-on-line';
-import { Popup } from 'mapbox-gl';
 import { onScopeDispose } from 'vue';
 
 export function useDeck(map) {
-  const popup = new Popup({
-    closeButton: false,
-    closeOnClick: false,
-  });
-
-  const overlay = new MapboxOverlay({
-    interleaved: true,
-    getCursor: ({ isHovering, isDragging }) => {
-      return isHovering && !isDragging ? 'pointer' : '';
-    },
-    onClick: (info) => {
-      if (!info.picked) {
-        popup.remove();
-        return;
-      }
-
-      const props = info.sourceLayer.props;
-      const lngLat = props.data.snapTo(info.index, info.coordinate);
-      const [name, openingHours] = props.metadata[props.data.indices[info.index]] ?? [];
-
-      popup.setHTML(`
-        <a href="${satelliteUrl(lngLat)}" target="_blank" class="underline">
-          ${name || props.name}
-        </a>
-        ${openingHours ? `<br>Opening hours: ${openingHours}` : ''}
-      `);
-      popup.setLngLat(lngLat);
-      popup.addTo(map);
-    },
-  });
+  const poiRenderer = usePoiRenderer(map);
+  const overlay = new MapboxOverlay({ interleaved: true });
 
   map.addControl(overlay);
 
@@ -57,6 +28,7 @@ export function useDeck(map) {
   };
 
   const removeLayer = (id) => {
+    poiRenderer.removeLayerPoi(id);
     if (!layers.has(id)) {
       return;
     }
@@ -64,7 +36,6 @@ export function useDeck(map) {
     layers.delete(id);
     cleanups.get(id)?.();
     cleanups.delete(id);
-    popup.remove();
 
     syncLayers();
   };
@@ -151,45 +122,7 @@ export function useDeck(map) {
   };
 
   const addLayerPoi = ({ id, name, color, positions, metadata, beforeId }) => {
-    const getFillColor = new Uint8Array([color.r, color.g, color.b, 0xff]);
-
-    addTileLayer({
-      id,
-      init: {
-        data: { kind: 'poi', positions },
-        transfer: [positions.buffer],
-      },
-      getTileData: ({ positions, indices }) => {
-        if (positions == null || positions.length === 0) {
-          return null;
-        }
-        return {
-          length: positions.length / 2,
-          attributes: { getPosition: { value: positions, size: 2 } },
-          byteLength: positions.byteLength + indices.byteLength,
-          indices,
-
-          snapTo(index) {
-            return [positions[2 * index], positions[2 * index + 1]];
-          },
-        };
-      },
-      renderSubLayers: ({ id, data, scale, detailed }) => {
-        return new ScatterplotLayer({
-          id,
-          data,
-          name,
-          metadata,
-          positionFormat: 'XY',
-          getFillColor,
-          getRadius: 2,
-          radiusUnits: 'pixels',
-          radiusScale: scale,
-          pickable: detailed,
-        });
-      },
-      beforeId,
-    });
+    poiRenderer.addLayerPoi({ id, name, color, positions, metadata, beforeId });
   };
 
   const addLayerWay = ({ id, name, color, positions, startIndices, metadata, beforeId }) => {
@@ -256,7 +189,7 @@ export function useDeck(map) {
     }
     cleanups.clear();
 
-    popup.remove();
+    poiRenderer.dispose();
     tiler.terminate();
     map.removeControl(overlay);
   });
