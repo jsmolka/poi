@@ -498,29 +498,16 @@ export function useWayRenderer(map) {
     popup.setLngLat(way.coordinates).addTo(map);
   };
 
-  let lastPointer;
-  let hoverFrame;
-
-  const updateCursor = () => {
-    hoverFrame = null;
-    if (lastPointer && !map.isMoving()) {
-      map.getCanvas().style.cursor = findWay(lastPointer) ? 'pointer' : '';
-    }
-  };
-
   const onMouseMove = (event) => {
-    lastPointer = event.point;
-    if (map.isMoving() || event.originalEvent.buttons !== 0 || hoverFrame != null) return;
-    hoverFrame = requestAnimationFrame(updateCursor);
-  };
+    if (map.isMoving()) {
+      return;
+    }
 
-  const onMoveEnd = () => {
-    if (lastPointer && hoverFrame == null) hoverFrame = requestAnimationFrame(updateCursor);
+    map.getCanvasContainer().style.cursor = findWay(event.point) ? 'pointer' : '';
   };
 
   map.on('click', onClick);
   map.on('mousemove', onMouseMove);
-  map.on('moveend', onMoveEnd);
 
   const addLayerWay = ({ id, name, color, positions, startIndices, beforeId }) => {
     const result = createWayLayer({ id, color, positions, startIndices });
@@ -545,9 +532,7 @@ export function useWayRenderer(map) {
     popup.remove();
     map.off('click', onClick);
     map.off('mousemove', onMouseMove);
-    map.off('moveend', onMoveEnd);
-    if (hoverFrame != null) cancelAnimationFrame(hoverFrame);
-    map.getCanvas().style.cursor = '';
+    map.getCanvasContainer().style.cursor = '';
   };
 
   return { addLayerWay, removeLayerWay, dispose };
