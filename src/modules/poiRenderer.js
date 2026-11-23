@@ -270,7 +270,7 @@ export function usePoiRenderer(map) {
   const updateCursor = () => {
     hoverFrame = null;
     if (lastPointer && !map.isMoving()) {
-      map.getCanvas().style.cursor = findPoi(lastPointer) ? 'pointer' : '';
+      map.getCanvasContainer().style.cursor = findPoi(lastPointer) ? 'pointer' : '';
     }
   };
 
@@ -317,7 +317,7 @@ export function usePoiRenderer(map) {
     map.off('mousemove', onMouseMove);
     map.off('moveend', onMoveEnd);
     if (hoverFrame != null) cancelAnimationFrame(hoverFrame);
-    map.getCanvas().style.cursor = '';
+    map.getCanvasContainer().style.cursor = '';
   };
 
   return { addLayerPoi, removeLayerPoi, dispose };
