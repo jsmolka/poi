@@ -264,12 +264,29 @@ export function usePoiRenderer(map) {
     popup.setLngLat(poi.coordinates).addTo(map);
   };
 
+  let lastPointer;
+  let hoverFrame;
+
+  const updateCursor = () => {
+    hoverFrame = null;
+    if (lastPointer && !map.isMoving()) {
+      map.getCanvas().style.cursor = findPoi(lastPointer) ? 'pointer' : '';
+    }
+  };
+
   const onMouseMove = (event) => {
-    map.getCanvas().style.cursor = findPoi(event.point) ? 'pointer' : '';
+    lastPointer = event.point;
+    if (map.isMoving() || event.originalEvent?.buttons !== 0 || hoverFrame != null) return;
+    hoverFrame = requestAnimationFrame(updateCursor);
+  };
+
+  const onMoveEnd = () => {
+    if (lastPointer && hoverFrame == null) hoverFrame = requestAnimationFrame(updateCursor);
   };
 
   map.on('click', onClick);
   map.on('mousemove', onMouseMove);
+  map.on('moveend', onMoveEnd);
 
   const addLayerPoi = ({ id, name, color, positions, metadata, beforeId }) => {
     const result = createPoiLayer({ id, color, positions, beforeId });
@@ -298,6 +315,8 @@ export function usePoiRenderer(map) {
     popup.remove();
     map.off('click', onClick);
     map.off('mousemove', onMouseMove);
+    map.off('moveend', onMoveEnd);
+    if (hoverFrame != null) cancelAnimationFrame(hoverFrame);
     map.getCanvas().style.cursor = '';
   };
 

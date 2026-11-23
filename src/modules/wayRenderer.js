@@ -1,0 +1,556 @@
+﻿import { satelliteUrl } from '@/utils/google';
+import Flatbush from 'flatbush';
+import { Popup } from 'mapbox-gl';
+
+const BIN_COUNT = 32;
+const BIN_TOTAL = BIN_COUNT * BIN_COUNT;
+const BIN_BUFFER = 1;
+const CORNERS = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
+const CORNERS_PER_SEGMENT = 6;
+const FLOATS_PER_SEGMENT = 8;
+const LOD_STRIDES = [1, 2, 4, 8, 16, 32];
+const LOD_TILE_ZOOMS = [17, 15, 13, 11, 9, 5];
+const LOD_ZOOMS = [20, 18, 16, 14, 12];
+const DEFAULT_MAX_LOD = LOD_STRIDES.length - 1;
+
+const vertexShader = `#version 300 es
+  in vec2 a_startHigh;
+  in vec2 a_startLow;
+  in vec2 a_endHigh;
+  in vec2 a_endLow;
+  in vec2 a_corner;
+  uniform mat4 u_matrix;
+  uniform vec2 u_viewport;
+  uniform highp float u_lineWidth;
+  out vec2 v_start;
+  out vec2 v_end;
+
+  void main() {
+    vec4 startClip = u_matrix * vec4(a_startHigh, 0.0, 1.0) + u_matrix * vec4(a_startLow, 0.0, 0.0);
+    vec4 endClip = u_matrix * vec4(a_endHigh, 0.0, 1.0) + u_matrix * vec4(a_endLow, 0.0, 0.0);
+    v_start = (startClip.xy / startClip.w * 0.5 + 0.5) * u_viewport;
+    v_end = (endClip.xy / endClip.w * 0.5 + 0.5) * u_viewport;
+
+    vec2 segment = v_end - v_start;
+    vec2 direction = segment / max(length(segment), 0.0001);
+    vec2 normal = vec2(-direction.y, direction.x);
+    vec4 clip = mix(startClip, endClip, (a_corner.x + 1.0) * 0.5);
+    vec2 offset = (direction * a_corner.x + normal * a_corner.y) * (u_lineWidth * 0.5);
+    clip.xy += offset * (2.0 / u_viewport) * clip.w;
+    gl_Position = clip;
+  }
+`;
+
+const fragmentShader = `#version 300 es
+  precision mediump float;
+  uniform vec4 u_color;
+  uniform highp float u_lineWidth;
+  in vec2 v_start;
+  in vec2 v_end;
+  out vec4 fragColor;
+
+  void main() {
+    vec2 segment = v_end - v_start;
+    float lengthSquared = max(dot(segment, segment), 0.0001);
+    float t = clamp(dot(gl_FragCoord.xy - v_start, segment) / lengthSquared, 0.0, 1.0);
+    float distanceToLine = length(gl_FragCoord.xy - (v_start + t * segment));
+    float edgeWidth = max(fwidth(distanceToLine), 0.5);
+    float alpha = 1.0 - smoothstep(u_lineWidth * 0.5 - edgeWidth, u_lineWidth * 0.5 + edgeWidth, distanceToLine);
+    fragColor = vec4(u_color.rgb * alpha, u_color.a * alpha);
+  }
+`;
+
+function createShader(gl, type, source) {
+  const shader = gl.createShader(type);
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    const message = gl.getShaderInfoLog(shader);
+    gl.deleteShader(shader);
+    throw new Error(`Could not compile way renderer shader: ${message}`);
+  }
+  return shader;
+}
+
+function createProgram(gl) {
+  const vertex = createShader(gl, gl.VERTEX_SHADER, vertexShader);
+  const fragment = createShader(gl, gl.FRAGMENT_SHADER, fragmentShader);
+  const program = gl.createProgram();
+  gl.attachShader(program, vertex);
+  gl.attachShader(program, fragment);
+  gl.linkProgram(program);
+  gl.deleteShader(vertex);
+  gl.deleteShader(fragment);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    const message = gl.getProgramInfoLog(program);
+    gl.deleteProgram(program);
+    throw new Error(`Could not link way renderer shader: ${message}`);
+  }
+  return program;
+}
+
+function projectPosition(lng, lat) {
+  const clampedLat = Math.max(-85.051129, Math.min(85.051129, lat));
+  const radians = (clampedLat * Math.PI) / 180;
+  return [(lng + 180) / 360, (1 - Math.log(Math.tan(Math.PI / 4 + radians / 2)) / Math.PI) / 2];
+}
+
+function createSegmentData(positions, startIndices, stride, tileZoom) {
+  let segmentCount = 0;
+  for (let line = 0; line < startIndices.length - 1; line++) {
+    const vertices = startIndices[line + 1] - startIndices[line];
+    if (vertices > 1) segmentCount += Math.ceil((vertices - 1) / stride);
+  }
+  if (segmentCount === 0) return null;
+
+  const projected = new Float64Array(4 * segmentCount);
+  const segmentStarts = new Uint32Array(segmentCount);
+  const segmentEnds = new Uint32Array(segmentCount);
+  const segmentLines = new Uint32Array(segmentCount);
+  const tileCount = 2 ** tileZoom;
+  const tileCounts = new Map();
+  const longSegments = [];
+  const longBounds = [];
+  const bush = new Flatbush(segmentCount, 16, Float32Array);
+  let segment = 0;
+
+  for (let line = 0; line < startIndices.length - 1; line++) {
+    const start = startIndices[line];
+    const end = startIndices[line + 1];
+    for (let vertex = start; vertex < end - 1; vertex = Math.min(vertex + stride, end - 1)) {
+      const next = Math.min(vertex + stride, end - 1);
+      const lng1 = positions[2 * vertex];
+      const lat1 = positions[2 * vertex + 1];
+      const lng2 = positions[2 * next];
+      const lat2 = positions[2 * next + 1];
+      const [x1, y1] = projectPosition(lng1, lat1);
+      const [x2, y2] = projectPosition(lng2, lat2);
+      const offset = 4 * segment;
+      projected[offset] = x1;
+      projected[offset + 1] = y1;
+      projected[offset + 2] = x2;
+      projected[offset + 3] = y2;
+      segmentStarts[segment] = vertex;
+      segmentEnds[segment] = next;
+      segmentLines[segment] = line;
+
+      bush.add(
+        Math.min(lng1, lng2),
+        Math.min(lat1, lat2),
+        Math.max(lng1, lng2),
+        Math.max(lat1, lat2),
+      );
+      const tileX1 = Math.floor(x1 * tileCount);
+      const tileY1 = Math.floor(y1 * tileCount);
+      const tileX2 = Math.floor(x2 * tileCount);
+      const tileY2 = Math.floor(y2 * tileCount);
+      if (Math.max(Math.abs(tileX2 - tileX1), Math.abs(tileY2 - tileY1)) > 1) {
+        const minLng = Math.min(lng1, lng2);
+        const minLat = Math.min(lat1, lat2);
+        const maxLng = Math.max(lng1, lng2);
+        const maxLat = Math.max(lat1, lat2);
+        longSegments.push(segment);
+        longBounds.push([minLng, minLat, maxLng, maxLat]);
+      } else {
+        const tileX = Math.max(0, Math.min(tileCount - 1, Math.floor(((x1 + x2) / 2) * tileCount)));
+        const tileY = Math.max(0, Math.min(tileCount - 1, Math.floor(((y1 + y2) / 2) * tileCount)));
+        const tile = tileY * tileCount + tileX;
+        tileCounts.set(tile, (tileCounts.get(tile) || 0) + 1);
+      }
+      segment++;
+    }
+  }
+  bush.finish();
+  let longIndex = null;
+  if (longSegments.length) {
+    longIndex = new Flatbush(longSegments.length, 16, Float32Array);
+    for (const bounds of longBounds) longIndex.add(...bounds);
+    longIndex.finish();
+  }
+
+  const sortedTiles = Array.from(tileCounts.entries()).sort((a, b) => a[0] - b[0]);
+  const regularCount = sortedTiles.reduce((total, [, count]) => total + count, 0);
+  const regularSegments = new Float32Array(regularCount * FLOATS_PER_SEGMENT);
+  const tileRanges = new Map();
+  const tileCursors = new Map();
+  let writeIndex = 0;
+  for (const [tile, count] of sortedTiles) {
+    tileRanges.set(tile, { start: writeIndex, count });
+    tileCursors.set(tile, writeIndex);
+    writeIndex += count;
+  }
+  const longVertices = new Float32Array(longSegments.length * FLOATS_PER_SEGMENT);
+  let longOffset = 0;
+
+  for (let i = 0; i < segmentCount; i++) {
+    const offset = 4 * i;
+    const x1 = projected[offset];
+    const y1 = projected[offset + 1];
+    const x2 = projected[offset + 2];
+    const y2 = projected[offset + 3];
+    const highX1 = Math.fround(x1);
+    const highY1 = Math.fround(y1);
+    const highX2 = Math.fround(x2);
+    const highY2 = Math.fround(y2);
+    const vertex = [
+      highX1,
+      highY1,
+      x1 - highX1,
+      y1 - highY1,
+      highX2,
+      highY2,
+      x2 - highX2,
+      y2 - highY2,
+    ];
+    const tileX1 = Math.floor(x1 * tileCount);
+    const tileY1 = Math.floor(y1 * tileCount);
+    const tileX2 = Math.floor(x2 * tileCount);
+    const tileY2 = Math.floor(y2 * tileCount);
+    if (Math.max(Math.abs(tileX2 - tileX1), Math.abs(tileY2 - tileY1)) > 1) {
+      longVertices.set(vertex, FLOATS_PER_SEGMENT * longOffset++);
+      continue;
+    }
+    const tileX = Math.max(0, Math.min(tileCount - 1, Math.floor(((x1 + x2) / 2) * tileCount)));
+    const tileY = Math.max(0, Math.min(tileCount - 1, Math.floor(((y1 + y2) / 2) * tileCount)));
+    const tile = tileY * tileCount + tileX;
+    const target = tileCursors.get(tile);
+    tileCursors.set(tile, target + 1);
+    regularSegments.set(vertex, FLOATS_PER_SEGMENT * target);
+  }
+
+  return {
+    regularSegments,
+    longVertices,
+    tileRanges,
+    tileCount,
+    longIndex,
+    bush,
+    segmentStarts,
+    segmentEnds,
+    segmentLines,
+    segmentCount,
+    longCount: longSegments.length,
+    stride,
+    tileZoom,
+  };
+}
+
+function createWayLayer({ id, color, positions, startIndices }) {
+  const lods = LOD_STRIDES.map((stride, index) =>
+    createSegmentData(positions, startIndices, stride, LOD_TILE_ZOOMS[index]),
+  ).filter(Boolean);
+  if (!lods.length) return null;
+
+  let map;
+  let program;
+  let cornerBuffer;
+  let attributes;
+  let uniforms;
+  let lastBoundsKey = '';
+  let visibleRanges = [];
+  let visibleLong = new Uint32Array(0);
+  let visibleLongCount = 0;
+  let longBufferDirty = true;
+  let longBufferLod = -1;
+  const longScratch = lods.map((lod) => new Float32Array(lod.longCount * FLOATS_PER_SEGMENT));
+
+  const layer = {
+    id,
+    type: 'custom',
+    renderingMode: '2d',
+    onAdd(mapInstance, gl) {
+      map = mapInstance;
+      program = createProgram(gl);
+      cornerBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, cornerBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, CORNERS, gl.STATIC_DRAW);
+      for (const lod of lods) {
+        lod.segmentBuffer = gl.createBuffer();
+        lod.longBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, lod.segmentBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, lod.regularSegments, gl.STATIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, lod.longBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, lod.longVertices.byteLength, gl.DYNAMIC_DRAW);
+        lod.regularSegments = null;
+      }
+      gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+      attributes = {
+        startHigh: gl.getAttribLocation(program, 'a_startHigh'),
+        startLow: gl.getAttribLocation(program, 'a_startLow'),
+        endHigh: gl.getAttribLocation(program, 'a_endHigh'),
+        endLow: gl.getAttribLocation(program, 'a_endLow'),
+        corner: gl.getAttribLocation(program, 'a_corner'),
+      };
+      uniforms = {
+        matrix: gl.getUniformLocation(program, 'u_matrix'),
+        viewport: gl.getUniformLocation(program, 'u_viewport'),
+        lineWidth: gl.getUniformLocation(program, 'u_lineWidth'),
+        color: gl.getUniformLocation(program, 'u_color'),
+      };
+    },
+    render(gl, matrix) {
+      const zoom = map.getZoom();
+      let lodIndex = 0;
+      while (lodIndex < LOD_ZOOMS.length && zoom < LOD_ZOOMS[lodIndex]) lodIndex++;
+      lodIndex = Math.min(DEFAULT_MAX_LOD, lodIndex);
+      const lod = lods[lodIndex];
+      const width = Math.max(0.5, Math.min(8, 0.5 + ((zoom - 6) / 12) * 7.5));
+      const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
+      const bounds = map.getBounds();
+      const tileCount = lod.tileCount;
+      let minX = Math.floor(((bounds.getWest() + 180) / 360) * tileCount) - BIN_BUFFER;
+      let maxX = Math.floor(((bounds.getEast() + 180) / 360) * tileCount) + BIN_BUFFER;
+      let minY = Math.floor(projectPosition(0, bounds.getNorth())[1] * tileCount) - BIN_BUFFER;
+      const maxY = Math.min(
+        tileCount - 1,
+        Math.floor(projectPosition(0, bounds.getSouth())[1] * tileCount) + BIN_BUFFER,
+      );
+      if (bounds.getEast() - bounds.getWest() >= 360 || minX < 0 || maxX >= tileCount) {
+        minX = 0;
+        maxX = tileCount - 1;
+      }
+      minY = Math.max(0, minY);
+      if (maxY < minY) return;
+      const boundsKey = [lodIndex, minX, maxX, minY, maxY].join(':');
+      if (boundsKey !== lastBoundsKey) {
+        visibleRanges.length = 0;
+        for (let y = minY; y <= maxY; y++) {
+          for (let x = minX; x <= maxX; x++) {
+            const range = lod.tileRanges.get(y * tileCount + x);
+            if (!range) continue;
+            const previous = visibleRanges[visibleRanges.length - 1];
+            if (previous && previous.start + previous.count === range.start)
+              previous.count += range.count;
+            else visibleRanges.push({ start: range.start, count: range.count });
+          }
+        }
+        visibleLong =
+          lod.longIndex && bounds.getEast() - bounds.getWest() < 360
+            ? lod.longIndex.search(
+                bounds.getWest() - 360 / tileCount,
+                Math.max(-85.051129, bounds.getSouth() - 180 / tileCount),
+                bounds.getEast() + 360 / tileCount,
+                Math.min(85.051129, bounds.getNorth() + 180 / tileCount),
+              )
+            : new Uint32Array(0);
+        visibleLongCount = visibleLong.length;
+        longBufferDirty = true;
+        longBufferLod = lodIndex;
+        lastBoundsKey = boundsKey;
+      }
+
+      const segmentStride = FLOATS_PER_SEGMENT * Float32Array.BYTES_PER_ELEMENT;
+      const segmentAttributes = [
+        [attributes.startHigh, 0],
+        [attributes.startLow, 2 * Float32Array.BYTES_PER_ELEMENT],
+        [attributes.endHigh, 4 * Float32Array.BYTES_PER_ELEMENT],
+        [attributes.endLow, 6 * Float32Array.BYTES_PER_ELEMENT],
+      ];
+      const bindSegments = (buffer, byteOffset = 0) => {
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        for (const [attribute, offset] of segmentAttributes) {
+          gl.enableVertexAttribArray(attribute);
+          gl.vertexAttribPointer(attribute, 2, gl.FLOAT, false, segmentStride, byteOffset + offset);
+          gl.vertexAttribDivisor(attribute, 1);
+        }
+      };
+
+      gl.useProgram(program);
+      gl.bindBuffer(gl.ARRAY_BUFFER, cornerBuffer);
+      gl.enableVertexAttribArray(attributes.corner);
+      gl.vertexAttribPointer(attributes.corner, 2, gl.FLOAT, false, 0, 0);
+      gl.vertexAttribDivisor(attributes.corner, 0);
+      gl.uniformMatrix4fv(uniforms.matrix, false, matrix);
+      gl.uniform2f(uniforms.viewport, gl.drawingBufferWidth, gl.drawingBufferHeight);
+      gl.uniform1f(uniforms.lineWidth, width * pixelRatio);
+      gl.uniform4f(uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);
+
+      for (const range of visibleRanges) {
+        bindSegments(lod.segmentBuffer, range.start * segmentStride);
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, CORNERS_PER_SEGMENT, range.count);
+      }
+
+      if (visibleLongCount) {
+        if (longBufferDirty || longBufferLod !== lodIndex) {
+          const scratch = longScratch[lodIndex];
+          let target = 0;
+          for (const candidate of visibleLong) {
+            const start = candidate * FLOATS_PER_SEGMENT;
+            scratch.set(lod.longVertices.subarray(start, start + FLOATS_PER_SEGMENT), target);
+            target += FLOATS_PER_SEGMENT;
+          }
+          gl.bindBuffer(gl.ARRAY_BUFFER, lod.longBuffer);
+          gl.bufferSubData(gl.ARRAY_BUFFER, 0, scratch.subarray(0, target));
+          longBufferDirty = false;
+          longBufferLod = lodIndex;
+        }
+        bindSegments(lod.longBuffer);
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, CORNERS_PER_SEGMENT, visibleLongCount);
+      }
+
+      for (const [attribute] of segmentAttributes) gl.vertexAttribDivisor(attribute, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    },
+    onRemove(_, gl) {
+      for (const lod of lods) {
+        gl.deleteBuffer(lod.segmentBuffer);
+        gl.deleteBuffer(lod.longBuffer);
+      }
+      gl.deleteBuffer(cornerBuffer);
+      gl.deleteProgram(program);
+      cornerBuffer = null;
+      program = null;
+      map = null;
+    },
+  };
+  return { layer, lods };
+}
+
+function escapeHtml(value) {
+  return String(value).replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      })[character],
+  );
+}
+
+export function useWayRenderer(map) {
+  const popup = new Popup({ closeButton: false, closeOnClick: false });
+  const layers = new Map();
+
+  const getLod = (lods) => {
+    const zoom = map.getZoom();
+    return zoom < 6
+      ? lods[5]
+      : zoom < 8
+        ? lods[4]
+        : zoom < 10
+          ? lods[3]
+          : zoom < 12
+            ? lods[2]
+            : zoom < 14
+              ? lods[1]
+              : lods[0];
+  };
+
+  const findWay = (point) => {
+    const corners = [
+      map.unproject([point.x - 12, point.y - 12]),
+      map.unproject([point.x + 12, point.y - 12]),
+      map.unproject([point.x - 12, point.y + 12]),
+      map.unproject([point.x + 12, point.y + 12]),
+    ];
+    const west = Math.min(...corners.map(({ lng }) => lng));
+    const east = Math.max(...corners.map(({ lng }) => lng));
+    const south = Math.min(...corners.map(({ lat }) => lat));
+    const north = Math.max(...corners.map(({ lat }) => lat));
+    let nearest = null;
+
+    for (const [id, entry] of layers) {
+      const lod = getLod(entry.lods);
+      for (const segment of lod.bush.search(west, south, east, north)) {
+        const start = lod.segmentStarts[segment];
+        const end = lod.segmentEnds[segment];
+        const a = map.project([entry.positions[2 * start], entry.positions[2 * start + 1]]);
+        const b = map.project([entry.positions[2 * end], entry.positions[2 * end + 1]]);
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const lengthSquared = dx * dx + dy * dy;
+        const t =
+          lengthSquared === 0
+            ? 0
+            : Math.max(
+                0,
+                Math.min(1, ((point.x - a.x) * dx + (point.y - a.y) * dy) / lengthSquared),
+              );
+        const x = a.x + t * dx;
+        const y = a.y + t * dy;
+        const distance = Math.hypot(point.x - x, point.y - y);
+        if (distance < (nearest?.distance ?? Infinity)) {
+          nearest = {
+            id,
+            name: entry.name,
+            coordinates: map.unproject([x, y]).toArray(),
+            distance,
+          };
+        }
+      }
+    }
+    return nearest && nearest.distance <= 6 ? nearest : null;
+  };
+
+  const onClick = (event) => {
+    if (event.defaultPrevented) return;
+    const way = findWay(event.point);
+    if (way == null) {
+      popup.remove();
+      return;
+    }
+    event.preventDefault();
+    popup.setHTML(
+      `<a href="${satelliteUrl(way.coordinates)}" target="_blank" rel="noopener noreferrer" class="underline">${escapeHtml(way.name)}</a>`,
+    );
+    popup.setLngLat(way.coordinates).addTo(map);
+  };
+
+  let lastPointer;
+  let hoverFrame;
+
+  const updateCursor = () => {
+    hoverFrame = null;
+    if (lastPointer && !map.isMoving()) {
+      map.getCanvas().style.cursor = findWay(lastPointer) ? 'pointer' : '';
+    }
+  };
+
+  const onMouseMove = (event) => {
+    lastPointer = event.point;
+    if (map.isMoving() || event.originalEvent.buttons !== 0 || hoverFrame != null) return;
+    hoverFrame = requestAnimationFrame(updateCursor);
+  };
+
+  const onMoveEnd = () => {
+    if (lastPointer && hoverFrame == null) hoverFrame = requestAnimationFrame(updateCursor);
+  };
+
+  map.on('click', onClick);
+  map.on('mousemove', onMouseMove);
+  map.on('moveend', onMoveEnd);
+
+  const addLayerWay = ({ id, name, color, positions, startIndices, beforeId }) => {
+    const result = createWayLayer({ id, color, positions, startIndices });
+    removeLayerWay(id);
+    if (result == null) return;
+    if (beforeId && map.getLayer(beforeId)) map.addLayer(result.layer, beforeId);
+    else map.addLayer(result.layer);
+    layers.set(id, { ...result, name, positions, startIndices });
+  };
+
+  const removeLayerWay = (id) => {
+    if (!layers.delete(id)) return;
+    popup.remove();
+    if (map.getLayer(id)) map.removeLayer(id);
+  };
+
+  const dispose = () => {
+    for (const id of layers.keys()) {
+      if (map.getLayer(id)) map.removeLayer(id);
+    }
+    layers.clear();
+    popup.remove();
+    map.off('click', onClick);
+    map.off('mousemove', onMouseMove);
+    map.off('moveend', onMoveEnd);
+    if (hoverFrame != null) cancelAnimationFrame(hoverFrame);
+    map.getCanvas().style.cursor = '';
+  };
+
+  return { addLayerWay, removeLayerWay, dispose };
+}
