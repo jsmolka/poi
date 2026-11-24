@@ -1,6 +1,6 @@
 import { satelliteUrl } from '@/utils/google';
 import Flatbush from 'flatbush';
-import { Popup } from 'mapbox-gl';
+import { MercatorCoordinate, Popup } from 'mapbox-gl';
 
 const vertexShader = `#version 300 es
   in vec2 a_positionHigh;
@@ -66,12 +66,6 @@ function createProgram(gl) {
   return program;
 }
 
-function projectPosition(lng, lat) {
-  const clampedLat = Math.max(-85.051129, Math.min(85.051129, lat));
-  const radians = (clampedLat * Math.PI) / 180;
-  return [(lng + 180) / 360, (1 - Math.log(Math.tan(Math.PI / 4 + radians / 2)) / Math.PI) / 2];
-}
-
 function createPositionBuffer(positions) {
   const count = positions.length / 2;
   const gpuPositions = new Float32Array(4 * count);
@@ -80,7 +74,7 @@ function createPositionBuffer(positions) {
   for (let i = 0; i < count; i++) {
     const lng = positions[2 * i];
     const lat = positions[2 * i + 1];
-    const [x, y] = projectPosition(lng, lat);
+    const { x, y } = MercatorCoordinate.fromLngLat([lng, lat]);
     const highX = Math.fround(x);
     const highY = Math.fround(y);
     const offset = 4 * i;
@@ -179,13 +173,15 @@ function createPoiLayer({ id, color, positions, beforeId }) {
       gl.vertexAttribPointer(attributes.positionHigh, 2, gl.FLOAT, false, 16, 0);
       gl.vertexAttribPointer(attributes.positionLow, 2, gl.FLOAT, false, 16, 8);
       gl.uniformMatrix4fv(uniforms.matrix, false, matrix);
-      const center = projectPosition(map.getCenter().lng, map.getCenter().lat);
-      const originHigh = center.map(Math.fround);
-      const originLow = center.map((value, index) => value - originHigh[index]);
+      const center = MercatorCoordinate.fromLngLat(map.getCenter());
+      const centerX = center.x;
+      const centerY = center.y;
+      const originHigh = [Math.fround(centerX), Math.fround(centerY)];
+      const originLow = [centerX - originHigh[0], centerY - originHigh[1]];
       const originClip = new Float32Array(4);
       for (let column = 0; column < 4; column++) {
         originClip[column] =
-          matrix[column] * center[0] + matrix[4 + column] * center[1] + matrix[12 + column];
+          matrix[column] * centerX + matrix[4 + column] * centerY + matrix[12 + column];
       }
       gl.uniform2f(uniforms.originHigh, originHigh[0], originHigh[1]);
       gl.uniform2f(uniforms.originLow, originLow[0], originLow[1]);
