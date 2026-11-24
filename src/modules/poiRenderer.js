@@ -2,9 +2,6 @@ import { satelliteUrl } from '@/utils/google';
 import Flatbush from 'flatbush';
 import { Popup } from 'mapbox-gl';
 
-const BIN_COUNT = 32;
-const BIN_TOTAL = BIN_COUNT * BIN_COUNT;
-
 const vertexShader = `#version 300 es
   in vec2 a_positionHigh;
   in vec2 a_positionLow;
@@ -77,40 +74,48 @@ function projectPosition(lng, lat) {
 
 function createPositionBuffer(positions) {
   const count = positions.length / 2;
-  const binCounts = new Uint32Array(BIN_TOTAL);
-  const projected = new Float64Array(2 * count);
-
-  for (let i = 0; i < count; i++) {
-    const [x, y] = projectPosition(positions[2 * i], positions[2 * i + 1]);
-    projected[2 * i] = x;
-    projected[2 * i + 1] = y;
-    const binX = Math.min(BIN_COUNT - 1, Math.max(0, Math.floor(x * BIN_COUNT)));
-    const binY = Math.min(BIN_COUNT - 1, Math.max(0, Math.floor(y * BIN_COUNT)));
-    binCounts[binY * BIN_COUNT + binX]++;
-  }
-
-  const binStarts = new Uint32Array(BIN_TOTAL + 1);
-  for (let i = 0; i < BIN_TOTAL; i++) {
-    binStarts[i + 1] = binStarts[i] + binCounts[i];
-  }
-
-  const next = binStarts.slice(0, BIN_TOTAL);
   const gpuPositions = new Float32Array(4 * count);
+  const bounds = { west: Infinity, south: Infinity, east: -Infinity, north: -Infinity };
+
   for (let i = 0; i < count; i++) {
-    const x = projected[2 * i];
-    const y = projected[2 * i + 1];
-    const binX = Math.min(BIN_COUNT - 1, Math.max(0, Math.floor(x * BIN_COUNT)));
-    const binY = Math.min(BIN_COUNT - 1, Math.max(0, Math.floor(y * BIN_COUNT)));
-    const offset = 4 * next[binY * BIN_COUNT + binX]++;
+    const lng = positions[2 * i];
+    const lat = positions[2 * i + 1];
+    const [x, y] = projectPosition(lng, lat);
     const highX = Math.fround(x);
     const highY = Math.fround(y);
+    const offset = 4 * i;
     gpuPositions[offset] = highX;
     gpuPositions[offset + 1] = highY;
     gpuPositions[offset + 2] = x - highX;
     gpuPositions[offset + 3] = y - highY;
+    bounds.west = Math.min(bounds.west, lng);
+    bounds.south = Math.min(bounds.south, lat);
+    bounds.east = Math.max(bounds.east, lng);
+    bounds.north = Math.max(bounds.north, lat);
   }
 
-  return { gpuPositions, binStarts };
+  return { gpuPositions, bounds };
+}
+
+function intersectsViewport(layerBounds, viewport) {
+  const south = viewport.getSouth();
+  const north = viewport.getNorth();
+  if (layerBounds.north < south || layerBounds.south > north) return false;
+
+  const west = viewport.getWest();
+  let east = viewport.getEast();
+  if (east < west) east += 360;
+  if (east - west >= 360) return true;
+
+  const viewportCenter = (west + east) / 2;
+  const layerCenter = (layerBounds.west + layerBounds.east) / 2;
+  const nearestWorldOffset = Math.round((viewportCenter - layerCenter) / 360) * 360;
+
+  return [-360, 0, 360].some((offset) => {
+    const shiftedWest = layerBounds.west + nearestWorldOffset + offset;
+    const shiftedEast = layerBounds.east + nearestWorldOffset + offset;
+    return shiftedEast >= west && shiftedWest <= east;
+  });
 }
 
 function createPoiLayer({ id, color, positions, beforeId }) {
@@ -123,7 +128,7 @@ function createPoiLayer({ id, color, positions, beforeId }) {
   }
   index.finish();
 
-  const { gpuPositions, binStarts } = createPositionBuffer(positions);
+  const { gpuPositions, bounds: layerBounds } = createPositionBuffer(positions);
   let map;
   let program;
   let buffer;
@@ -159,24 +164,12 @@ function createPoiLayer({ id, color, positions, beforeId }) {
       const zoom = Math.round(map.getZoom() * 4) / 4;
       const scale = Math.max(0.5, Math.min(8, 0.5 + ((zoom - 6) / 12) * 7.5));
       const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
-      const maxPointSize = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1];
       const bounds = map.getBounds();
-      const west = bounds.getWest();
-      const east = bounds.getEast();
-      const south = bounds.getSouth();
-      const north = bounds.getNorth();
-      let minX = Math.floor(((west + 180) / 360) * BIN_COUNT) - 1;
-      let maxX = Math.floor(((east + 180) / 360) * BIN_COUNT) + 1;
-      if (east - west >= 360 || minX < 0 || maxX >= BIN_COUNT) {
-        minX = 0;
-        maxX = BIN_COUNT - 1;
+      if (!intersectsViewport(layerBounds, bounds)) {
+        return;
       }
-      const minY = Math.max(0, Math.floor(projectPosition(0, north)[1] * BIN_COUNT) - 1);
-      const maxY = Math.min(
-        BIN_COUNT - 1,
-        Math.floor(projectPosition(0, south)[1] * BIN_COUNT) + 1,
-      );
 
+      const maxPointSize = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1];
       gl.useProgram(program);
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
       gl.enableVertexAttribArray(attributes.positionHigh);
@@ -199,11 +192,7 @@ function createPoiLayer({ id, color, positions, beforeId }) {
       gl.uniform4fv(uniforms.originClip, originClip);
       gl.uniform1f(uniforms.pointSize, Math.min(4 * scale * pixelRatio, maxPointSize));
       gl.uniform4f(uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);
-      for (let y = minY; y <= maxY; y++) {
-        const start = binStarts[y * BIN_COUNT + minX];
-        const end = binStarts[y * BIN_COUNT + maxX + 1];
-        if (end > start) gl.drawArrays(gl.POINTS, start, end - start);
-      }
+      gl.drawArrays(gl.POINTS, 0, count);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
     },
     onRemove(_, gl) {
