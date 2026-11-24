@@ -1,4 +1,5 @@
 import { satelliteUrl } from '@/utils/google';
+import { mapRange } from '@/utils/numeric';
 import Flatbush from 'flatbush';
 import { MercatorCoordinate, Popup } from 'mapbox-gl';
 
@@ -155,8 +156,7 @@ function createPoiLayer({ id, color, positions, beforeId }) {
       };
     },
     render(gl, matrix) {
-      const zoom = Math.round(map.getZoom() * 4) / 4;
-      const scale = Math.max(0.5, Math.min(8, 0.5 + ((zoom - 6) / 12) * 7.5));
+      const scale = getScale(map.getZoom());
       const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
       const bounds = map.getBounds();
       if (!intersectsViewport(layerBounds, bounds)) {
@@ -215,9 +215,8 @@ function escapeHtml(value) {
   });
 }
 
-function pointScale(map) {
-  const zoom = Math.round(map.getZoom() * 4) / 4;
-  return Math.max(0.5, Math.min(8, 0.5 + ((zoom - 6) / 12) * 7.5));
+function getScale(zoom) {
+  return mapRange(zoom, 6, 18, 0.5, 8);
 }
 
 export function usePoiRenderer(map) {
@@ -250,7 +249,7 @@ export function usePoiRenderer(map) {
       }
     }
 
-    return nearest && nearest.distance <= 2 * pointScale(map) + 3 ? nearest : null;
+    return nearest && nearest.distance <= 2 * getScale(map.getZoom()) + 3 ? nearest : null;
   };
 
   const onClick = (event) => {
