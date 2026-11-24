@@ -219,7 +219,7 @@ function getScale(zoom) {
   return mapRange(zoom, 6, 18, 0.5, 8);
 }
 
-export function usePoiRenderer(map) {
+export function useRendererPoi(map) {
   const popup = new Popup({ closeButton: false, closeOnClick: false });
   const layers = new Map();
 
@@ -280,9 +280,9 @@ export function usePoiRenderer(map) {
   map.on('click', onClick);
   map.on('mousemove', onMouseMove);
 
-  const addLayerPoi = ({ id, name, color, positions, metadata, beforeId }) => {
+  const addLayer = ({ id, name, color, positions, metadata, beforeId }) => {
     const result = createPoiLayer({ id, color, positions, beforeId });
-    removeLayerPoi(id);
+    removeLayer(id);
     if (result == null) return;
 
     if (beforeId && map.getLayer(beforeId)) {
@@ -293,7 +293,7 @@ export function usePoiRenderer(map) {
     layers.set(id, { ...result, name, metadata, positions });
   };
 
-  const removeLayerPoi = (id) => {
+  const removeLayer = (id) => {
     if (!layers.delete(id)) return;
     popup.remove();
     if (map.getLayer(id)) map.removeLayer(id);
@@ -310,5 +310,5 @@ export function usePoiRenderer(map) {
     map.getCanvas().style.cursor = '';
   };
 
-  return { addLayerPoi, removeLayerPoi, dispose };
+  return { addLayer, removeLayer, dispose };
 }

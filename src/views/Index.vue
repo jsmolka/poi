@@ -3,9 +3,10 @@
 </template>
 
 <script setup>
-import { useDeck } from '@/composables/useDeck';
 import { useLocation } from '@/composables/useLocation';
 import { useMap } from '@/composables/useMap';
+import { useRendererPoi } from '@/composables/useRendererPoi';
+import { useRendererWay } from '@/composables/useRendererWay';
 import { Country } from '@/modules/country';
 import { pois } from '@/modules/pois';
 import { useSettingsStore } from '@/stores/settings';
@@ -98,10 +99,16 @@ const initAnchors = (map) => {
 };
 
 const initLayers = (map) => {
-  const { addLayerPoi, addLayerWay, removeLayer } = useDeck(map);
+  const rendererPoi = useRendererPoi(map);
+  const rendererWay = useRendererWay(map);
+
+  onScopeDispose(() => {
+    rendererPoi.dispose();
+    rendererWay.dispose();
+  });
 
   for (const [poi, { type, name, color, urls }] of Object.entries(pois)) {
-    const addLayer = type === 'poi' ? addLayerPoi : addLayerWay;
+    const { addLayer, removeLayer } = type === 'poi' ? rendererPoi : rendererWay;
 
     for (const country of Country.$values) {
       const id = `${poi}-${country}`;

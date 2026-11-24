@@ -455,7 +455,7 @@ function escapeHtml(value) {
   );
 }
 
-export function useWayRenderer(map) {
+export function useRendererWay(map) {
   const popup = new Popup({ closeButton: false, closeOnClick: false });
   const layers = new Map();
 
@@ -532,16 +532,16 @@ export function useWayRenderer(map) {
   map.on('click', onClick);
   map.on('mousemove', onMouseMove);
 
-  const addLayerWay = ({ id, name, color, positions, startIndices, beforeId }) => {
+  const addLayer = ({ id, name, color, positions, startIndices, beforeId }) => {
     const result = createWayLayer({ id, color, positions, startIndices });
-    removeLayerWay(id);
+    removeLayer(id);
     if (result == null) return;
     if (beforeId && map.getLayer(beforeId)) map.addLayer(result.layer, beforeId);
     else map.addLayer(result.layer);
     layers.set(id, { ...result, name, positions, startIndices });
   };
 
-  const removeLayerWay = (id) => {
+  const removeLayer = (id) => {
     if (!layers.delete(id)) return;
     popup.remove();
     if (map.getLayer(id)) map.removeLayer(id);
@@ -558,5 +558,5 @@ export function useWayRenderer(map) {
     map.getCanvas().style.cursor = '';
   };
 
-  return { addLayerWay, removeLayerWay, dispose };
+  return { addLayer, removeLayer, dispose };
 }
