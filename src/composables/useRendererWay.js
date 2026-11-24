@@ -1,4 +1,5 @@
-﻿import { satelliteUrl } from '@/utils/google';
+﻿import { createProgram } from '@/utils/gl';
+import { satelliteUrl } from '@/utils/google';
 import Flatbush from 'flatbush';
 import { Popup } from 'mapbox-gl';
 
@@ -73,35 +74,6 @@ const fragmentShader = `#version 300 es
     fragColor = vec4(u_color.rgb * alpha, u_color.a * alpha);
   }
 `;
-
-function createShader(gl, type, source) {
-  const shader = gl.createShader(type);
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    const message = gl.getShaderInfoLog(shader);
-    gl.deleteShader(shader);
-    throw new Error(`Could not compile way renderer shader: ${message}`);
-  }
-  return shader;
-}
-
-function createProgram(gl) {
-  const vertex = createShader(gl, gl.VERTEX_SHADER, vertexShader);
-  const fragment = createShader(gl, gl.FRAGMENT_SHADER, fragmentShader);
-  const program = gl.createProgram();
-  gl.attachShader(program, vertex);
-  gl.attachShader(program, fragment);
-  gl.linkProgram(program);
-  gl.deleteShader(vertex);
-  gl.deleteShader(fragment);
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    const message = gl.getProgramInfoLog(program);
-    gl.deleteProgram(program);
-    throw new Error(`Could not link way renderer shader: ${message}`);
-  }
-  return program;
-}
 
 function projectPosition(lng, lat) {
   const clampedLat = Math.max(-85.051129, Math.min(85.051129, lat));
@@ -282,7 +254,7 @@ function createLayer(id, color, positions, startIndices) {
     renderingMode: '2d',
     onAdd(mapInstance, gl) {
       map = mapInstance;
-      program = createProgram(gl);
+      program = createProgram(gl, vertexShader, fragmentShader);
       cornerBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, cornerBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, CORNERS, gl.STATIC_DRAW);
