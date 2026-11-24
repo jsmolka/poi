@@ -250,7 +250,7 @@ function createSegmentData(positions, projectedPositions, startIndices, stride, 
   };
 }
 
-function createWayLayer({ id, color, positions, startIndices }) {
+function createLayer(id, color, positions, startIndices) {
   const projectedPositions = new Float32Array(positions.length);
   for (let vertex = 0; vertex < positions.length / 2; vertex++) {
     const lng = positions[2 * vertex];
@@ -533,7 +533,7 @@ export function useRendererWay(map) {
   map.on('mousemove', onMouseMove);
 
   const addLayer = ({ id, name, color, positions, startIndices, beforeId }) => {
-    const result = createWayLayer({ id, color, positions, startIndices });
+    const result = createLayer(id, color, positions, startIndices);
     removeLayer(id);
     if (result == null) return;
     if (beforeId && map.getLayer(beforeId)) map.addLayer(result.layer, beforeId);

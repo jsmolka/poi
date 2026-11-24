@@ -113,7 +113,7 @@ function intersectsViewport(layerBounds, viewport) {
   });
 }
 
-function createPoiLayer({ id, color, positions, beforeId }) {
+function createLayer(id, color, positions) {
   const count = positions.length / 2;
   if (count === 0) return null;
 
@@ -281,7 +281,7 @@ export function useRendererPoi(map) {
   map.on('mousemove', onMouseMove);
 
   const addLayer = ({ id, name, color, positions, metadata, beforeId }) => {
-    const result = createPoiLayer({ id, color, positions, beforeId });
+    const result = createLayer(id, color, positions);
     removeLayer(id);
     if (result == null) return;
 
