@@ -173,18 +173,6 @@ function createLayer(id, color, positions) {
   return { layer, index };
 }
 
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, (character) => {
-    return {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;',
-    }[character];
-  });
-}
-
 function getScale(zoom) {
   return mapRange(zoom, 6, 18, 0.5, 8);
 }
@@ -231,10 +219,10 @@ export function useRendererPoi(map) {
 
     const [name, openingHours] = poi.metadata[poi.candidate] ?? [];
     popup.setHTML(`
-      <a href="${satelliteUrl(poi.coordinates)}" target="_blank" rel="noopener noreferrer" class="underline">
-        ${name ? escapeHtml(name) : escapeHtml(poi.name)}
+      <a href="${satelliteUrl(poi.coordinates)}" target="_blank" class="underline">
+        ${name || poi.name}
       </a>
-      ${openingHours ? `<br>Opening hours: ${escapeHtml(openingHours)}` : ''}
+      ${openingHours ? `<br>Opening hours: ${openingHours}` : ''}
     `);
     popup.setLngLat(poi.coordinates).addTo(map);
   };
