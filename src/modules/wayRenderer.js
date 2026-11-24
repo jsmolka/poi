@@ -25,14 +25,23 @@ const vertexShader = `#version 300 es
   in vec2 a_endLow;
   in vec2 a_corner;
   uniform mat4 u_matrix;
+  uniform vec2 u_originHigh;
+  uniform vec2 u_originLow;
+  uniform vec4 u_originClip;
   uniform vec2 u_viewport;
   uniform highp float u_lineWidth;
   out vec2 v_start;
   out vec2 v_end;
 
   void main() {
-    vec4 startClip = u_matrix * vec4(a_startHigh, 0.0, 1.0) + u_matrix * vec4(a_startLow, 0.0, 0.0);
-    vec4 endClip = u_matrix * vec4(a_endHigh, 0.0, 1.0) + u_matrix * vec4(a_endLow, 0.0, 0.0);
+    vec2 startHigh = a_startHigh - u_originHigh;
+    vec2 startLow = a_startLow - u_originLow;
+    vec2 endHigh = a_endHigh - u_originHigh;
+    vec2 endLow = a_endLow - u_originLow;
+    vec4 startClip = u_originClip + u_matrix * vec4(startHigh, 0.0, 0.0)
+      + u_matrix * vec4(startLow, 0.0, 0.0);
+    vec4 endClip = u_originClip + u_matrix * vec4(endHigh, 0.0, 0.0)
+      + u_matrix * vec4(endLow, 0.0, 0.0);
     v_start = (startClip.xy / startClip.w * 0.5 + 0.5) * u_viewport;
     v_end = (endClip.xy / endClip.w * 0.5 + 0.5) * u_viewport;
 
@@ -297,6 +306,9 @@ function createWayLayer({ id, color, positions, startIndices }) {
       };
       uniforms = {
         matrix: gl.getUniformLocation(program, 'u_matrix'),
+        originHigh: gl.getUniformLocation(program, 'u_originHigh'),
+        originLow: gl.getUniformLocation(program, 'u_originLow'),
+        originClip: gl.getUniformLocation(program, 'u_originClip'),
         viewport: gl.getUniformLocation(program, 'u_viewport'),
         lineWidth: gl.getUniformLocation(program, 'u_lineWidth'),
         color: gl.getUniformLocation(program, 'u_color'),
@@ -373,6 +385,17 @@ function createWayLayer({ id, color, positions, startIndices }) {
       gl.vertexAttribPointer(attributes.corner, 2, gl.FLOAT, false, 0, 0);
       gl.vertexAttribDivisor(attributes.corner, 0);
       gl.uniformMatrix4fv(uniforms.matrix, false, matrix);
+      const center = projectPosition(map.getCenter().lng, map.getCenter().lat);
+      const originHigh = center.map(Math.fround);
+      const originLow = center.map((value, index) => value - originHigh[index]);
+      const originClip = new Float32Array(4);
+      for (let column = 0; column < 4; column++) {
+        originClip[column] =
+          matrix[column] * center[0] + matrix[4 + column] * center[1] + matrix[12 + column];
+      }
+      gl.uniform2f(uniforms.originHigh, originHigh[0], originHigh[1]);
+      gl.uniform2f(uniforms.originLow, originLow[0], originLow[1]);
+      gl.uniform4fv(uniforms.originClip, originClip);
       gl.uniform2f(uniforms.viewport, gl.drawingBufferWidth, gl.drawingBufferHeight);
       gl.uniform1f(uniforms.lineWidth, width * pixelRatio);
       gl.uniform4f(uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);

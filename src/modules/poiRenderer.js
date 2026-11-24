@@ -9,10 +9,17 @@ const vertexShader = `#version 300 es
   in vec2 a_positionHigh;
   in vec2 a_positionLow;
   uniform mat4 u_matrix;
+  uniform vec2 u_originHigh;
+  uniform vec2 u_originLow;
+  uniform vec4 u_originClip;
   uniform float u_pointSize;
 
   void main() {
-    gl_Position = u_matrix * vec4(a_positionHigh, 0.0, 1.0) + u_matrix * vec4(a_positionLow, 0.0, 0.0);
+    vec2 offsetHigh = a_positionHigh - u_originHigh;
+    vec2 offsetLow = a_positionLow - u_originLow;
+    vec4 offsetClip = u_matrix * vec4(offsetHigh, 0.0, 0.0)
+      + u_matrix * vec4(offsetLow, 0.0, 0.0);
+    gl_Position = u_originClip + offsetClip;
     gl_PointSize = u_pointSize;
   }
 `;
@@ -141,6 +148,9 @@ function createPoiLayer({ id, color, positions, beforeId }) {
       };
       uniforms = {
         matrix: gl.getUniformLocation(program, 'u_matrix'),
+        originHigh: gl.getUniformLocation(program, 'u_originHigh'),
+        originLow: gl.getUniformLocation(program, 'u_originLow'),
+        originClip: gl.getUniformLocation(program, 'u_originClip'),
         pointSize: gl.getUniformLocation(program, 'u_pointSize'),
         color: gl.getUniformLocation(program, 'u_color'),
       };
@@ -176,6 +186,17 @@ function createPoiLayer({ id, color, positions, beforeId }) {
       gl.vertexAttribPointer(attributes.positionHigh, 2, gl.FLOAT, false, 16, 0);
       gl.vertexAttribPointer(attributes.positionLow, 2, gl.FLOAT, false, 16, 8);
       gl.uniformMatrix4fv(uniforms.matrix, false, matrix);
+      const center = projectPosition(map.getCenter().lng, map.getCenter().lat);
+      const originHigh = center.map(Math.fround);
+      const originLow = center.map((value, index) => value - originHigh[index]);
+      const originClip = new Float32Array(4);
+      for (let column = 0; column < 4; column++) {
+        originClip[column] =
+          matrix[column] * center[0] + matrix[4 + column] * center[1] + matrix[12 + column];
+      }
+      gl.uniform2f(uniforms.originHigh, originHigh[0], originHigh[1]);
+      gl.uniform2f(uniforms.originLow, originLow[0], originLow[1]);
+      gl.uniform4fv(uniforms.originClip, originClip);
       gl.uniform1f(uniforms.pointSize, Math.min(4 * scale * pixelRatio, maxPointSize));
       gl.uniform4f(uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);
       for (let y = minY; y <= maxY; y++) {
