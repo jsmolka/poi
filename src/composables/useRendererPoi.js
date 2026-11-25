@@ -182,49 +182,45 @@ export function useRendererPoi(map) {
   const layers = new Map();
 
   const findPoi = (point) => {
-    if (map.getZoom() < 8) return null;
+    const northEast = map.unproject([point.x - 32, point.y - 32]);
+    const southWest = map.unproject([point.x + 32, point.y + 32]);
 
-    const corners = [
-      map.unproject([point.x - 24, point.y - 24]),
-      map.unproject([point.x + 24, point.y - 24]),
-      map.unproject([point.x - 24, point.y + 24]),
-      map.unproject([point.x + 24, point.y + 24]),
-    ];
-    const west = Math.min(...corners.map(({ lng }) => lng));
-    const east = Math.max(...corners.map(({ lng }) => lng));
-    const south = Math.min(...corners.map(({ lat }) => lat));
-    const north = Math.max(...corners.map(({ lat }) => lat));
     let nearest = null;
-
-    for (const [id, entry] of layers) {
-      for (const candidate of entry.index.search(west, south, east, north)) {
-        const coordinates = [entry.positions[2 * candidate], entry.positions[2 * candidate + 1]];
-        const screen = map.project(coordinates);
-        const distance = Math.hypot(screen.x - point.x, screen.y - point.y);
-        if (distance < (nearest?.distance ?? Infinity)) {
-          nearest = { id, ...entry, candidate, coordinates, distance };
+    for (const [id, layer] of layers) {
+      for (const candidate of layer.index.search(
+        northEast.lng,
+        southWest.lat,
+        southWest.lng,
+        northEast.lat,
+      )) {
+        const coordinates = [layer.positions[2 * candidate], layer.positions[2 * candidate + 1]];
+        const candidatePoint = map.project(coordinates);
+        const distance = Math.hypot(candidatePoint.x - point.x, candidatePoint.y - point.y);
+        if (nearest == null || distance < nearest.distance) {
+          nearest = { id, layer, candidate, coordinates, distance };
         }
       }
     }
 
-    return nearest && nearest.distance <= 2 * getScale(map.getZoom()) + 3 ? nearest : null;
+    return nearest && nearest.distance <= 2 * getScale(map.getZoom()) ? nearest : null;
   };
 
   const onClick = (event) => {
     const poi = findPoi(event.point);
     if (poi == null) {
-      if (!event.defaultPrevented) popup.remove();
+      popup.remove();
       return;
     }
 
-    const [name, openingHours] = poi.metadata[poi.candidate] ?? [];
+    const [name, openingHours] = poi.layer.metadata[poi.candidate] ?? [];
     popup.setHTML(`
       <a href="${satelliteUrl(poi.coordinates)}" target="_blank" class="underline">
-        ${name || poi.name}
+        ${name || poi.layer.name}
       </a>
       ${openingHours ? `<br>Opening hours: ${openingHours}` : ''}
     `);
-    popup.setLngLat(poi.coordinates).addTo(map);
+    popup.setLngLat(poi.coordinates);
+    popup.addTo(map);
   };
 
   const onMouseMove = (event) => {
@@ -232,7 +228,7 @@ export function useRendererPoi(map) {
       return;
     }
 
-    map.getCanvas().style.cursor = findPoi(event.point) ? 'pointer' : '';
+    map.getCanvasContainer().style.cursor = findPoi(event.point) ? 'pointer' : '';
   };
 
   map.on('click', onClick);
