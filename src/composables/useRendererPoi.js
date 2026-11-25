@@ -56,7 +56,7 @@ function createPositionBuffer(positions) {
   return { positionBuffer, bounds };
 }
 
-function boundsIntersect(bounds, viewport) {
+function intersects(viewport, bounds) {
   if (bounds.getNorth() < viewport.getSouth() || bounds.getSouth() > viewport.getNorth()) {
     return false;
   }
@@ -90,7 +90,8 @@ function createLayer(id, color, positions) {
   }
   index.finish();
 
-  const { positionBuffer, bounds: layerBounds } = createPositionBuffer(positions);
+  const { positionBuffer, bounds } = createPositionBuffer(positions);
+
   let map;
   let program;
   let buffer;
@@ -101,6 +102,7 @@ function createLayer(id, color, positions) {
     id,
     type: 'custom',
     renderingMode: '2d',
+
     onAdd(mapInstance, gl) {
       map = mapInstance;
       program = createProgram(gl, vertexShader, fragmentShader);
@@ -122,10 +124,11 @@ function createLayer(id, color, positions) {
         color: gl.getUniformLocation(program, 'u_color'),
       };
     },
+
     render(gl, matrix) {
       const scale = getScale(map.getZoom());
       const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
-      if (!boundsIntersect(layerBounds, map.getBounds())) {
+      if (!intersects(map.getBounds(), bounds)) {
         return;
       }
 
@@ -157,6 +160,7 @@ function createLayer(id, color, positions) {
       gl.drawArrays(gl.POINTS, 0, vertices);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
     },
+
     onRemove(_, gl) {
       gl.deleteBuffer(buffer);
       gl.deleteProgram(program);
@@ -165,7 +169,6 @@ function createLayer(id, color, positions) {
       map = null;
     },
   };
-
   return { layer, index };
 }
 
