@@ -77,7 +77,7 @@ function intersects(viewport, bounds) {
 }
 
 function getScale(zoom) {
-  return mapRange(zoom, 6, 18, 0.5, 8);
+  return mapRange(zoom, 6, 18, 1, 16);
 }
 
 function createLayer(id, color, positions) {
@@ -150,7 +150,7 @@ function createLayer(id, color, positions) {
       const scale = getScale(this.map.getZoom());
       const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
       const [minPointSize, maxPointSize] = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE);
-      const pointSize = clamp(4 * scale * pixelRatio, minPointSize, maxPointSize);
+      const pointSize = clamp(2 * scale * pixelRatio, minPointSize, maxPointSize);
 
       gl.uniform2f(this.uniforms.originHi, originHi[0], originHi[1]);
       gl.uniform2f(this.uniforms.originLo, originLo[0], originLo[1]);
@@ -194,7 +194,7 @@ export function useRendererPoi(map) {
       }
     }
 
-    return nearest && nearest.distance <= 2 * getScale(map.getZoom()) ? nearest : null;
+    return nearest && nearest.distance <= getScale(map.getZoom()) ? nearest : null;
   };
 
   const onClick = (event) => {
