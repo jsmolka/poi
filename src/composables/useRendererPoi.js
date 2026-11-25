@@ -42,9 +42,8 @@ function createPositionBuffer(positions) {
   const bounds = new LngLatBounds();
 
   for (let vertex = 0; vertex < vertices; vertex++) {
-    const lng = positions[2 * vertex];
-    const lat = positions[2 * vertex + 1];
-    const { x, y } = MercatorCoordinate.fromLngLat([lng, lat]);
+    const coordinates = [positions[2 * vertex], positions[2 * vertex + 1]];
+    const { x, y } = MercatorCoordinate.fromLngLat(coordinates);
     const highX = Math.fround(x);
     const highY = Math.fround(y);
 
@@ -52,7 +51,7 @@ function createPositionBuffer(positions) {
     positionBuffer[4 * vertex + 1] = highY;
     positionBuffer[4 * vertex + 2] = x - highX;
     positionBuffer[4 * vertex + 3] = y - highY;
-    bounds.extend([lng, lat]);
+    bounds.extend(coordinates);
   }
   return { positionBuffer, bounds };
 }
