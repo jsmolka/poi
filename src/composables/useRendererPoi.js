@@ -2,7 +2,7 @@ import { createProgram } from '@/utils/gl';
 import { satelliteUrl } from '@/utils/google';
 import { mapRange } from '@/utils/numeric';
 import Flatbush from 'flatbush';
-import { MercatorCoordinate, Popup } from 'mapbox-gl';
+import { LngLatBounds, MercatorCoordinate, Popup } from 'mapbox-gl';
 
 const vertexShader = `#version 300 es
   in vec2 a_positionHi;
@@ -39,7 +39,7 @@ const fragmentShader = `#version 300 es
 function createPositionBuffer(positions) {
   const vertices = positions.length / 2;
   const positionBuffer = new Float32Array(4 * vertices);
-  const bounds = { west: Infinity, south: Infinity, east: -Infinity, north: -Infinity };
+  const bounds = new LngLatBounds();
 
   for (let vertex = 0; vertex < vertices; vertex++) {
     const lng = positions[2 * vertex];
@@ -52,19 +52,13 @@ function createPositionBuffer(positions) {
     positionBuffer[4 * vertex + 1] = highY;
     positionBuffer[4 * vertex + 2] = x - highX;
     positionBuffer[4 * vertex + 3] = y - highY;
-
-    bounds.west = Math.min(bounds.west, lng);
-    bounds.south = Math.min(bounds.south, lat);
-    bounds.east = Math.max(bounds.east, lng);
-    bounds.north = Math.max(bounds.north, lat);
+    bounds.extend([lng, lat]);
   }
   return { positionBuffer, bounds };
 }
 
-function intersectsViewport(bounds, viewport) {
-  const south = viewport.getSouth();
-  const north = viewport.getNorth();
-  if (bounds.north < south || bounds.south > north) {
+function boundsIntersect(bounds, viewport) {
+  if (bounds.getNorth() < viewport.getSouth() || bounds.getSouth() > viewport.getNorth()) {
     return false;
   }
 
@@ -76,13 +70,15 @@ function intersectsViewport(bounds, viewport) {
     return true;
   }
 
+  const boundsWest = bounds.getWest();
+  const boundsEast = bounds.getEast();
   const viewportCenter = (west + east) / 2;
-  const boundsCenter = (bounds.west + bounds.east) / 2;
+  const boundsCenter = (boundsWest + boundsEast) / 2;
   const nearestWorldOffset = Math.round((viewportCenter - boundsCenter) / 360) * 360;
 
   return [-360, 0, 360].some((offset) => {
-    const shiftedWest = bounds.west + nearestWorldOffset + offset;
-    const shiftedEast = bounds.east + nearestWorldOffset + offset;
+    const shiftedWest = boundsWest + nearestWorldOffset + offset;
+    const shiftedEast = boundsEast + nearestWorldOffset + offset;
     return shiftedEast >= west && shiftedWest <= east;
   });
 }
@@ -130,7 +126,7 @@ function createLayer(id, color, positions) {
     render(gl, matrix) {
       const scale = getScale(map.getZoom());
       const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
-      if (!intersectsViewport(layerBounds, map.getBounds())) {
+      if (!boundsIntersect(layerBounds, map.getBounds())) {
         return;
       }
 
