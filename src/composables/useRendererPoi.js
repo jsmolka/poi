@@ -1,6 +1,6 @@
 import { createProgram } from '@/utils/gl';
 import { satelliteUrl } from '@/utils/google';
-import { mapRange } from '@/utils/numeric';
+import { mapRange, roundTo } from '@/utils/numeric';
 import Flatbush from 'flatbush';
 import { LngLatBounds, MercatorCoordinate, Popup } from 'mapbox-gl';
 
@@ -61,25 +61,19 @@ function intersects(viewport, bounds) {
     return false;
   }
 
-  const west = viewport.getWest();
-  let east = viewport.getEast();
-  if (east < west) {
-    east += 360;
-  } else if (east - west >= 360) {
+  const viewWest = viewport.getWest();
+  const viewEastRaw = viewport.getEast();
+  const viewEast = viewEastRaw < viewWest ? viewEastRaw + 360 : viewEastRaw;
+  const viewCenter = (viewWest + viewEast) / 2;
+  if (viewEast - viewWest >= 360) {
     return true;
   }
 
   const boundsWest = bounds.getWest();
   const boundsEast = bounds.getEast();
-  const viewportCenter = (west + east) / 2;
   const boundsCenter = (boundsWest + boundsEast) / 2;
-  const nearestWorldOffset = Math.round((viewportCenter - boundsCenter) / 360) * 360;
-
-  return [-360, 0, 360].some((offset) => {
-    const shiftedWest = boundsWest + nearestWorldOffset + offset;
-    const shiftedEast = boundsEast + nearestWorldOffset + offset;
-    return shiftedEast >= west && shiftedWest <= east;
-  });
+  const nearestWorldOffset = roundTo(viewCenter - boundsCenter, 360);
+  return boundsEast + nearestWorldOffset >= viewWest && boundsWest + nearestWorldOffset <= viewEast;
 }
 
 function createLayer(id, color, positions) {
