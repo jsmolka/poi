@@ -1,6 +1,6 @@
 import { createProgram } from '@/utils/gl';
 import { satelliteUrl } from '@/utils/google';
-import { mapRange, roundTo } from '@/utils/numeric';
+import { clamp, mapRange, roundTo } from '@/utils/numeric';
 import Flatbush from 'flatbush';
 import { LngLatBounds, MercatorCoordinate, Popup } from 'mapbox-gl';
 
@@ -76,6 +76,10 @@ function intersects(viewport, bounds) {
   return boundsEast + nearestWorldOffset >= viewWest && boundsWest + nearestWorldOffset <= viewEast;
 }
 
+function getScale(zoom) {
+  return mapRange(zoom, 6, 18, 0.5, 8);
+}
+
 function createLayer(id, color, positions) {
   const vertices = positions.length / 2;
   const index = new Flatbush(vertices, 16, Float32Array);
@@ -86,88 +90,83 @@ function createLayer(id, color, positions) {
 
   const { positionBuffer, bounds } = createPositionBuffer(positions);
 
-  let map;
-  let program;
-  let buffer;
-  let attributes;
-  let uniforms;
-
   const layer = {
     id,
     type: 'custom',
     renderingMode: '2d',
 
-    onAdd(mapInstance, gl) {
-      map = mapInstance;
-      program = createProgram(gl, vertexShader, fragmentShader);
-      buffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    map: null,
+    program: null,
+    buffer: null,
+    attributes: null,
+    uniforms: null,
+
+    onAdd(map, gl) {
+      this.map = map;
+      this.program = createProgram(gl, vertexShader, fragmentShader);
+      this.buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
       gl.bufferData(gl.ARRAY_BUFFER, positionBuffer, gl.STATIC_DRAW);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-      attributes = {
-        positionHi: gl.getAttribLocation(program, 'a_positionHi'),
-        positionLo: gl.getAttribLocation(program, 'a_positionLo'),
+      this.attributes = {
+        positionHi: gl.getAttribLocation(this.program, 'a_positionHi'),
+        positionLo: gl.getAttribLocation(this.program, 'a_positionLo'),
       };
-      uniforms = {
-        matrix: gl.getUniformLocation(program, 'u_matrix'),
-        originHi: gl.getUniformLocation(program, 'u_originHi'),
-        originLo: gl.getUniformLocation(program, 'u_originLo'),
-        originClip: gl.getUniformLocation(program, 'u_originClip'),
-        pointSize: gl.getUniformLocation(program, 'u_pointSize'),
-        color: gl.getUniformLocation(program, 'u_color'),
+
+      this.uniforms = {
+        matrix: gl.getUniformLocation(this.program, 'u_matrix'),
+        originHi: gl.getUniformLocation(this.program, 'u_originHi'),
+        originLo: gl.getUniformLocation(this.program, 'u_originLo'),
+        originClip: gl.getUniformLocation(this.program, 'u_originClip'),
+        pointSize: gl.getUniformLocation(this.program, 'u_pointSize'),
+        color: gl.getUniformLocation(this.program, 'u_color'),
       };
     },
 
     render(gl, matrix) {
-      const scale = getScale(map.getZoom());
-      const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
-      if (!intersects(map.getBounds(), bounds)) {
+      if (!intersects(this.map.getBounds(), bounds)) {
         return;
       }
 
-      const maxPointSize = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1];
-      gl.useProgram(program);
-      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-      gl.enableVertexAttribArray(attributes.positionHi);
-      gl.enableVertexAttribArray(attributes.positionLo);
-      gl.vertexAttribDivisor(attributes.positionHi, 0);
-      gl.vertexAttribDivisor(attributes.positionLo, 0);
-      gl.vertexAttribPointer(attributes.positionHi, 2, gl.FLOAT, false, 16, 0);
-      gl.vertexAttribPointer(attributes.positionLo, 2, gl.FLOAT, false, 16, 8);
-      gl.uniformMatrix4fv(uniforms.matrix, false, matrix);
-      const center = MercatorCoordinate.fromLngLat(map.getCenter());
-      const centerX = center.x;
-      const centerY = center.y;
-      const originHi = [Math.fround(centerX), Math.fround(centerY)];
-      const originLo = [centerX - originHi[0], centerY - originHi[1]];
+      gl.useProgram(this.program);
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+      gl.enableVertexAttribArray(this.attributes.positionHi);
+      gl.enableVertexAttribArray(this.attributes.positionLo);
+      gl.vertexAttribDivisor(this.attributes.positionHi, 0);
+      gl.vertexAttribDivisor(this.attributes.positionLo, 0);
+      gl.vertexAttribPointer(this.attributes.positionHi, 2, gl.FLOAT, false, 16, 0);
+      gl.vertexAttribPointer(this.attributes.positionLo, 2, gl.FLOAT, false, 16, 8);
+      gl.uniformMatrix4fv(this.uniforms.matrix, false, matrix);
+
+      const { x, y } = MercatorCoordinate.fromLngLat(this.map.getCenter());
+      const originHi = [Math.fround(x), Math.fround(y)];
+      const originLo = [x - originHi[0], y - originHi[1]];
       const originClip = new Float32Array(4);
       for (let column = 0; column < 4; column++) {
-        originClip[column] =
-          matrix[column] * centerX + matrix[4 + column] * centerY + matrix[12 + column];
+        originClip[column] = matrix[column] * x + matrix[4 + column] * y + matrix[12 + column];
       }
-      gl.uniform2f(uniforms.originHi, originHi[0], originHi[1]);
-      gl.uniform2f(uniforms.originLo, originLo[0], originLo[1]);
-      gl.uniform4fv(uniforms.originClip, originClip);
-      gl.uniform1f(uniforms.pointSize, Math.min(4 * scale * pixelRatio, maxPointSize));
-      gl.uniform4f(uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);
+
+      const scale = getScale(this.map.getZoom());
+      const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
+      const [minPointSize, maxPointSize] = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE);
+      const pointSize = clamp(4 * scale * pixelRatio, minPointSize, maxPointSize);
+
+      gl.uniform2f(this.uniforms.originHi, originHi[0], originHi[1]);
+      gl.uniform2f(this.uniforms.originLo, originLo[0], originLo[1]);
+      gl.uniform4fv(this.uniforms.originClip, originClip);
+      gl.uniform1f(this.uniforms.pointSize, pointSize);
+      gl.uniform4f(this.uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);
       gl.drawArrays(gl.POINTS, 0, vertices);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
     },
 
     onRemove(_, gl) {
-      gl.deleteBuffer(buffer);
-      gl.deleteProgram(program);
-      buffer = null;
-      program = null;
-      map = null;
+      gl.deleteBuffer(this.buffer);
+      gl.deleteProgram(this.program);
     },
   };
   return { layer, index };
-}
-
-function getScale(zoom) {
-  return mapRange(zoom, 6, 18, 0.5, 8);
 }
 
 export function useRendererPoi(map) {
