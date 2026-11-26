@@ -142,7 +142,7 @@ function createSegmentData(positions, projectedPositions, startIndices, stride) 
   }
   bush.finish();
 
-  return { segments, bush, segmentStarts, segmentEnds, segmentCount, stride };
+  return { segments, bush, segmentStarts, segmentEnds, segmentCount };
 }
 
 function createLayer(id, color, positions, startIndices) {
@@ -157,6 +157,19 @@ function createLayer(id, color, positions, startIndices) {
     createSegmentData(positions, projectedPositions, startIndices, stride),
   ).filter(Boolean);
   if (!lods.length) return null;
+
+  let minLng = Infinity;
+  let minLat = Infinity;
+  let maxLng = -Infinity;
+  let maxLat = -Infinity;
+  for (let vertex = 0; vertex < positions.length / 2; vertex++) {
+    const lng = positions[2 * vertex];
+    const lat = positions[2 * vertex + 1];
+    minLng = Math.min(minLng, lng);
+    minLat = Math.min(minLat, lat);
+    maxLng = Math.max(maxLng, lng);
+    maxLat = Math.max(maxLat, lat);
+  }
 
   let map;
   let program;
@@ -203,6 +216,16 @@ function createLayer(id, color, positions, startIndices) {
       const zoom = map.getZoom();
       const lodIndex = getLodIndex(zoom);
       const lod = lods[lodIndex];
+      const viewport = map.getBounds();
+      if (
+        minLng > viewport.getEast() ||
+        maxLng < viewport.getWest() ||
+        minLat > viewport.getNorth() ||
+        maxLat < viewport.getSouth()
+      ) {
+        return;
+      }
+
       const width = Math.max(0.5, Math.min(8, 0.5 + ((zoom - 6) / 12) * 7.5));
       const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
       const segmentStride = FLOATS_PER_SEGMENT * Float32Array.BYTES_PER_ELEMENT;
