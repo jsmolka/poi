@@ -494,11 +494,7 @@ export function useRendererWay(map) {
   };
 
   const onMouseMove = (event) => {
-    if (map.isMoving()) {
-      return;
-    }
-
-    map.getCanvas().style.cursor = findWay(event.point) ? 'pointer' : '';
+    map.getCanvas().classList.toggle('way-hover', !map.isMoving() && findWay(event.point));
   };
 
   map.on('click', onClick);
@@ -527,7 +523,7 @@ export function useRendererWay(map) {
     popup.remove();
     map.off('click', onClick);
     map.off('mousemove', onMouseMove);
-    map.getCanvas().style.cursor = '';
+    map.getCanvas().classList.remove('way-hover');
   };
 
   return { addLayer, removeLayer, dispose };

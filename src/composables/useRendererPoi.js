@@ -223,11 +223,7 @@ export function useRendererPoi(map) {
   };
 
   const onMouseMove = (event) => {
-    if (map.isMoving()) {
-      return;
-    }
-
-    map.getCanvas().style.cursor = findPoi(event.point) ? 'pointer' : '';
+    map.getCanvas().classList.toggle('poi-hover', !map.isMoving() && findPoi(event.point));
   };
 
   map.on('click', onClick);
@@ -258,7 +254,7 @@ export function useRendererPoi(map) {
 
     map.off('click', onClick);
     map.off('mousemove', onMouseMove);
-    map.getCanvas().style.cursor = '';
+    map.getCanvas().classList.remove('poi-hover');
   };
 
   return { addLayer, removeLayer, dispose };
