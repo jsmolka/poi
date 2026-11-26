@@ -201,7 +201,6 @@ export function useRendererPoi(map) {
         }
       }
     }
-
     return nearest && nearest.distance <= getScale(map.getZoom()) ? nearest : null;
   };
 
@@ -228,37 +227,35 @@ export function useRendererPoi(map) {
       return;
     }
 
-    map.getCanvasContainer().style.cursor = findPoi(event.point) ? 'pointer' : '';
+    map.getCanvas().style.cursor = findPoi(event.point) ? 'pointer' : '';
   };
 
   map.on('click', onClick);
   map.on('mousemove', onMouseMove);
 
   const addLayer = ({ id, name, color, positions, metadata, beforeId }) => {
-    const result = createLayer(id, color, positions);
     removeLayer(id);
-    if (result == null) return;
 
-    if (beforeId && map.getLayer(beforeId)) {
-      map.addLayer(result.layer, beforeId);
-    } else {
-      map.addLayer(result.layer);
-    }
-    layers.set(id, { ...result, name, metadata, positions });
+    const { layer, index } = createLayer(id, color, positions);
+    map.addLayer(layer, beforeId);
+
+    layers.set(id, { layer, index, name, metadata, positions });
   };
 
   const removeLayer = (id) => {
-    if (!layers.delete(id)) return;
+    if (!layers.delete(id)) {
+      return;
+    }
+
     popup.remove();
-    if (map.getLayer(id)) map.removeLayer(id);
+    map.removeLayer(id);
   };
 
   const dispose = () => {
     for (const id of layers.keys()) {
-      if (map.getLayer(id)) map.removeLayer(id);
+      removeLayer(id);
     }
-    layers.clear();
-    popup.remove();
+
     map.off('click', onClick);
     map.off('mousemove', onMouseMove);
     map.getCanvas().style.cursor = '';
