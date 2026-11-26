@@ -170,26 +170,26 @@ function createLayer(id, color, positions) {
 }
 
 export function useRendererPoi(map) {
-  const popup = new Popup({ closeButton: false, closeOnClick: false });
   const layers = new Map();
+  const popup = new Popup({ closeButton: false, closeOnClick: false });
 
   const findPoi = (point) => {
     const northEast = map.unproject([point.x - 32, point.y - 32]);
     const southWest = map.unproject([point.x + 32, point.y + 32]);
 
     let nearest = null;
-    for (const [id, layer] of layers) {
-      for (const candidate of layer.index.search(
+    for (const layer of layers.values()) {
+      for (const index of layer.index.search(
         northEast.lng,
         southWest.lat,
         southWest.lng,
         northEast.lat,
       )) {
-        const coordinates = [layer.positions[2 * candidate], layer.positions[2 * candidate + 1]];
-        const candidatePoint = map.project(coordinates);
-        const distance = Math.hypot(candidatePoint.x - point.x, candidatePoint.y - point.y);
+        const coordinates = [layer.positions[2 * index], layer.positions[2 * index + 1]];
+        const coordinatePoint = map.project(coordinates);
+        const distance = Math.hypot(coordinatePoint.x - point.x, coordinatePoint.y - point.y);
         if (nearest == null || distance < nearest.distance) {
-          nearest = { id, layer, candidate, coordinates, distance };
+          nearest = { index, coordinates, distance, layer };
         }
       }
     }
@@ -204,7 +204,7 @@ export function useRendererPoi(map) {
       return;
     }
 
-    const [name, openingHours] = poi.layer.metadata[poi.candidate] ?? [];
+    const [name, openingHours] = poi.layer.metadata[poi.index] ?? [];
     popup.setHTML(`
       <a href="${satelliteUrl(poi.coordinates)}" target="_blank" class="underline">
         ${name || poi.layer.name}
