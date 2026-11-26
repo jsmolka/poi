@@ -3,14 +3,10 @@ import { satelliteUrl } from '@/utils/googleMaps';
 import Flatbush from 'flatbush';
 import { Popup } from 'mapbox-gl';
 
-const BIN_COUNT = 32;
-const BIN_TOTAL = BIN_COUNT * BIN_COUNT;
-const BIN_BUFFER = 1;
 const CORNERS = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
 const CORNERS_PER_SEGMENT = 6;
 const FLOATS_PER_SEGMENT = 8;
 const LOD_STRIDES = [1, 4, 32];
-const LOD_TILE_ZOOMS = [17, 13, 5];
 const LOD_ZOOMS = [10, 6];
 
 function getLodIndex(zoom) {
@@ -102,7 +98,7 @@ function writeSegment(target, offset, x1, y1, x2, y2) {
   target[offset + 7] = y2 - highY2;
 }
 
-function createSegmentData(positions, projectedPositions, startIndices, stride, tileZoom) {
+function createSegmentData(positions, projectedPositions, startIndices, stride) {
   let segmentCount = 0;
   for (let line = 0; line < startIndices.length - 1; line++) {
     const vertices = startIndices[line + 1] - startIndices[line];
@@ -110,12 +106,10 @@ function createSegmentData(positions, projectedPositions, startIndices, stride, 
   }
   if (segmentCount === 0) return null;
 
+  const segments = new Float32Array(segmentCount * FLOATS_PER_SEGMENT);
   const segmentStarts = new Uint32Array(segmentCount);
   const segmentEnds = new Uint32Array(segmentCount);
-  const tileCount = 2 ** tileZoom;
-  const tileCounts = new Map();
   const bush = new Flatbush(segmentCount, 16, Float32Array);
-  let longCount = 0;
   let segment = 0;
 
   for (let line = 0; line < startIndices.length - 1; line++) {
@@ -127,99 +121,28 @@ function createSegmentData(positions, projectedPositions, startIndices, stride, 
       const lat1 = positions[2 * vertex + 1];
       const lng2 = positions[2 * next];
       const lat2 = positions[2 * next + 1];
-      const x1 = projectedPositions[2 * vertex];
-      const y1 = projectedPositions[2 * vertex + 1];
-      const x2 = projectedPositions[2 * next];
-      const y2 = projectedPositions[2 * next + 1];
       segmentStarts[segment] = vertex;
       segmentEnds[segment] = next;
-
       bush.add(
         Math.min(lng1, lng2),
         Math.min(lat1, lat2),
         Math.max(lng1, lng2),
         Math.max(lat1, lat2),
       );
-      const tileX1 = Math.floor(x1 * tileCount);
-      const tileY1 = Math.floor(y1 * tileCount);
-      const tileX2 = Math.floor(x2 * tileCount);
-      const tileY2 = Math.floor(y2 * tileCount);
-      if (Math.max(Math.abs(tileX2 - tileX1), Math.abs(tileY2 - tileY1)) > 1) {
-        longCount++;
-      } else {
-        const tileX = Math.max(0, Math.min(tileCount - 1, Math.floor(((x1 + x2) / 2) * tileCount)));
-        const tileY = Math.max(0, Math.min(tileCount - 1, Math.floor(((y1 + y2) / 2) * tileCount)));
-        const tile = tileY * tileCount + tileX;
-        tileCounts.set(tile, (tileCounts.get(tile) || 0) + 1);
-      }
+      writeSegment(
+        segments,
+        FLOATS_PER_SEGMENT * segment,
+        projectedPositions[2 * vertex],
+        projectedPositions[2 * vertex + 1],
+        projectedPositions[2 * next],
+        projectedPositions[2 * next + 1],
+      );
       segment++;
     }
   }
   bush.finish();
 
-  const sortedTiles = Array.from(tileCounts.entries()).sort((a, b) => a[0] - b[0]);
-  const regularCount = segmentCount - longCount;
-  const regularSegments = new Float32Array(regularCount * FLOATS_PER_SEGMENT);
-  const tileRanges = new Map();
-  const tileCursors = new Map();
-  let writeIndex = 0;
-  for (const [tile, count] of sortedTiles) {
-    tileRanges.set(tile, { start: writeIndex, count });
-    tileCursors.set(tile, writeIndex);
-    writeIndex += count;
-  }
-  const longVertices = new Float32Array(longCount * FLOATS_PER_SEGMENT);
-  const longIndex = longCount ? new Flatbush(longCount, 16, Float32Array) : null;
-  let longOffset = 0;
-
-  for (let i = 0; i < segmentCount; i++) {
-    const start = segmentStarts[i];
-    const end = segmentEnds[i];
-    const x1 = projectedPositions[2 * start];
-    const y1 = projectedPositions[2 * start + 1];
-    const x2 = projectedPositions[2 * end];
-    const y2 = projectedPositions[2 * end + 1];
-    const tileX1 = Math.floor(x1 * tileCount);
-    const tileY1 = Math.floor(y1 * tileCount);
-    const tileX2 = Math.floor(x2 * tileCount);
-    const tileY2 = Math.floor(y2 * tileCount);
-    if (Math.max(Math.abs(tileX2 - tileX1), Math.abs(tileY2 - tileY1)) > 1) {
-      const lng1 = positions[2 * start];
-      const lat1 = positions[2 * start + 1];
-      const lng2 = positions[2 * end];
-      const lat2 = positions[2 * end + 1];
-      longIndex.add(
-        Math.min(lng1, lng2),
-        Math.min(lat1, lat2),
-        Math.max(lng1, lng2),
-        Math.max(lat1, lat2),
-      );
-      writeSegment(longVertices, FLOATS_PER_SEGMENT * longOffset++, x1, y1, x2, y2);
-      continue;
-    }
-    const tileX = Math.max(0, Math.min(tileCount - 1, Math.floor(((x1 + x2) / 2) * tileCount)));
-    const tileY = Math.max(0, Math.min(tileCount - 1, Math.floor(((y1 + y2) / 2) * tileCount)));
-    const tile = tileY * tileCount + tileX;
-    const target = tileCursors.get(tile);
-    tileCursors.set(tile, target + 1);
-    writeSegment(regularSegments, FLOATS_PER_SEGMENT * target, x1, y1, x2, y2);
-  }
-  if (longIndex) longIndex.finish();
-
-  return {
-    regularSegments,
-    longVertices,
-    tileRanges,
-    tileCount,
-    longIndex,
-    bush,
-    segmentStarts,
-    segmentEnds,
-    segmentCount,
-    longCount,
-    stride,
-    tileZoom,
-  };
+  return { segments, bush, segmentStarts, segmentEnds, segmentCount, stride };
 }
 
 function createLayer(id, color, positions, startIndices) {
@@ -230,8 +153,8 @@ function createLayer(id, color, positions, startIndices) {
     projectedPositions[2 * vertex + 1] = projectLatitude(positions[2 * vertex + 1]);
   }
 
-  const lods = LOD_STRIDES.map((stride, index) =>
-    createSegmentData(positions, projectedPositions, startIndices, stride, LOD_TILE_ZOOMS[index]),
+  const lods = LOD_STRIDES.map((stride) =>
+    createSegmentData(positions, projectedPositions, startIndices, stride),
   ).filter(Boolean);
   if (!lods.length) return null;
 
@@ -240,13 +163,6 @@ function createLayer(id, color, positions, startIndices) {
   let cornerBuffer;
   let attributes;
   let uniforms;
-  let lastBoundsKey = '';
-  let visibleRanges = [];
-  let visibleLong = new Uint32Array(0);
-  let visibleLongCount = 0;
-  let longBufferDirty = true;
-  let longBufferLod = -1;
-  const longScratch = lods.map((lod) => new Float32Array(lod.longCount * FLOATS_PER_SEGMENT));
 
   const layer = {
     id,
@@ -260,12 +176,9 @@ function createLayer(id, color, positions, startIndices) {
       gl.bufferData(gl.ARRAY_BUFFER, CORNERS, gl.STATIC_DRAW);
       for (const lod of lods) {
         lod.segmentBuffer = gl.createBuffer();
-        lod.longBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, lod.segmentBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, lod.regularSegments, gl.STATIC_DRAW);
-        gl.bindBuffer(gl.ARRAY_BUFFER, lod.longBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, lod.longVertices.byteLength, gl.DYNAMIC_DRAW);
-        lod.regularSegments = null;
+        gl.bufferData(gl.ARRAY_BUFFER, lod.segments, gl.STATIC_DRAW);
+        lod.segments = null;
       }
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
@@ -292,49 +205,6 @@ function createLayer(id, color, positions, startIndices) {
       const lod = lods[lodIndex];
       const width = Math.max(0.5, Math.min(8, 0.5 + ((zoom - 6) / 12) * 7.5));
       const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
-      const bounds = map.getBounds();
-      const tileCount = lod.tileCount;
-      let minX = Math.floor(((bounds.getWest() + 180) / 360) * tileCount) - BIN_BUFFER;
-      let maxX = Math.floor(((bounds.getEast() + 180) / 360) * tileCount) + BIN_BUFFER;
-      let minY = Math.floor(projectPosition(0, bounds.getNorth())[1] * tileCount) - BIN_BUFFER;
-      const maxY = Math.min(
-        tileCount - 1,
-        Math.floor(projectPosition(0, bounds.getSouth())[1] * tileCount) + BIN_BUFFER,
-      );
-      if (bounds.getEast() - bounds.getWest() >= 360 || minX < 0 || maxX >= tileCount) {
-        minX = 0;
-        maxX = tileCount - 1;
-      }
-      minY = Math.max(0, minY);
-      if (maxY < minY) return;
-      const boundsKey = [lodIndex, minX, maxX, minY, maxY].join(':');
-      if (boundsKey !== lastBoundsKey) {
-        visibleRanges.length = 0;
-        for (let y = minY; y <= maxY; y++) {
-          for (let x = minX; x <= maxX; x++) {
-            const range = lod.tileRanges.get(y * tileCount + x);
-            if (!range) continue;
-            const previous = visibleRanges[visibleRanges.length - 1];
-            if (previous && previous.start + previous.count === range.start)
-              previous.count += range.count;
-            else visibleRanges.push({ start: range.start, count: range.count });
-          }
-        }
-        visibleLong =
-          lod.longIndex && bounds.getEast() - bounds.getWest() < 360
-            ? lod.longIndex.search(
-                bounds.getWest() - 360 / tileCount,
-                Math.max(-85.051129, bounds.getSouth() - 180 / tileCount),
-                bounds.getEast() + 360 / tileCount,
-                Math.min(85.051129, bounds.getNorth() + 180 / tileCount),
-              )
-            : new Uint32Array(0);
-        visibleLongCount = visibleLong.length;
-        longBufferDirty = true;
-        longBufferLod = lodIndex;
-        lastBoundsKey = boundsKey;
-      }
-
       const segmentStride = FLOATS_PER_SEGMENT * Float32Array.BYTES_PER_ELEMENT;
       const segmentAttributes = [
         [attributes.startHigh, 0],
@@ -372,28 +242,8 @@ function createLayer(id, color, positions, startIndices) {
       gl.uniform1f(uniforms.lineWidth, width * pixelRatio);
       gl.uniform4f(uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);
 
-      for (const range of visibleRanges) {
-        bindSegments(lod.segmentBuffer, range.start * segmentStride);
-        gl.drawArraysInstanced(gl.TRIANGLES, 0, CORNERS_PER_SEGMENT, range.count);
-      }
-
-      if (visibleLongCount) {
-        if (longBufferDirty || longBufferLod !== lodIndex) {
-          const scratch = longScratch[lodIndex];
-          let target = 0;
-          for (const candidate of visibleLong) {
-            const start = candidate * FLOATS_PER_SEGMENT;
-            scratch.set(lod.longVertices.subarray(start, start + FLOATS_PER_SEGMENT), target);
-            target += FLOATS_PER_SEGMENT;
-          }
-          gl.bindBuffer(gl.ARRAY_BUFFER, lod.longBuffer);
-          gl.bufferSubData(gl.ARRAY_BUFFER, 0, scratch.subarray(0, target));
-          longBufferDirty = false;
-          longBufferLod = lodIndex;
-        }
-        bindSegments(lod.longBuffer);
-        gl.drawArraysInstanced(gl.TRIANGLES, 0, CORNERS_PER_SEGMENT, visibleLongCount);
-      }
+      bindSegments(lod.segmentBuffer);
+      gl.drawArraysInstanced(gl.TRIANGLES, 0, CORNERS_PER_SEGMENT, lod.segmentCount);
 
       for (const [attribute] of segmentAttributes) gl.vertexAttribDivisor(attribute, 0);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
@@ -401,7 +251,6 @@ function createLayer(id, color, positions, startIndices) {
     onRemove(_, gl) {
       for (const lod of lods) {
         gl.deleteBuffer(lod.segmentBuffer);
-        gl.deleteBuffer(lod.longBuffer);
       }
       gl.deleteBuffer(cornerBuffer);
       gl.deleteProgram(program);
