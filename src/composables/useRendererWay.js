@@ -1,7 +1,8 @@
 ﻿import { createProgram } from '@/utils/gl';
 import { satelliteUrl } from '@/utils/googleMaps';
+import { roundTo } from '@/utils/numeric';
 import Flatbush from 'flatbush';
-import { Popup } from 'mapbox-gl';
+import { LngLatBounds, Popup } from 'mapbox-gl';
 
 const CORNERS = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
 const CORNERS_PER_SEGMENT = 6;
@@ -81,6 +82,29 @@ function projectLatitude(lat) {
   const clampedLat = Math.max(-85.051129, Math.min(85.051129, lat));
   const radians = (clampedLat * Math.PI) / 180;
   return (1 - Math.log(Math.tan(Math.PI / 4 + radians / 2)) / Math.PI) / 2;
+}
+
+function intersects(viewport, bounds) {
+  if (bounds.getNorth() < viewport.getSouth() || bounds.getSouth() > viewport.getNorth()) {
+    return false;
+  }
+
+  const viewportWest = viewport.getWest();
+  const viewportEastRaw = viewport.getEast();
+  const viewportEast = viewportEastRaw < viewportWest ? viewportEastRaw + 360 : viewportEastRaw;
+  const viewportCenter = (viewportWest + viewportEast) / 2;
+  if (viewportEast - viewportWest >= 360) {
+    return true;
+  }
+
+  const boundsWest = bounds.getWest();
+  const boundsEast = bounds.getEast();
+  const boundsCenter = (boundsWest + boundsEast) / 2;
+  const nearestWorldOffset = roundTo(viewportCenter - boundsCenter, 360);
+  return (
+    boundsEast + nearestWorldOffset >= viewportWest &&
+    boundsWest + nearestWorldOffset <= viewportEast
+  );
 }
 
 function writeSegment(target, offset, x1, y1, x2, y2) {
@@ -171,6 +195,8 @@ function createLayer(id, color, positions, startIndices) {
     maxLat = Math.max(maxLat, lat);
   }
 
+  const bounds = new LngLatBounds([minLng, minLat], [maxLng, maxLat]);
+
   let map;
   let program;
   let cornerBuffer;
@@ -216,15 +242,7 @@ function createLayer(id, color, positions, startIndices) {
       const zoom = map.getZoom();
       const lodIndex = getLodIndex(zoom);
       const lod = lods[lodIndex];
-      const viewport = map.getBounds();
-      if (
-        minLng > viewport.getEast() ||
-        maxLng < viewport.getWest() ||
-        minLat > viewport.getNorth() ||
-        maxLat < viewport.getSouth()
-      ) {
-        return;
-      }
+      if (!intersects(map.getBounds(), bounds)) return;
 
       const width = Math.max(0.5, Math.min(8, 0.5 + ((zoom - 6) / 12) * 7.5));
       const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
