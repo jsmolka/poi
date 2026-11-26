@@ -98,21 +98,31 @@ function createLayer(id, color, positions) {
     map: null,
     program: null,
     buffer: null,
+    vertexArray: null,
     attributes: null,
     uniforms: null,
 
     onAdd(map, gl) {
       this.map = map;
       this.program = createProgram(gl, vertexShader, fragmentShader);
+
       this.buffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
       gl.bufferData(gl.ARRAY_BUFFER, positionBuffer, gl.STATIC_DRAW);
-      gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+      this.vertexArray = gl.createVertexArray();
+      gl.bindVertexArray(this.vertexArray);
 
       this.attributes = {
         positionHi: gl.getAttribLocation(this.program, 'a_positionHi'),
         positionLo: gl.getAttribLocation(this.program, 'a_positionLo'),
       };
+      gl.enableVertexAttribArray(this.attributes.positionHi);
+      gl.enableVertexAttribArray(this.attributes.positionLo);
+      gl.vertexAttribPointer(this.attributes.positionHi, 2, gl.FLOAT, false, 16, 0);
+      gl.vertexAttribPointer(this.attributes.positionLo, 2, gl.FLOAT, false, 16, 8);
+      gl.vertexAttribDivisor(this.attributes.positionHi, 0);
+      gl.vertexAttribDivisor(this.attributes.positionLo, 0);
 
       this.uniforms = {
         matrix: gl.getUniformLocation(this.program, 'u_matrix'),
@@ -122,6 +132,9 @@ function createLayer(id, color, positions) {
         pointSize: gl.getUniformLocation(this.program, 'u_pointSize'),
         color: gl.getUniformLocation(this.program, 'u_color'),
       };
+
+      gl.bindVertexArray(null);
+      gl.bindBuffer(gl.ARRAY_BUFFER, null);
     },
 
     render(gl, matrix) {
@@ -130,13 +143,7 @@ function createLayer(id, color, positions) {
       }
 
       gl.useProgram(this.program);
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-      gl.enableVertexAttribArray(this.attributes.positionHi);
-      gl.enableVertexAttribArray(this.attributes.positionLo);
-      gl.vertexAttribDivisor(this.attributes.positionHi, 0);
-      gl.vertexAttribDivisor(this.attributes.positionLo, 0);
-      gl.vertexAttribPointer(this.attributes.positionHi, 2, gl.FLOAT, false, 16, 0);
-      gl.vertexAttribPointer(this.attributes.positionLo, 2, gl.FLOAT, false, 16, 8);
+      gl.bindVertexArray(this.vertexArray);
       gl.uniformMatrix4fv(this.uniforms.matrix, false, matrix);
 
       const { x, y } = MercatorCoordinate.fromLngLat(this.map.getCenter());
@@ -158,10 +165,11 @@ function createLayer(id, color, positions) {
       gl.uniform1f(this.uniforms.pointSize, pointSize);
       gl.uniform4f(this.uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);
       gl.drawArrays(gl.POINTS, 0, vertices);
-      gl.bindBuffer(gl.ARRAY_BUFFER, null);
+      gl.bindVertexArray(null);
     },
 
     onRemove(_, gl) {
+      gl.deleteVertexArray(this.vertexArray);
       gl.deleteBuffer(this.buffer);
       gl.deleteProgram(this.program);
     },
