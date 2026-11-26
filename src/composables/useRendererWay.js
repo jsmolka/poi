@@ -1,5 +1,5 @@
 ﻿import { createProgram } from '@/utils/gl';
-import { satelliteUrl } from '@/utils/google';
+import { satelliteUrl } from '@/utils/googleMaps';
 import Flatbush from 'flatbush';
 import { Popup } from 'mapbox-gl';
 

@@ -1,5 +1,5 @@
 import { createProgram } from '@/utils/gl';
-import { satelliteUrl } from '@/utils/google';
+import { satelliteUrl } from '@/utils/googleMaps';
 import { clamp, mapRange, roundTo } from '@/utils/numeric';
 import Flatbush from 'flatbush';
 import { LngLatBounds, MercatorCoordinate, Popup } from 'mapbox-gl';
@@ -36,66 +36,64 @@ const fragmentShader = `#version 300 es
   }
 `;
 
-function createPositionBuffer(positions) {
-  const vertices = positions.length / 2;
-  const positionBuffer = new Float32Array(4 * vertices);
-  const bounds = new LngLatBounds();
-
-  for (let vertex = 0; vertex < vertices; vertex++) {
-    const coordinates = [positions[2 * vertex], positions[2 * vertex + 1]];
-    const { x, y } = MercatorCoordinate.fromLngLat(coordinates);
-    const highX = Math.fround(x);
-    const highY = Math.fround(y);
-
-    positionBuffer[4 * vertex] = highX;
-    positionBuffer[4 * vertex + 1] = highY;
-    positionBuffer[4 * vertex + 2] = x - highX;
-    positionBuffer[4 * vertex + 3] = y - highY;
-    bounds.extend(coordinates);
-  }
-  return { positionBuffer, bounds };
-}
-
 function intersects(viewport, bounds) {
   if (bounds.getNorth() < viewport.getSouth() || bounds.getSouth() > viewport.getNorth()) {
     return false;
   }
 
-  const viewWest = viewport.getWest();
-  const viewEastRaw = viewport.getEast();
-  const viewEast = viewEastRaw < viewWest ? viewEastRaw + 360 : viewEastRaw;
-  const viewCenter = (viewWest + viewEast) / 2;
-  if (viewEast - viewWest >= 360) {
+  const viewportWest = viewport.getWest();
+  const viewportEastRaw = viewport.getEast();
+  const viewportEast = viewportEastRaw < viewportWest ? viewportEastRaw + 360 : viewportEastRaw;
+  const viewportCenter = (viewportWest + viewportEast) / 2;
+  if (viewportEast - viewportWest >= 360) {
     return true;
   }
 
   const boundsWest = bounds.getWest();
   const boundsEast = bounds.getEast();
   const boundsCenter = (boundsWest + boundsEast) / 2;
-  const nearestWorldOffset = roundTo(viewCenter - boundsCenter, 360);
-  return boundsEast + nearestWorldOffset >= viewWest && boundsWest + nearestWorldOffset <= viewEast;
+  const nearestWorldOffset = roundTo(viewportCenter - boundsCenter, 360);
+  return (
+    boundsEast + nearestWorldOffset >= viewportWest &&
+    boundsWest + nearestWorldOffset <= viewportEast
+  );
 }
 
-function getScale(zoom) {
+function getRadius(zoom) {
   return mapRange(zoom, 6, 18, 1, 16);
 }
 
-function createLayer(id, color, positions) {
-  const vertices = positions.length / 2;
-  const index = new Flatbush(vertices, 16, Float32Array);
-  for (let vertex = 0; vertex < vertices; vertex++) {
-    index.add(positions[2 * vertex], positions[2 * vertex + 1]);
+function createLayer(id, name, color, positions, metadata) {
+  const vertexCount = positions.length / 2;
+  const positionBuffer = new Float32Array(4 * vertexCount);
+  const index = new Flatbush(vertexCount, 16, Float32Array);
+
+  for (let i = 0; i < vertexCount; i++) {
+    const coordinates = [positions[2 * i], positions[2 * i + 1]];
+    const { x, y } = MercatorCoordinate.fromLngLat(coordinates);
+    const highX = Math.fround(x);
+    const highY = Math.fround(y);
+
+    positionBuffer[4 * i] = highX;
+    positionBuffer[4 * i + 1] = highY;
+    positionBuffer[4 * i + 2] = x - highX;
+    positionBuffer[4 * i + 3] = y - highY;
+    index.add(coordinates[0], coordinates[1]);
   }
   index.finish();
 
-  const { positionBuffer, bounds } = createPositionBuffer(positions);
-
-  const layer = {
+  return {
     id,
     type: 'custom',
     renderingMode: '2d',
 
+    name,
+    index,
+    positions,
+    metadata,
+
     map: null,
+    bounds: new LngLatBounds([index.minX, index.minY], [index.maxX, index.maxY]),
     program: null,
     buffer: null,
     vertexArray: null,
@@ -138,7 +136,7 @@ function createLayer(id, color, positions) {
     },
 
     render(gl, matrix) {
-      if (!intersects(this.map.getBounds(), bounds)) {
+      if (!intersects(this.map.getBounds(), this.bounds)) {
         return;
       }
 
@@ -154,17 +152,17 @@ function createLayer(id, color, positions) {
         originClip[column] = matrix[column] * x + matrix[4 + column] * y + matrix[12 + column];
       }
 
-      const scale = getScale(this.map.getZoom());
+      const radius = getRadius(this.map.getZoom());
       const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
       const [minPointSize, maxPointSize] = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE);
-      const pointSize = clamp(2 * scale * pixelRatio, minPointSize, maxPointSize);
+      const pointSize = clamp(2 * radius * pixelRatio, minPointSize, maxPointSize);
 
       gl.uniform2f(this.uniforms.originHi, originHi[0], originHi[1]);
       gl.uniform2f(this.uniforms.originLo, originLo[0], originLo[1]);
       gl.uniform4fv(this.uniforms.originClip, originClip);
       gl.uniform1f(this.uniforms.pointSize, pointSize);
       gl.uniform4f(this.uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);
-      gl.drawArrays(gl.POINTS, 0, vertices);
+      gl.drawArrays(gl.POINTS, 0, vertexCount);
       gl.bindVertexArray(null);
     },
 
@@ -174,7 +172,6 @@ function createLayer(id, color, positions) {
       gl.deleteProgram(this.program);
     },
   };
-  return { layer, index };
 }
 
 export function useRendererPoi(map) {
@@ -201,7 +198,7 @@ export function useRendererPoi(map) {
         }
       }
     }
-    return nearest && nearest.distance <= getScale(map.getZoom()) ? nearest : null;
+    return nearest && nearest.distance <= getRadius(map.getZoom()) ? nearest : null;
   };
 
   const onClick = (event) => {
@@ -232,10 +229,10 @@ export function useRendererPoi(map) {
   const addLayer = ({ id, name, color, positions, metadata, beforeId }) => {
     removeLayer(id);
 
-    const { layer, index } = createLayer(id, color, positions);
+    const layer = createLayer(id, name, color, positions, metadata);
     map.addLayer(layer, beforeId);
 
-    layers.set(id, { layer, index, name, metadata, positions });
+    layers.set(id, layer);
   };
 
   const removeLayer = (id) => {
