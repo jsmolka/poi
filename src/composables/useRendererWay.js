@@ -229,22 +229,6 @@ function createLayer(id, name, color, positions, startIndices) {
         return;
       }
 
-      const segmentStride = FLOATS_PER_SEGMENT * Float32Array.BYTES_PER_ELEMENT;
-      const segmentAttributes = [
-        [this.attributes.startHi, 0],
-        [this.attributes.startLo, 2 * Float32Array.BYTES_PER_ELEMENT],
-        [this.attributes.endHi, 4 * Float32Array.BYTES_PER_ELEMENT],
-        [this.attributes.endLo, 6 * Float32Array.BYTES_PER_ELEMENT],
-      ];
-      const bindSegments = (buffer, byteOffset = 0) => {
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        for (const [attribute, offset] of segmentAttributes) {
-          gl.enableVertexAttribArray(attribute);
-          gl.vertexAttribPointer(attribute, 2, gl.FLOAT, false, segmentStride, byteOffset + offset);
-          gl.vertexAttribDivisor(attribute, 1);
-        }
-      };
-
       gl.useProgram(this.program);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.cornerBuffer);
       gl.enableVertexAttribArray(this.attributes.corner);
@@ -273,10 +257,26 @@ function createLayer(id, name, color, positions, startIndices) {
       gl.uniform4f(this.uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);
 
       const lod = this.lod;
-      bindSegments(lod.segmentBuffer);
+      const attributes = [
+        this.attributes.startHi,
+        this.attributes.startLo,
+        this.attributes.endHi,
+        this.attributes.endLo,
+      ];
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, lod.segmentBuffer);
+      for (const [index, attribute] of attributes.entries()) {
+        const stride = FLOATS_PER_SEGMENT * Float32Array.BYTES_PER_ELEMENT;
+        const offset = index * 2 * Float32Array.BYTES_PER_ELEMENT;
+        gl.enableVertexAttribArray(attribute);
+        gl.vertexAttribPointer(attribute, 2, gl.FLOAT, false, stride, offset);
+        gl.vertexAttribDivisor(attribute, 1);
+      }
       gl.drawArraysInstanced(gl.TRIANGLES, 0, CORNERS_PER_TRIANGLE, lod.segmentCount);
 
-      for (const [attribute] of segmentAttributes) gl.vertexAttribDivisor(attribute, 0);
+      for (const attribute of attributes) {
+        gl.vertexAttribDivisor(attribute, 0);
+      }
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
     },
 
@@ -291,27 +291,24 @@ function createLayer(id, name, color, positions, startIndices) {
 }
 
 export function useRendererWay(map) {
-  const popup = new Popup({ closeButton: false, closeOnClick: false });
   const layers = new Map();
+  const popup = new Popup({ closeButton: false, closeOnClick: false });
 
   const findWay = (point) => {
-    const corners = [
-      map.unproject([point.x - 12, point.y - 12]),
-      map.unproject([point.x + 12, point.y - 12]),
-      map.unproject([point.x - 12, point.y + 12]),
-      map.unproject([point.x + 12, point.y + 12]),
-    ];
-    const west = Math.min(...corners.map(({ lng }) => lng));
-    const east = Math.max(...corners.map(({ lng }) => lng));
-    const south = Math.min(...corners.map(({ lat }) => lat));
-    const north = Math.max(...corners.map(({ lat }) => lat));
-    let nearest = null;
+    const northEast = map.unproject([point.x - 32, point.y - 32]);
+    const southWest = map.unproject([point.x + 32, point.y + 32]);
 
+    let nearest = null;
     for (const layer of layers.values()) {
       const lod = layer.lod;
-      for (const segment of lod.index.search(west, south, east, north)) {
-        const start = lod.segmentStartIndices[segment];
-        const end = lod.segmentEndIndices[segment];
+      for (const index of lod.index.search(
+        northEast.lng,
+        southWest.lat,
+        southWest.lng,
+        northEast.lat,
+      )) {
+        const start = lod.segmentStartIndices[index];
+        const end = lod.segmentEndIndices[index];
         const a = map.project([layer.positions[2 * start], layer.positions[2 * start + 1]]);
         const b = map.project([layer.positions[2 * end], layer.positions[2 * end + 1]]);
         const dx = b.x - a.x;
@@ -328,7 +325,7 @@ export function useRendererWay(map) {
         const y = a.y + t * dy;
         const distance = Math.hypot(point.x - x, point.y - y);
         if (nearest == null || distance < nearest.distance) {
-          nearest = { coordinates: map.unproject([x, y]).toArray(), distance, layer };
+          nearest = { index, coordinates: map.unproject([x, y]).toArray(), distance, layer };
         }
       }
     }
