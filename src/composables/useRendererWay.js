@@ -3,10 +3,12 @@ import { satelliteUrl } from '@/utils/googleMaps';
 import { roundTo } from '@/utils/numeric';
 import Flatbush from 'flatbush';
 import { LngLatBounds, MercatorCoordinate, Popup } from 'mapbox-gl';
+import simplify from 'simplify-js';
 
 const CORNERS = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
 const FLOATS_PER_SEGMENT = 8;
-const LOD_STRIDES = [1, 4, 32];
+// Douglas–Peucker tolerances in normalized Mercator units: 0.5px at zoom 8, then 2px at zoom 6.
+const LOD_TOLERANCES = [0, 0.5 / (512 * 2 ** 8), 2 / (512 * 2 ** 6)];
 const LOD_ZOOMS = [10, 6];
 
 function getLodIndex(zoom) {
@@ -107,11 +109,33 @@ function writeSegment(target, offset, x1, y1, x2, y2) {
   target[offset + 7] = y2 - highY2;
 }
 
-function createSegmentData(positions, projectedPositions, startIndices, stride) {
+function simplifyLine(projectedPositions, start, end, tolerance) {
+  if (tolerance === 0) {
+    return Array.from({ length: end - start }, (_, index) => start + index);
+  }
+
+  const vertices = [];
+  for (let index = start; index < end; index++) {
+    vertices.push({
+      x: projectedPositions[2 * index],
+      y: projectedPositions[2 * index + 1],
+      index,
+    });
+  }
+  return simplify(vertices, tolerance).map(({ index }) => index);
+}
+
+function createSegmentData(positions, projectedPositions, startIndices, tolerance) {
+  const lines = [];
   let segmentCount = 0;
+
   for (let line = 0; line < startIndices.length - 1; line++) {
-    const vertices = startIndices[line + 1] - startIndices[line];
-    if (vertices > 1) segmentCount += Math.ceil((vertices - 1) / stride);
+    const start = startIndices[line];
+    const end = startIndices[line + 1];
+    if (end - start <= 1) continue;
+    const vertices = simplifyLine(projectedPositions, start, end, tolerance);
+    lines.push(vertices);
+    segmentCount += vertices.length - 1;
   }
   if (segmentCount === 0) return null;
 
@@ -121,17 +145,16 @@ function createSegmentData(positions, projectedPositions, startIndices, stride) 
   const bush = new Flatbush(segmentCount, 16, Float32Array);
   let segment = 0;
 
-  for (let line = 0; line < startIndices.length - 1; line++) {
-    const start = startIndices[line];
-    const end = startIndices[line + 1];
-    for (let vertex = start; vertex < end - 1; vertex += stride) {
-      const next = Math.min(vertex + stride, end - 1);
-      const lng1 = positions[2 * vertex];
-      const lat1 = positions[2 * vertex + 1];
-      const lng2 = positions[2 * next];
-      const lat2 = positions[2 * next + 1];
-      segmentStarts[segment] = vertex;
-      segmentEnds[segment] = next;
+  for (const vertices of lines) {
+    for (let index = 0; index < vertices.length - 1; index++) {
+      const start = vertices[index];
+      const end = vertices[index + 1];
+      const lng1 = positions[2 * start];
+      const lat1 = positions[2 * start + 1];
+      const lng2 = positions[2 * end];
+      const lat2 = positions[2 * end + 1];
+      segmentStarts[segment] = start;
+      segmentEnds[segment] = end;
       bush.add(
         Math.min(lng1, lng2),
         Math.min(lat1, lat2),
@@ -141,10 +164,10 @@ function createSegmentData(positions, projectedPositions, startIndices, stride) 
       writeSegment(
         segments,
         FLOATS_PER_SEGMENT * segment,
-        projectedPositions[2 * vertex],
-        projectedPositions[2 * vertex + 1],
-        projectedPositions[2 * next],
-        projectedPositions[2 * next + 1],
+        projectedPositions[2 * start],
+        projectedPositions[2 * start + 1],
+        projectedPositions[2 * end],
+        projectedPositions[2 * end + 1],
       );
       segment++;
     }
@@ -163,8 +186,8 @@ function createLayer(id, color, positions, startIndices) {
     projectedPositions[2 * vertex + 1] = y;
   }
 
-  const lods = LOD_STRIDES.map((stride) =>
-    createSegmentData(positions, projectedPositions, startIndices, stride),
+  const lods = LOD_TOLERANCES.map((tolerance) =>
+    createSegmentData(positions, projectedPositions, startIndices, tolerance),
   ).filter(Boolean);
   if (!lods.length) return null;
 
