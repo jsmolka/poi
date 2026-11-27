@@ -2,6 +2,8 @@
 import { satelliteUrl } from '@/utils/googleMaps';
 import { intersects } from '@/utils/mapbox';
 import { mapRange } from '@/utils/numeric';
+import { lineString } from '@turf/helpers';
+import { nearestPointOnLine } from '@turf/nearest-point-on-line';
 import Flatbush from 'flatbush';
 import { LngLatBounds, MercatorCoordinate, Popup } from 'mapbox-gl';
 import simplify from 'simplify-js';
@@ -295,6 +297,7 @@ export function useRendererWay(map) {
   const popup = new Popup({ closeButton: false, closeOnClick: false });
 
   const findWay = (point) => {
+    const coordinatesPoint = map.unproject(point).toArray();
     const northEast = map.unproject([point.x - 32, point.y - 32]);
     const southWest = map.unproject([point.x + 32, point.y + 32]);
 
@@ -309,35 +312,30 @@ export function useRendererWay(map) {
       )) {
         const start = lod.segmentStartIndices[index];
         const end = lod.segmentEndIndices[index];
-        const a = map.project([layer.positions[2 * start], layer.positions[2 * start + 1]]);
-        const b = map.project([layer.positions[2 * end], layer.positions[2 * end + 1]]);
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-        const lengthSquared = dx * dx + dy * dy;
-        const t =
-          lengthSquared === 0
-            ? 0
-            : Math.max(
-                0,
-                Math.min(1, ((point.x - a.x) * dx + (point.y - a.y) * dy) / lengthSquared),
-              );
-        const x = a.x + t * dx;
-        const y = a.y + t * dy;
-        const distance = Math.hypot(point.x - x, point.y - y);
+        const segment = lineString([
+          [layer.positions[2 * start], layer.positions[2 * start + 1]],
+          [layer.positions[2 * end], layer.positions[2 * end + 1]],
+        ]);
+
+        const coordinates = nearestPointOnLine(segment, coordinatesPoint).geometry.coordinates;
+        const screenPoint = map.project(coordinates);
+        const distance = Math.hypot(point.x - screenPoint.x, point.y - screenPoint.y);
         if (nearest == null || distance < nearest.distance) {
-          nearest = { index, coordinates: map.unproject([x, y]).toArray(), distance, layer };
+          nearest = { index, coordinates, distance, layer };
         }
       }
     }
-    return nearest && nearest.distance <= 6 ? nearest : null;
+    return nearest && nearest.distance <= getLineWidth(map.getZoom()) / 2 ? nearest : null;
   };
 
   const onClick = (event) => {
     const way = findWay(event.point);
-    if (way == null) {
+    if (way == null || event.defaultPrevented) {
       popup.remove();
       return;
     }
+
+    event.preventDefault();
 
     popup.setHTML(`
       <a href="${satelliteUrl(way.coordinates)}" target="_blank" class="underline">

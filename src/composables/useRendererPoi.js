@@ -174,8 +174,8 @@ export function useRendererPoi(map) {
         northEast.lat,
       )) {
         const coordinates = [layer.positions[2 * index], layer.positions[2 * index + 1]];
-        const coordinatePoint = map.project(coordinates);
-        const distance = Math.hypot(coordinatePoint.x - point.x, coordinatePoint.y - point.y);
+        const screenPoint = map.project(coordinates);
+        const distance = Math.hypot(screenPoint.x - point.x, screenPoint.y - point.y);
         if (nearest == null || distance < nearest.distance) {
           nearest = { index, coordinates, distance, layer };
         }
@@ -186,10 +186,12 @@ export function useRendererPoi(map) {
 
   const onClick = (event) => {
     const poi = findPoi(event.point);
-    if (poi == null) {
+    if (poi == null || event.defaultPrevented) {
       popup.remove();
       return;
     }
+
+    event.preventDefault();
 
     const [name, openingHours] = poi.layer.metadata[poi.index] ?? [];
     popup.setHTML(`
