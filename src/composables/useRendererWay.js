@@ -94,22 +94,7 @@ function intersects(viewport, bounds) {
   );
 }
 
-function writeSegment(target, offset, x1, y1, x2, y2) {
-  const highX1 = Math.fround(x1);
-  const highY1 = Math.fround(y1);
-  const highX2 = Math.fround(x2);
-  const highY2 = Math.fround(y2);
-  target[offset] = highX1;
-  target[offset + 1] = highY1;
-  target[offset + 2] = x1 - highX1;
-  target[offset + 3] = y1 - highY1;
-  target[offset + 4] = highX2;
-  target[offset + 5] = highY2;
-  target[offset + 6] = x2 - highX2;
-  target[offset + 7] = y2 - highY2;
-}
-
-function simplifyLine(projectedPositions, start, end, tolerance) {
+function simplifyProjectedPositions(projectedPositions, start, end, tolerance) {
   if (tolerance === 0) {
     return Array.from({ length: end - start }, (_, index) => start + index);
   }
@@ -125,56 +110,68 @@ function simplifyLine(projectedPositions, start, end, tolerance) {
   return simplify(vertices, tolerance).map(({ index }) => index);
 }
 
-function createSegmentData(positions, projectedPositions, startIndices, tolerance) {
+function createSegments(positions, projectedPositions, startIndices, tolerance) {
   const lines = [];
   let segmentCount = 0;
 
   for (let line = 0; line < startIndices.length - 1; line++) {
-    const start = startIndices[line];
-    const end = startIndices[line + 1];
-    if (end - start <= 1) continue;
-    const vertices = simplifyLine(projectedPositions, start, end, tolerance);
+    const vertices = simplifyProjectedPositions(
+      projectedPositions,
+      startIndices[line],
+      startIndices[line + 1],
+      tolerance,
+    );
     lines.push(vertices);
     segmentCount += vertices.length - 1;
   }
-  if (segmentCount === 0) return null;
 
   const segments = new Float32Array(segmentCount * FLOATS_PER_SEGMENT);
-  const segmentStarts = new Uint32Array(segmentCount);
-  const segmentEnds = new Uint32Array(segmentCount);
-  const bush = new Flatbush(segmentCount, 16, Float32Array);
-  let segment = 0;
+  const segmentStartIndices = new Uint32Array(segmentCount);
+  const segmentEndIndices = new Uint32Array(segmentCount);
+  const index = new Flatbush(segmentCount, 16, Float32Array);
 
+  let segment = 0;
   for (const vertices of lines) {
-    for (let index = 0; index < vertices.length - 1; index++) {
-      const start = vertices[index];
-      const end = vertices[index + 1];
+    for (let i = 0; i < vertices.length - 1; i++) {
+      const start = vertices[i];
+      const end = vertices[i + 1];
+      segmentStartIndices[segment] = start;
+      segmentEndIndices[segment] = end;
+
+      const x1 = projectedPositions[2 * start];
+      const y1 = projectedPositions[2 * start + 1];
+      const x2 = projectedPositions[2 * end];
+      const y2 = projectedPositions[2 * end + 1];
+      const highX1 = Math.fround(x1);
+      const highY1 = Math.fround(y1);
+      const highX2 = Math.fround(x2);
+      const highY2 = Math.fround(y2);
+      const offset = FLOATS_PER_SEGMENT * segment;
+      segments[offset] = highX1;
+      segments[offset + 1] = highY1;
+      segments[offset + 2] = x1 - highX1;
+      segments[offset + 3] = y1 - highY1;
+      segments[offset + 4] = highX2;
+      segments[offset + 5] = highY2;
+      segments[offset + 6] = x2 - highX2;
+      segments[offset + 7] = y2 - highY2;
+      segment++;
+
       const lng1 = positions[2 * start];
       const lat1 = positions[2 * start + 1];
       const lng2 = positions[2 * end];
       const lat2 = positions[2 * end + 1];
-      segmentStarts[segment] = start;
-      segmentEnds[segment] = end;
-      bush.add(
+      index.add(
         Math.min(lng1, lng2),
         Math.min(lat1, lat2),
         Math.max(lng1, lng2),
         Math.max(lat1, lat2),
       );
-      writeSegment(
-        segments,
-        FLOATS_PER_SEGMENT * segment,
-        projectedPositions[2 * start],
-        projectedPositions[2 * start + 1],
-        projectedPositions[2 * end],
-        projectedPositions[2 * end + 1],
-      );
-      segment++;
     }
   }
-  bush.finish();
+  index.finish();
 
-  return { segments, bush, segmentStarts, segmentEnds, segmentCount };
+  return { segments, segmentStartIndices, segmentEndIndices, segmentCount, index };
 }
 
 function createLayer(id, color, positions, startIndices) {
@@ -187,24 +184,13 @@ function createLayer(id, color, positions, startIndices) {
   }
 
   const lods = LOD_TOLERANCES.map((tolerance) =>
-    createSegmentData(positions, projectedPositions, startIndices, tolerance),
-  ).filter(Boolean);
-  if (!lods.length) return null;
+    createSegments(positions, projectedPositions, startIndices, tolerance),
+  );
 
-  let minLng = Infinity;
-  let minLat = Infinity;
-  let maxLng = -Infinity;
-  let maxLat = -Infinity;
-  for (let vertex = 0; vertex < positions.length / 2; vertex++) {
-    const lng = positions[2 * vertex];
-    const lat = positions[2 * vertex + 1];
-    minLng = Math.min(minLng, lng);
-    minLat = Math.min(minLat, lat);
-    maxLng = Math.max(maxLng, lng);
-    maxLat = Math.max(maxLat, lat);
-  }
-
-  const bounds = new LngLatBounds([minLng, minLat], [maxLng, maxLat]);
+  const bounds = new LngLatBounds(
+    [lods[0].index.minX, lods[0].index.minY],
+    [lods[0].index.maxX, lods[0].index.maxY],
+  );
 
   let map;
   let program;
@@ -348,9 +334,9 @@ export function useRendererWay(map) {
 
     for (const [id, entry] of layers) {
       const lod = getLod(entry.lods);
-      for (const segment of lod.bush.search(west, south, east, north)) {
-        const start = lod.segmentStarts[segment];
-        const end = lod.segmentEnds[segment];
+      for (const segment of lod.index.search(west, south, east, north)) {
+        const start = lod.segmentStartIndices[segment];
+        const end = lod.segmentEndIndices[segment];
         const a = map.project([entry.positions[2 * start], entry.positions[2 * start + 1]]);
         const b = map.project([entry.positions[2 * end], entry.positions[2 * end + 1]]);
         const dx = b.x - a.x;
