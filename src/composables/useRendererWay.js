@@ -8,8 +8,6 @@ import simplify from 'simplify-js';
 const FLOATS_PER_SEGMENT = 8;
 const CORNERS = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
 const CORNERS_PER_TRIANGLE = CORNERS.length / 2;
-const LOD_TOLERANCES = [0, 0.5 / (512 * 2 ** 8), 2 / (512 * 2 ** 6)];
-const LOD_ZOOMS = [10, 6, 0];
 
 const vertexShader = `#version 300 es
   in vec2 a_startHi;
@@ -77,10 +75,11 @@ function simplifiedIndices(projectedPositions, start, end, tolerance) {
   return simplify(vertices, tolerance).map(({ index }) => index);
 }
 
-function createSegments(positions, projectedPositions, startIndices, tolerance) {
+function createSegments(positions, projectedPositions, startIndices, zoom) {
   let segmentCount = 0;
 
   const lines = [];
+  const tolerance = 1 / (512 * 2 ** zoom);
   for (let startIndex = 0; startIndex < startIndices.length - 1; startIndex++) {
     const indices = simplifiedIndices(
       projectedPositions,
@@ -138,7 +137,7 @@ function createSegments(positions, projectedPositions, startIndices, tolerance) 
   }
   index.finish();
 
-  return { segments, segmentStartIndices, segmentEndIndices, segmentCount, index };
+  return { segments, segmentStartIndices, segmentEndIndices, segmentCount, index, zoom };
 }
 
 function createLayer(id, name, color, positions, startIndices) {
@@ -150,8 +149,8 @@ function createLayer(id, name, color, positions, startIndices) {
     projectedPositions[2 * i + 1] = y;
   }
 
-  const lods = LOD_TOLERANCES.map((tolerance) =>
-    createSegments(positions, projectedPositions, startIndices, tolerance),
+  const lods = [7, 10, 22].map((zoom) =>
+    createSegments(positions, projectedPositions, startIndices, zoom),
   );
 
   const bounds = new LngLatBounds(
@@ -178,9 +177,9 @@ function createLayer(id, name, color, positions, startIndices) {
 
     get lod() {
       const zoom = this.map.getZoom();
-      for (const [index, zoomLod] of LOD_ZOOMS.entries()) {
-        if (zoom >= zoomLod) {
-          return this.lods[index];
+      for (const lod of this.lods) {
+        if (zoom <= lod.zoom) {
+          return lod;
         }
       }
       return this.lods[0];
