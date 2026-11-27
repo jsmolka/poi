@@ -5,7 +5,6 @@ import Flatbush from 'flatbush';
 import { LngLatBounds, Popup } from 'mapbox-gl';
 
 const CORNERS = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
-const CORNERS_PER_SEGMENT = 6;
 const FLOATS_PER_SEGMENT = 8;
 const LOD_STRIDES = [1, 4, 32];
 const LOD_ZOOMS = [10, 6];
@@ -17,14 +16,14 @@ function getLodIndex(zoom) {
 }
 
 const vertexShader = `#version 300 es
-  in vec2 a_startHigh;
-  in vec2 a_startLow;
-  in vec2 a_endHigh;
-  in vec2 a_endLow;
+  in vec2 a_startHi;
+  in vec2 a_startLo;
+  in vec2 a_endHi;
+  in vec2 a_endLo;
   in vec2 a_corner;
   uniform mat4 u_matrix;
-  uniform vec2 u_originHigh;
-  uniform vec2 u_originLow;
+  uniform vec2 u_originHi;
+  uniform vec2 u_originLo;
   uniform vec4 u_originClip;
   uniform vec2 u_viewport;
   uniform highp float u_lineWidth;
@@ -32,14 +31,12 @@ const vertexShader = `#version 300 es
   out vec2 v_end;
 
   void main() {
-    vec2 startHigh = a_startHigh - u_originHigh;
-    vec2 startLow = a_startLow - u_originLow;
-    vec2 endHigh = a_endHigh - u_originHigh;
-    vec2 endLow = a_endLow - u_originLow;
-    vec4 startClip = u_originClip + u_matrix * vec4(startHigh, 0.0, 0.0)
-      + u_matrix * vec4(startLow, 0.0, 0.0);
-    vec4 endClip = u_originClip + u_matrix * vec4(endHigh, 0.0, 0.0)
-      + u_matrix * vec4(endLow, 0.0, 0.0);
+    vec2 startHi = a_startHi - u_originHi;
+    vec2 startLo = a_startLo - u_originLo;
+    vec2 endHi = a_endHi - u_originHi;
+    vec2 endLo = a_endLo - u_originLo;
+    vec4 startClip = u_originClip + u_matrix * vec4(startHi, 0.0, 0.0) + u_matrix * vec4(startLo, 0.0, 0.0);
+    vec4 endClip = u_originClip + u_matrix * vec4(endHi, 0.0, 0.0) + u_matrix * vec4(endLo, 0.0, 0.0);
     v_start = (startClip.xy / startClip.w * 0.5 + 0.5) * u_viewport;
     v_end = (endClip.xy / endClip.w * 0.5 + 0.5) * u_viewport;
 
@@ -222,16 +219,16 @@ function createLayer(id, color, positions, startIndices) {
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
       attributes = {
-        startHigh: gl.getAttribLocation(program, 'a_startHigh'),
-        startLow: gl.getAttribLocation(program, 'a_startLow'),
-        endHigh: gl.getAttribLocation(program, 'a_endHigh'),
-        endLow: gl.getAttribLocation(program, 'a_endLow'),
+        startHi: gl.getAttribLocation(program, 'a_startHi'),
+        startLo: gl.getAttribLocation(program, 'a_startLo'),
+        endHi: gl.getAttribLocation(program, 'a_endHi'),
+        endLo: gl.getAttribLocation(program, 'a_endLo'),
         corner: gl.getAttribLocation(program, 'a_corner'),
       };
       uniforms = {
         matrix: gl.getUniformLocation(program, 'u_matrix'),
-        originHigh: gl.getUniformLocation(program, 'u_originHigh'),
-        originLow: gl.getUniformLocation(program, 'u_originLow'),
+        originHi: gl.getUniformLocation(program, 'u_originHi'),
+        originLo: gl.getUniformLocation(program, 'u_originLo'),
         originClip: gl.getUniformLocation(program, 'u_originClip'),
         viewport: gl.getUniformLocation(program, 'u_viewport'),
         lineWidth: gl.getUniformLocation(program, 'u_lineWidth'),
@@ -248,10 +245,10 @@ function createLayer(id, color, positions, startIndices) {
       const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
       const segmentStride = FLOATS_PER_SEGMENT * Float32Array.BYTES_PER_ELEMENT;
       const segmentAttributes = [
-        [attributes.startHigh, 0],
-        [attributes.startLow, 2 * Float32Array.BYTES_PER_ELEMENT],
-        [attributes.endHigh, 4 * Float32Array.BYTES_PER_ELEMENT],
-        [attributes.endLow, 6 * Float32Array.BYTES_PER_ELEMENT],
+        [attributes.startHi, 0],
+        [attributes.startLo, 2 * Float32Array.BYTES_PER_ELEMENT],
+        [attributes.endHi, 4 * Float32Array.BYTES_PER_ELEMENT],
+        [attributes.endLo, 6 * Float32Array.BYTES_PER_ELEMENT],
       ];
       const bindSegments = (buffer, byteOffset = 0) => {
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -269,22 +266,22 @@ function createLayer(id, color, positions, startIndices) {
       gl.vertexAttribDivisor(attributes.corner, 0);
       gl.uniformMatrix4fv(uniforms.matrix, false, matrix);
       const center = projectPosition(map.getCenter().lng, map.getCenter().lat);
-      const originHigh = center.map(Math.fround);
-      const originLow = center.map((value, index) => value - originHigh[index]);
+      const originHi = center.map(Math.fround);
+      const originLo = center.map((value, index) => value - originHi[index]);
       const originClip = new Float32Array(4);
       for (let column = 0; column < 4; column++) {
         originClip[column] =
           matrix[column] * center[0] + matrix[4 + column] * center[1] + matrix[12 + column];
       }
-      gl.uniform2f(uniforms.originHigh, originHigh[0], originHigh[1]);
-      gl.uniform2f(uniforms.originLow, originLow[0], originLow[1]);
+      gl.uniform2f(uniforms.originHi, originHi[0], originHi[1]);
+      gl.uniform2f(uniforms.originLo, originLo[0], originLo[1]);
       gl.uniform4fv(uniforms.originClip, originClip);
       gl.uniform2f(uniforms.viewport, gl.drawingBufferWidth, gl.drawingBufferHeight);
       gl.uniform1f(uniforms.lineWidth, width * pixelRatio);
       gl.uniform4f(uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);
 
       bindSegments(lod.segmentBuffer);
-      gl.drawArraysInstanced(gl.TRIANGLES, 0, CORNERS_PER_SEGMENT, lod.segmentCount);
+      gl.drawArraysInstanced(gl.TRIANGLES, 0, CORNERS.length / 2, lod.segmentCount);
 
       for (const [attribute] of segmentAttributes) gl.vertexAttribDivisor(attribute, 0);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
