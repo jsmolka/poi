@@ -1,6 +1,7 @@
 import { createProgram } from '@/utils/gl';
 import { satelliteUrl } from '@/utils/googleMaps';
-import { clamp, mapRange, roundTo } from '@/utils/numeric';
+import { intersects } from '@/utils/mapbox';
+import { clamp, mapRange } from '@/utils/numeric';
 import Flatbush from 'flatbush';
 import { LngLatBounds, MercatorCoordinate, Popup } from 'mapbox-gl';
 
@@ -35,29 +36,6 @@ const fragmentShader = `#version 300 es
     fragColor = vec4(u_color.rgb * alpha, u_color.a * alpha);
   }
 `;
-
-function intersects(viewport, bounds) {
-  if (bounds.getNorth() < viewport.getSouth() || bounds.getSouth() > viewport.getNorth()) {
-    return false;
-  }
-
-  const viewportWest = viewport.getWest();
-  const viewportEastRaw = viewport.getEast();
-  const viewportEast = viewportEastRaw < viewportWest ? viewportEastRaw + 360 : viewportEastRaw;
-  const viewportCenter = (viewportWest + viewportEast) / 2;
-  if (viewportEast - viewportWest >= 360) {
-    return true;
-  }
-
-  const boundsWest = bounds.getWest();
-  const boundsEast = bounds.getEast();
-  const boundsCenter = (boundsWest + boundsEast) / 2;
-  const nearestWorldOffset = roundTo(viewportCenter - boundsCenter, 360);
-  return (
-    boundsEast + nearestWorldOffset >= viewportWest &&
-    boundsWest + nearestWorldOffset <= viewportEast
-  );
-}
 
 function getPointSize(zoom) {
   return mapRange(zoom, 6, 18, 2, 32);

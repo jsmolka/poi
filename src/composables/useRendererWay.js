@@ -1,15 +1,15 @@
 ﻿import { createProgram } from '@/utils/gl';
 import { satelliteUrl } from '@/utils/googleMaps';
-import { roundTo } from '@/utils/numeric';
+import { intersects } from '@/utils/mapbox';
 import Flatbush from 'flatbush';
 import { LngLatBounds, MercatorCoordinate, Popup } from 'mapbox-gl';
 import simplify from 'simplify-js';
 
-const CORNERS = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
 const FLOATS_PER_SEGMENT = 8;
-// Douglas–Peucker tolerances in normalized Mercator units: 0.5px at zoom 8, then 2px at zoom 6.
+const CORNERS = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
+const CORNERS_PER_TRIANGLE = CORNERS.length / 2;
 const LOD_TOLERANCES = [0, 0.5 / (512 * 2 ** 8), 2 / (512 * 2 ** 6)];
-const LOD_ZOOMS = [10, 6];
+const LOD_ZOOMS = [10, 6, 0];
 
 const vertexShader = `#version 300 es
   in vec2 a_startHi;
@@ -64,29 +64,6 @@ const fragmentShader = `#version 300 es
     fragColor = vec4(u_color.rgb * alpha, u_color.a * alpha);
   }
 `;
-
-function intersects(viewport, bounds) {
-  if (bounds.getNorth() < viewport.getSouth() || bounds.getSouth() > viewport.getNorth()) {
-    return false;
-  }
-
-  const viewportWest = viewport.getWest();
-  const viewportEastRaw = viewport.getEast();
-  const viewportEast = viewportEastRaw < viewportWest ? viewportEastRaw + 360 : viewportEastRaw;
-  const viewportCenter = (viewportWest + viewportEast) / 2;
-  if (viewportEast - viewportWest >= 360) {
-    return true;
-  }
-
-  const boundsWest = bounds.getWest();
-  const boundsEast = bounds.getEast();
-  const boundsCenter = (boundsWest + boundsEast) / 2;
-  const nearestWorldOffset = roundTo(viewportCenter - boundsCenter, 360);
-  return (
-    boundsEast + nearestWorldOffset >= viewportWest &&
-    boundsWest + nearestWorldOffset <= viewportEast
-  );
-}
 
 function simplifiedIndices(projectedPositions, start, end, tolerance) {
   const vertices = [];
@@ -201,16 +178,16 @@ function createLayer(id, name, color, positions, startIndices) {
 
     get lod() {
       const zoom = this.map.getZoom();
-      function getLodIndex(zoom) {
-        if (zoom >= LOD_ZOOMS[0]) return 0;
-        if (zoom <= LOD_ZOOMS[1]) return 2;
-        return 1;
+      for (const [index, zoomLod] of LOD_ZOOMS.entries()) {
+        if (zoom >= zoomLod) {
+          return this.lods[index];
+        }
       }
-      return this.lods[getLodIndex(zoom)];
+      return this.lods[0];
     },
 
-    onAdd(mapInstance, gl) {
-      this.map = mapInstance;
+    onAdd(map, gl) {
+      this.map = map;
       this.program = createProgram(gl, vertexShader, fragmentShader);
 
       this.cornerBuffer = gl.createBuffer();
@@ -291,7 +268,7 @@ function createLayer(id, name, color, positions, startIndices) {
 
       const lod = this.lod;
       bindSegments(lod.segmentBuffer);
-      gl.drawArraysInstanced(gl.TRIANGLES, 0, CORNERS.length / 2, lod.segmentCount);
+      gl.drawArraysInstanced(gl.TRIANGLES, 0, CORNERS_PER_TRIANGLE, lod.segmentCount);
 
       for (const [attribute] of segmentAttributes) gl.vertexAttribDivisor(attribute, 0);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);

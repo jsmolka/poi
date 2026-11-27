@@ -65,7 +65,7 @@ import { pois } from '@/modules/pois';
 import { useSettingsStore } from '@/stores/settings';
 import { colors } from '@/utils/colors';
 import { readAsText, selectFile } from '@/utils/filesystem';
-import { gpxToGeoJson } from '@/utils/geoJson';
+import { gpxToGeoJson } from '@/utils/mapbox';
 import { cn } from '@/utils/ui';
 import { PhCircle, PhFlag, PhGpsFix, PhPath, PhRuler } from '@phosphor-icons/vue';
 import { bbox } from '@turf/bbox';
