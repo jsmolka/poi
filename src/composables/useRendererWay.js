@@ -2,7 +2,7 @@
 import { satelliteUrl } from '@/utils/googleMaps';
 import { roundTo } from '@/utils/numeric';
 import Flatbush from 'flatbush';
-import { LngLatBounds, Popup } from 'mapbox-gl';
+import { LngLatBounds, MercatorCoordinate, Popup } from 'mapbox-gl';
 
 const CORNERS = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
 const FLOATS_PER_SEGMENT = 8;
@@ -68,18 +68,6 @@ const fragmentShader = `#version 300 es
     fragColor = vec4(u_color.rgb * alpha, u_color.a * alpha);
   }
 `;
-
-function projectPosition(lng, lat) {
-  const clampedLat = Math.max(-85.051129, Math.min(85.051129, lat));
-  const radians = (clampedLat * Math.PI) / 180;
-  return [(lng + 180) / 360, (1 - Math.log(Math.tan(Math.PI / 4 + radians / 2)) / Math.PI) / 2];
-}
-
-function projectLatitude(lat) {
-  const clampedLat = Math.max(-85.051129, Math.min(85.051129, lat));
-  const radians = (clampedLat * Math.PI) / 180;
-  return (1 - Math.log(Math.tan(Math.PI / 4 + radians / 2)) / Math.PI) / 2;
-}
 
 function intersects(viewport, bounds) {
   if (bounds.getNorth() < viewport.getSouth() || bounds.getSouth() > viewport.getNorth()) {
@@ -169,9 +157,10 @@ function createSegmentData(positions, projectedPositions, startIndices, stride) 
 function createLayer(id, color, positions, startIndices) {
   const projectedPositions = new Float32Array(positions.length);
   for (let vertex = 0; vertex < positions.length / 2; vertex++) {
-    const lng = positions[2 * vertex];
-    projectedPositions[2 * vertex] = (lng + 180) / 360;
-    projectedPositions[2 * vertex + 1] = projectLatitude(positions[2 * vertex + 1]);
+    const coordinates = [positions[2 * vertex], positions[2 * vertex + 1]];
+    const { x, y } = MercatorCoordinate.fromLngLat(coordinates);
+    projectedPositions[2 * vertex] = x;
+    projectedPositions[2 * vertex + 1] = y;
   }
 
   const lods = LOD_STRIDES.map((stride) =>
@@ -265,7 +254,8 @@ function createLayer(id, color, positions, startIndices) {
       gl.vertexAttribPointer(attributes.corner, 2, gl.FLOAT, false, 0, 0);
       gl.vertexAttribDivisor(attributes.corner, 0);
       gl.uniformMatrix4fv(uniforms.matrix, false, matrix);
-      const center = projectPosition(map.getCenter().lng, map.getCenter().lat);
+      const { x, y } = MercatorCoordinate.fromLngLat(map.getCenter());
+      const center = [x, y];
       const originHi = center.map(Math.fround);
       const originLo = center.map((value, index) => value - originHi[index]);
       const originClip = new Float32Array(4);
