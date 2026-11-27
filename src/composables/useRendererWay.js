@@ -1,6 +1,7 @@
 ﻿import { createProgram } from '@/utils/gl';
 import { satelliteUrl } from '@/utils/googleMaps';
 import { intersects } from '@/utils/mapbox';
+import { mapRange } from '@/utils/numeric';
 import Flatbush from 'flatbush';
 import { LngLatBounds, MercatorCoordinate, Popup } from 'mapbox-gl';
 import simplify from 'simplify-js';
@@ -140,6 +141,10 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
   return { segments, segmentStartIndices, segmentEndIndices, segmentCount, index, zoom };
 }
 
+function getLineWidth(zoom) {
+  return mapRange(zoom, 6, 18, 0.5, 8);
+}
+
 function createLayer(id, name, color, positions, startIndices) {
   const projectedPositions = new Float32Array(positions.length);
   for (let i = 0; i < positions.length / 2; i++) {
@@ -224,9 +229,6 @@ function createLayer(id, name, color, positions, startIndices) {
         return;
       }
 
-      const zoom = this.map.getZoom();
-      const width = Math.max(0.5, Math.min(8, 0.5 + ((zoom - 6) / 12) * 7.5));
-      const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
       const segmentStride = FLOATS_PER_SEGMENT * Float32Array.BYTES_PER_ELEMENT;
       const segmentAttributes = [
         [this.attributes.startHi, 0],
@@ -249,6 +251,7 @@ function createLayer(id, name, color, positions, startIndices) {
       gl.vertexAttribPointer(this.attributes.corner, 2, gl.FLOAT, false, 0, 0);
       gl.vertexAttribDivisor(this.attributes.corner, 0);
       gl.uniformMatrix4fv(this.uniforms.matrix, false, matrix);
+
       const { x, y } = MercatorCoordinate.fromLngLat(this.map.getCenter());
       const center = [x, y];
       const originHi = center.map(Math.fround);
@@ -258,11 +261,15 @@ function createLayer(id, name, color, positions, startIndices) {
         originClip[column] =
           matrix[column] * center[0] + matrix[4 + column] * center[1] + matrix[12 + column];
       }
+
+      const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
+      const lineWidth = getLineWidth(this.map.getZoom()) * pixelRatio;
+
       gl.uniform2f(this.uniforms.originHi, originHi[0], originHi[1]);
       gl.uniform2f(this.uniforms.originLo, originLo[0], originLo[1]);
       gl.uniform4fv(this.uniforms.originClip, originClip);
       gl.uniform2f(this.uniforms.viewport, gl.drawingBufferWidth, gl.drawingBufferHeight);
-      gl.uniform1f(this.uniforms.lineWidth, width * pixelRatio);
+      gl.uniform1f(this.uniforms.lineWidth, lineWidth);
       gl.uniform4f(this.uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);
 
       const lod = this.lod;
