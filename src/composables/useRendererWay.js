@@ -66,7 +66,7 @@ const fragmentShader = `#version 300 es
   }
 `;
 
-function simplifiedIndices(projectedPositions, start, end, tolerance) {
+function createIndices(projectedPositions, start, end, tolerance) {
   const vertices = [];
   for (let index = start; index < end; index++) {
     vertices.push({
@@ -75,7 +75,7 @@ function simplifiedIndices(projectedPositions, start, end, tolerance) {
       index,
     });
   }
-  return simplify(vertices, tolerance).map(({ index }) => index);
+  return simplify(vertices, tolerance, true).map(({ index }) => index);
 }
 
 function createSegments(positions, projectedPositions, startIndices, zoom) {
@@ -84,7 +84,7 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
   const lines = [];
   const tolerance = 1 / (512 * 2 ** zoom);
   for (let startIndex = 0; startIndex < startIndices.length - 1; startIndex++) {
-    const indices = simplifiedIndices(
+    const indices = createIndices(
       projectedPositions,
       startIndices[startIndex],
       startIndices[startIndex + 1],
@@ -161,8 +161,8 @@ function createLayer(id, name, color, positions, startIndices) {
   );
 
   const bounds = new LngLatBounds(
-    [lods[0].index.minX, lods[0].index.minY],
-    [lods[0].index.maxX, lods[0].index.maxY],
+    [lods.at(-1).index.minX, lods.at(-1).index.minY],
+    [lods.at(-1).index.maxX, lods.at(-1).index.maxY],
   );
 
   return {
@@ -239,13 +239,11 @@ function createLayer(id, name, color, positions, startIndices) {
       gl.uniformMatrix4fv(this.uniforms.matrix, false, matrix);
 
       const { x, y } = MercatorCoordinate.fromLngLat(this.map.getCenter());
-      const center = [x, y];
-      const originHi = center.map(Math.fround);
-      const originLo = center.map((value, index) => value - originHi[index]);
+      const originHi = [Math.fround(x), Math.fround(y)];
+      const originLo = [x - originHi[0], y - originHi[1]];
       const originClip = new Float32Array(4);
       for (let column = 0; column < 4; column++) {
-        originClip[column] =
-          matrix[column] * center[0] + matrix[4 + column] * center[1] + matrix[12 + column];
+        originClip[column] = matrix[column] * x + matrix[4 + column] * y + matrix[12 + column];
       }
 
       const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
@@ -297,7 +295,7 @@ export function useRendererWay(map) {
   const popup = new Popup({ closeButton: false, closeOnClick: false });
 
   const findWay = (point) => {
-    const coordinatesPoint = map.unproject(point).toArray();
+    const pointCoordinates = map.unproject(point).toArray();
     const northEast = map.unproject([point.x - 32, point.y - 32]);
     const southWest = map.unproject([point.x + 32, point.y + 32]);
 
@@ -317,7 +315,7 @@ export function useRendererWay(map) {
           [layer.positions[2 * end], layer.positions[2 * end + 1]],
         ]);
 
-        const coordinates = nearestPointOnLine(segment, coordinatesPoint).geometry.coordinates;
+        const coordinates = nearestPointOnLine(segment, pointCoordinates).geometry.coordinates;
         const screenPoint = map.project(coordinates);
         const distance = Math.hypot(point.x - screenPoint.x, point.y - screenPoint.y);
         if (nearest == null || distance < nearest.distance) {
