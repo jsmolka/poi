@@ -94,11 +94,7 @@ function intersects(viewport, bounds) {
   );
 }
 
-function simplifyProjectedPositions(projectedPositions, start, end, tolerance) {
-  if (tolerance === 0) {
-    return Array.from({ length: end - start }, (_, index) => start + index);
-  }
-
+function simplifiedIndices(projectedPositions, start, end, tolerance) {
   const vertices = [];
   for (let index = start; index < end; index++) {
     vertices.push({
@@ -111,18 +107,18 @@ function simplifyProjectedPositions(projectedPositions, start, end, tolerance) {
 }
 
 function createSegments(positions, projectedPositions, startIndices, tolerance) {
-  const lines = [];
   let segmentCount = 0;
 
-  for (let line = 0; line < startIndices.length - 1; line++) {
-    const vertices = simplifyProjectedPositions(
+  const lines = [];
+  for (let startIndex = 0; startIndex < startIndices.length - 1; startIndex++) {
+    const indices = simplifiedIndices(
       projectedPositions,
-      startIndices[line],
-      startIndices[line + 1],
+      startIndices[startIndex],
+      startIndices[startIndex + 1],
       tolerance,
     );
-    lines.push(vertices);
-    segmentCount += vertices.length - 1;
+    lines.push(indices);
+    segmentCount += indices.length - 1;
   }
 
   const segments = new Float32Array(segmentCount * FLOATS_PER_SEGMENT);
@@ -131,10 +127,10 @@ function createSegments(positions, projectedPositions, startIndices, tolerance) 
   const index = new Flatbush(segmentCount, 16, Float32Array);
 
   let segment = 0;
-  for (const vertices of lines) {
-    for (let i = 0; i < vertices.length - 1; i++) {
-      const start = vertices[i];
-      const end = vertices[i + 1];
+  for (const indices of lines) {
+    for (let i = 0; i < indices.length - 1; i++) {
+      const start = indices[i];
+      const end = indices[i + 1];
       segmentStartIndices[segment] = start;
       segmentEndIndices[segment] = end;
 
@@ -176,11 +172,11 @@ function createSegments(positions, projectedPositions, startIndices, tolerance) 
 
 function createLayer(id, color, positions, startIndices) {
   const projectedPositions = new Float32Array(positions.length);
-  for (let vertex = 0; vertex < positions.length / 2; vertex++) {
-    const coordinates = [positions[2 * vertex], positions[2 * vertex + 1]];
+  for (let i = 0; i < positions.length / 2; i++) {
+    const coordinates = [positions[2 * i], positions[2 * i + 1]];
     const { x, y } = MercatorCoordinate.fromLngLat(coordinates);
-    projectedPositions[2 * vertex] = x;
-    projectedPositions[2 * vertex + 1] = y;
+    projectedPositions[2 * i] = x;
+    projectedPositions[2 * i + 1] = y;
   }
 
   const lods = LOD_TOLERANCES.map((tolerance) =>
