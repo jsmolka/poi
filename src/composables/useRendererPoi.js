@@ -82,6 +82,8 @@ function createLayer(id, name, color, positions, metadata) {
   }
   index.finish();
 
+  const bounds = new LngLatBounds([index.minX, index.minY], [index.maxX, index.maxY]);
+
   return {
     id,
     type: 'custom',
@@ -89,11 +91,11 @@ function createLayer(id, name, color, positions, metadata) {
 
     name,
     index,
+    bounds,
     positions,
     metadata,
 
     map: null,
-    bounds: new LngLatBounds([index.minX, index.minY], [index.maxX, index.maxY]),
     program: null,
     buffer: null,
     vertexArray: null,

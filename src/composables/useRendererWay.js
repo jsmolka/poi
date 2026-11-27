@@ -11,12 +11,6 @@ const FLOATS_PER_SEGMENT = 8;
 const LOD_TOLERANCES = [0, 0.5 / (512 * 2 ** 8), 2 / (512 * 2 ** 6)];
 const LOD_ZOOMS = [10, 6];
 
-function getLodIndex(zoom) {
-  if (zoom >= LOD_ZOOMS[0]) return 0;
-  if (zoom <= LOD_ZOOMS[1]) return 2;
-  return 1;
-}
-
 const vertexShader = `#version 300 es
   in vec2 a_startHi;
   in vec2 a_startLo;
@@ -170,7 +164,7 @@ function createSegments(positions, projectedPositions, startIndices, tolerance) 
   return { segments, segmentStartIndices, segmentEndIndices, segmentCount, index };
 }
 
-function createLayer(id, color, positions, startIndices) {
+function createLayer(id, name, color, positions, startIndices) {
   const projectedPositions = new Float32Array(positions.length);
   for (let i = 0; i < positions.length / 2; i++) {
     const coordinates = [positions[2 * i], positions[2 * i + 1]];
@@ -188,61 +182,81 @@ function createLayer(id, color, positions, startIndices) {
     [lods[0].index.maxX, lods[0].index.maxY],
   );
 
-  let map;
-  let program;
-  let cornerBuffer;
-  let attributes;
-  let uniforms;
-
-  const layer = {
+  return {
     id,
     type: 'custom',
     renderingMode: '2d',
+
+    name,
+    lods,
+    bounds,
+    positions,
+    startIndices,
+
+    map: null,
+    program: null,
+    cornerBuffer: null,
+    attributes: null,
+    uniforms: null,
+
+    get lod() {
+      const zoom = this.map.getZoom();
+      function getLodIndex(zoom) {
+        if (zoom >= LOD_ZOOMS[0]) return 0;
+        if (zoom <= LOD_ZOOMS[1]) return 2;
+        return 1;
+      }
+      return this.lods[getLodIndex(zoom)];
+    },
+
     onAdd(mapInstance, gl) {
-      map = mapInstance;
-      program = createProgram(gl, vertexShader, fragmentShader);
-      cornerBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, cornerBuffer);
+      this.map = mapInstance;
+      this.program = createProgram(gl, vertexShader, fragmentShader);
+
+      this.cornerBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.cornerBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, CORNERS, gl.STATIC_DRAW);
-      for (const lod of lods) {
+
+      for (const lod of this.lods) {
         lod.segmentBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, lod.segmentBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, lod.segments, gl.STATIC_DRAW);
-        lod.segments = null;
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
       }
-      gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-      attributes = {
-        startHi: gl.getAttribLocation(program, 'a_startHi'),
-        startLo: gl.getAttribLocation(program, 'a_startLo'),
-        endHi: gl.getAttribLocation(program, 'a_endHi'),
-        endLo: gl.getAttribLocation(program, 'a_endLo'),
-        corner: gl.getAttribLocation(program, 'a_corner'),
+      this.attributes = {
+        startHi: gl.getAttribLocation(this.program, 'a_startHi'),
+        startLo: gl.getAttribLocation(this.program, 'a_startLo'),
+        endHi: gl.getAttribLocation(this.program, 'a_endHi'),
+        endLo: gl.getAttribLocation(this.program, 'a_endLo'),
+        corner: gl.getAttribLocation(this.program, 'a_corner'),
       };
-      uniforms = {
-        matrix: gl.getUniformLocation(program, 'u_matrix'),
-        originHi: gl.getUniformLocation(program, 'u_originHi'),
-        originLo: gl.getUniformLocation(program, 'u_originLo'),
-        originClip: gl.getUniformLocation(program, 'u_originClip'),
-        viewport: gl.getUniformLocation(program, 'u_viewport'),
-        lineWidth: gl.getUniformLocation(program, 'u_lineWidth'),
-        color: gl.getUniformLocation(program, 'u_color'),
+
+      this.uniforms = {
+        matrix: gl.getUniformLocation(this.program, 'u_matrix'),
+        originHi: gl.getUniformLocation(this.program, 'u_originHi'),
+        originLo: gl.getUniformLocation(this.program, 'u_originLo'),
+        originClip: gl.getUniformLocation(this.program, 'u_originClip'),
+        viewport: gl.getUniformLocation(this.program, 'u_viewport'),
+        lineWidth: gl.getUniformLocation(this.program, 'u_lineWidth'),
+        color: gl.getUniformLocation(this.program, 'u_color'),
       };
     },
-    render(gl, matrix) {
-      const zoom = map.getZoom();
-      const lodIndex = getLodIndex(zoom);
-      const lod = lods[lodIndex];
-      if (!intersects(map.getBounds(), bounds)) return;
 
+    render(gl, matrix) {
+      if (!intersects(this.map.getBounds(), this.bounds)) {
+        return;
+      }
+
+      const zoom = this.map.getZoom();
       const width = Math.max(0.5, Math.min(8, 0.5 + ((zoom - 6) / 12) * 7.5));
       const pixelRatio = gl.drawingBufferWidth / Math.max(1, gl.canvas.clientWidth);
       const segmentStride = FLOATS_PER_SEGMENT * Float32Array.BYTES_PER_ELEMENT;
       const segmentAttributes = [
-        [attributes.startHi, 0],
-        [attributes.startLo, 2 * Float32Array.BYTES_PER_ELEMENT],
-        [attributes.endHi, 4 * Float32Array.BYTES_PER_ELEMENT],
-        [attributes.endLo, 6 * Float32Array.BYTES_PER_ELEMENT],
+        [this.attributes.startHi, 0],
+        [this.attributes.startLo, 2 * Float32Array.BYTES_PER_ELEMENT],
+        [this.attributes.endHi, 4 * Float32Array.BYTES_PER_ELEMENT],
+        [this.attributes.endLo, 6 * Float32Array.BYTES_PER_ELEMENT],
       ];
       const bindSegments = (buffer, byteOffset = 0) => {
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -253,13 +267,13 @@ function createLayer(id, color, positions, startIndices) {
         }
       };
 
-      gl.useProgram(program);
-      gl.bindBuffer(gl.ARRAY_BUFFER, cornerBuffer);
-      gl.enableVertexAttribArray(attributes.corner);
-      gl.vertexAttribPointer(attributes.corner, 2, gl.FLOAT, false, 0, 0);
-      gl.vertexAttribDivisor(attributes.corner, 0);
-      gl.uniformMatrix4fv(uniforms.matrix, false, matrix);
-      const { x, y } = MercatorCoordinate.fromLngLat(map.getCenter());
+      gl.useProgram(this.program);
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.cornerBuffer);
+      gl.enableVertexAttribArray(this.attributes.corner);
+      gl.vertexAttribPointer(this.attributes.corner, 2, gl.FLOAT, false, 0, 0);
+      gl.vertexAttribDivisor(this.attributes.corner, 0);
+      gl.uniformMatrix4fv(this.uniforms.matrix, false, matrix);
+      const { x, y } = MercatorCoordinate.fromLngLat(this.map.getCenter());
       const center = [x, y];
       const originHi = center.map(Math.fround);
       const originLo = center.map((value, index) => value - originHi[index]);
@@ -268,52 +282,34 @@ function createLayer(id, color, positions, startIndices) {
         originClip[column] =
           matrix[column] * center[0] + matrix[4 + column] * center[1] + matrix[12 + column];
       }
-      gl.uniform2f(uniforms.originHi, originHi[0], originHi[1]);
-      gl.uniform2f(uniforms.originLo, originLo[0], originLo[1]);
-      gl.uniform4fv(uniforms.originClip, originClip);
-      gl.uniform2f(uniforms.viewport, gl.drawingBufferWidth, gl.drawingBufferHeight);
-      gl.uniform1f(uniforms.lineWidth, width * pixelRatio);
-      gl.uniform4f(uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);
+      gl.uniform2f(this.uniforms.originHi, originHi[0], originHi[1]);
+      gl.uniform2f(this.uniforms.originLo, originLo[0], originLo[1]);
+      gl.uniform4fv(this.uniforms.originClip, originClip);
+      gl.uniform2f(this.uniforms.viewport, gl.drawingBufferWidth, gl.drawingBufferHeight);
+      gl.uniform1f(this.uniforms.lineWidth, width * pixelRatio);
+      gl.uniform4f(this.uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);
 
+      const lod = this.lod;
       bindSegments(lod.segmentBuffer);
       gl.drawArraysInstanced(gl.TRIANGLES, 0, CORNERS.length / 2, lod.segmentCount);
 
       for (const [attribute] of segmentAttributes) gl.vertexAttribDivisor(attribute, 0);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
     },
+
     onRemove(_, gl) {
-      for (const lod of lods) {
+      for (const lod of this.lods) {
         gl.deleteBuffer(lod.segmentBuffer);
       }
-      gl.deleteBuffer(cornerBuffer);
-      gl.deleteProgram(program);
-      cornerBuffer = null;
-      program = null;
-      map = null;
+      gl.deleteBuffer(this.cornerBuffer);
+      gl.deleteProgram(this.program);
     },
   };
-  return { layer, lods };
-}
-
-function escapeHtml(value) {
-  return String(value).replace(
-    /[&<>"']/g,
-    (character) =>
-      ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;',
-      })[character],
-  );
 }
 
 export function useRendererWay(map) {
   const popup = new Popup({ closeButton: false, closeOnClick: false });
   const layers = new Map();
-
-  const getLod = (lods) => lods[getLodIndex(map.getZoom())];
 
   const findWay = (point) => {
     const corners = [
@@ -328,13 +324,13 @@ export function useRendererWay(map) {
     const north = Math.max(...corners.map(({ lat }) => lat));
     let nearest = null;
 
-    for (const [id, entry] of layers) {
-      const lod = getLod(entry.lods);
+    for (const layer of layers.values()) {
+      const lod = layer.lod;
       for (const segment of lod.index.search(west, south, east, north)) {
         const start = lod.segmentStartIndices[segment];
         const end = lod.segmentEndIndices[segment];
-        const a = map.project([entry.positions[2 * start], entry.positions[2 * start + 1]]);
-        const b = map.project([entry.positions[2 * end], entry.positions[2 * end + 1]]);
+        const a = map.project([layer.positions[2 * start], layer.positions[2 * start + 1]]);
+        const b = map.project([layer.positions[2 * end], layer.positions[2 * end + 1]]);
         const dx = b.x - a.x;
         const dy = b.y - a.y;
         const lengthSquared = dx * dx + dy * dy;
@@ -348,13 +344,8 @@ export function useRendererWay(map) {
         const x = a.x + t * dx;
         const y = a.y + t * dy;
         const distance = Math.hypot(point.x - x, point.y - y);
-        if (distance < (nearest?.distance ?? Infinity)) {
-          nearest = {
-            id,
-            name: entry.name,
-            coordinates: map.unproject([x, y]).toArray(),
-            distance,
-          };
+        if (nearest == null || distance < nearest.distance) {
+          nearest = { coordinates: map.unproject([x, y]).toArray(), distance, layer };
         }
       }
     }
@@ -362,17 +353,19 @@ export function useRendererWay(map) {
   };
 
   const onClick = (event) => {
-    if (event.defaultPrevented) return;
     const way = findWay(event.point);
     if (way == null) {
       popup.remove();
       return;
     }
-    event.preventDefault();
-    popup.setHTML(
-      `<a href="${satelliteUrl(way.coordinates)}" target="_blank" rel="noopener noreferrer" class="underline">${escapeHtml(way.name)}</a>`,
-    );
-    popup.setLngLat(way.coordinates).addTo(map);
+
+    popup.setHTML(`
+      <a href="${satelliteUrl(way.coordinates)}" target="_blank" class="underline">
+        ${way.layer.name}
+      </a>
+    `);
+    popup.setLngLat(way.coordinates);
+    popup.addTo(map);
   };
 
   const onMouseMove = (event) => {
@@ -383,26 +376,28 @@ export function useRendererWay(map) {
   map.on('mousemove', onMouseMove);
 
   const addLayer = ({ id, name, color, positions, startIndices, beforeId }) => {
-    const result = createLayer(id, color, positions, startIndices);
     removeLayer(id);
-    if (result == null) return;
-    if (beforeId && map.getLayer(beforeId)) map.addLayer(result.layer, beforeId);
-    else map.addLayer(result.layer);
-    layers.set(id, { ...result, name, positions, startIndices });
+
+    const layer = createLayer(id, name, color, positions, startIndices);
+    map.addLayer(layer, beforeId);
+
+    layers.set(id, layer);
   };
 
   const removeLayer = (id) => {
-    if (!layers.delete(id)) return;
+    if (!layers.delete(id)) {
+      return;
+    }
+
     popup.remove();
-    if (map.getLayer(id)) map.removeLayer(id);
+    map.removeLayer(id);
   };
 
   const dispose = () => {
     for (const id of layers.keys()) {
-      if (map.getLayer(id)) map.removeLayer(id);
+      removeLayer(id);
     }
-    layers.clear();
-    popup.remove();
+
     map.off('click', onClick);
     map.off('mousemove', onMouseMove);
     map.getCanvas().classList.remove('way-hover');
