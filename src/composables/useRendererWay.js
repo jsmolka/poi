@@ -9,6 +9,7 @@ import { LngLatBounds, MercatorCoordinate, Popup } from 'mapbox-gl';
 import simplify from 'simplify-js';
 
 const FLOATS_PER_SEGMENT = 8;
+const MAX_SEGMENTS_PER_CHUNK = 1_000_000;
 const CORNERS = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
 const CORNERS_PER_TRIANGLE = CORNERS.length / 2;
 
@@ -79,22 +80,20 @@ function createIndices(projectedPositions, start, end, tolerance) {
 }
 
 function createSegments(positions, projectedPositions, startIndices, zoom) {
-  let segmentCount = 0;
-
   const lines = [];
   const tolerance = 1 / (512 * 2 ** zoom);
   for (let startIndex = 0; startIndex < startIndices.length - 1; startIndex++) {
-    const indices = createIndices(
-      projectedPositions,
-      startIndices[startIndex],
-      startIndices[startIndex + 1],
-      tolerance,
+    lines.push(
+      createIndices(
+        projectedPositions,
+        startIndices[startIndex],
+        startIndices[startIndex + 1],
+        tolerance,
+      ),
     );
-    lines.push(indices);
-    segmentCount += indices.length - 1;
   }
 
-  const segments = new Float32Array(segmentCount * FLOATS_PER_SEGMENT);
+  const segmentCount = lines.reduce((total, indices) => total + indices.length - 1, 0);
   const segmentStartIndices = new Uint32Array(segmentCount);
   const segmentEndIndices = new Uint32Array(segmentCount);
   const index = new Flatbush(segmentCount, 16, Float32Array);
@@ -107,25 +106,6 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
       segmentStartIndices[segment] = start;
       segmentEndIndices[segment] = end;
 
-      const x1 = projectedPositions[2 * start];
-      const y1 = projectedPositions[2 * start + 1];
-      const x2 = projectedPositions[2 * end];
-      const y2 = projectedPositions[2 * end + 1];
-      const highX1 = Math.fround(x1);
-      const highY1 = Math.fround(y1);
-      const highX2 = Math.fround(x2);
-      const highY2 = Math.fround(y2);
-      const offset = FLOATS_PER_SEGMENT * segment;
-      segments[offset] = highX1;
-      segments[offset + 1] = highY1;
-      segments[offset + 2] = x1 - highX1;
-      segments[offset + 3] = y1 - highY1;
-      segments[offset + 4] = highX2;
-      segments[offset + 5] = highY2;
-      segments[offset + 6] = x2 - highX2;
-      segments[offset + 7] = y2 - highY2;
-      segment++;
-
       const lng1 = positions[2 * start];
       const lat1 = positions[2 * start + 1];
       const lng2 = positions[2 * end];
@@ -136,11 +116,113 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
         Math.max(lng1, lng2),
         Math.max(lat1, lat2),
       );
+      segment++;
     }
   }
   index.finish();
 
-  return { segments, segmentStartIndices, segmentEndIndices, segmentCount, index, zoom };
+  const chunks = [];
+  const markers = new Uint32Array(segmentCount);
+  let markerId = 0;
+  const splitIntoChunks = (segmentIndices, minX, minY, maxX, maxY) => {
+    if (segmentIndices.length < MAX_SEGMENTS_PER_CHUNK) {
+      chunks.push(segmentIndices);
+      return;
+    }
+
+    const segmentMarker = ++markerId;
+    for (const segment of segmentIndices) {
+      markers[segment] = segmentMarker;
+    }
+
+    const midX = (minX + maxX) / 2;
+    const midY = (minY + maxY) / 2;
+    const quadrants = [
+      [minX, minY, midX, midY, false, false],
+      [midX, minY, maxX, midY, true, false],
+      [minX, midY, midX, maxY, false, true],
+      [midX, midY, maxX, maxY, true, true],
+    ];
+    for (const [minX, minY, maxX, maxY, east, north] of quadrants) {
+      const quadrantIndices = [];
+      for (const candidate of index.search(minX, minY, maxX, maxY)) {
+        if (markers[candidate] !== segmentMarker) {
+          continue;
+        }
+        const start = segmentStartIndices[candidate];
+        const end = segmentEndIndices[candidate];
+        const centerX = (positions[2 * start] + positions[2 * end]) / 2;
+        const centerY = (positions[2 * start + 1] + positions[2 * end + 1]) / 2;
+        if (centerX >= midX === east && centerY >= midY === north) {
+          quadrantIndices.push(candidate);
+        }
+      }
+
+      if (quadrantIndices.length >= MAX_SEGMENTS_PER_CHUNK) {
+        splitIntoChunks(quadrantIndices, minX, minY, maxX, maxY);
+      } else if (quadrantIndices.length > 0) {
+        chunks.push(quadrantIndices);
+      }
+    }
+  };
+
+  splitIntoChunks(
+    index.search(index.minX, index.minY, index.maxX, index.maxY),
+    index.minX,
+    index.minY,
+    index.maxX,
+    index.maxY,
+  );
+
+  return {
+    chunks: chunks.map((segmentIndices) => {
+      const segments = new Float32Array(segmentIndices.length * FLOATS_PER_SEGMENT);
+      let minX = Infinity;
+      let minY = Infinity;
+      let maxX = -Infinity;
+      let maxY = -Infinity;
+      for (let chunkSegment = 0; chunkSegment < segmentIndices.length; chunkSegment++) {
+        const segment = segmentIndices[chunkSegment];
+        const start = segmentStartIndices[segment];
+        const end = segmentEndIndices[segment];
+        const x1 = projectedPositions[2 * start];
+        const y1 = projectedPositions[2 * start + 1];
+        const x2 = projectedPositions[2 * end];
+        const y2 = projectedPositions[2 * end + 1];
+        const lng1 = positions[2 * start];
+        const lat1 = positions[2 * start + 1];
+        const lng2 = positions[2 * end];
+        const lat2 = positions[2 * end + 1];
+        minX = Math.min(minX, lng1, lng2);
+        minY = Math.min(minY, lat1, lat2);
+        maxX = Math.max(maxX, lng1, lng2);
+        maxY = Math.max(maxY, lat1, lat2);
+        const highX1 = Math.fround(x1);
+        const highY1 = Math.fround(y1);
+        const highX2 = Math.fround(x2);
+        const highY2 = Math.fround(y2);
+        const offset = FLOATS_PER_SEGMENT * chunkSegment;
+        segments[offset] = highX1;
+        segments[offset + 1] = highY1;
+        segments[offset + 2] = x1 - highX1;
+        segments[offset + 3] = y1 - highY1;
+        segments[offset + 4] = highX2;
+        segments[offset + 5] = highY2;
+        segments[offset + 6] = x2 - highX2;
+        segments[offset + 7] = y2 - highY2;
+      }
+      return {
+        segments,
+        segmentCount: segmentIndices.length,
+        bounds: new LngLatBounds([minX, minY], [maxX, maxY]),
+      };
+    }),
+    segmentStartIndices,
+    segmentEndIndices,
+    segmentCount,
+    index,
+    zoom,
+  };
 }
 
 function getLineWidth(zoom) {
@@ -201,9 +283,11 @@ function createLayer(id, name, color, positions, startIndices) {
       gl.bufferData(gl.ARRAY_BUFFER, CORNERS, gl.STATIC_DRAW);
 
       for (const lod of this.lods) {
-        lod.segmentBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, lod.segmentBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, lod.segments, gl.STATIC_DRAW);
+        for (const chunk of lod.chunks) {
+          chunk.segmentBuffer = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, chunk.segmentBuffer);
+          gl.bufferData(gl.ARRAY_BUFFER, chunk.segments, gl.STATIC_DRAW);
+        }
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
       }
 
@@ -227,6 +311,7 @@ function createLayer(id, name, color, positions, startIndices) {
     },
 
     render(gl, matrix) {
+      const lod = this.lod;
       if (!intersects(this.map.getBounds(), this.bounds)) {
         return;
       }
@@ -256,7 +341,6 @@ function createLayer(id, name, color, positions, startIndices) {
       gl.uniform1f(this.uniforms.lineWidth, lineWidth);
       gl.uniform4f(this.uniforms.color, color.r / 255, color.g / 255, color.b / 255, 1);
 
-      const lod = this.lod;
       const attributes = [
         this.attributes.startHi,
         this.attributes.startLo,
@@ -264,15 +348,21 @@ function createLayer(id, name, color, positions, startIndices) {
         this.attributes.endLo,
       ];
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, lod.segmentBuffer);
-      for (const [index, attribute] of attributes.entries()) {
-        const stride = FLOATS_PER_SEGMENT * Float32Array.BYTES_PER_ELEMENT;
-        const offset = index * 2 * Float32Array.BYTES_PER_ELEMENT;
-        gl.enableVertexAttribArray(attribute);
-        gl.vertexAttribPointer(attribute, 2, gl.FLOAT, false, stride, offset);
-        gl.vertexAttribDivisor(attribute, 1);
+      for (const chunk of lod.chunks) {
+        if (!intersects(this.map.getBounds(), chunk.bounds)) {
+          continue;
+        }
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, chunk.segmentBuffer);
+        for (const [index, attribute] of attributes.entries()) {
+          const stride = FLOATS_PER_SEGMENT * Float32Array.BYTES_PER_ELEMENT;
+          const offset = index * 2 * Float32Array.BYTES_PER_ELEMENT;
+          gl.enableVertexAttribArray(attribute);
+          gl.vertexAttribPointer(attribute, 2, gl.FLOAT, false, stride, offset);
+          gl.vertexAttribDivisor(attribute, 1);
+        }
+        gl.drawArraysInstanced(gl.TRIANGLES, 0, CORNERS_PER_TRIANGLE, chunk.segmentCount);
       }
-      gl.drawArraysInstanced(gl.TRIANGLES, 0, CORNERS_PER_TRIANGLE, lod.segmentCount);
 
       for (const attribute of attributes) {
         gl.vertexAttribDivisor(attribute, 0);
@@ -282,7 +372,9 @@ function createLayer(id, name, color, positions, startIndices) {
 
     onRemove(_, gl) {
       for (const lod of this.lods) {
-        gl.deleteBuffer(lod.segmentBuffer);
+        for (const chunk of lod.chunks) {
+          gl.deleteBuffer(chunk.segmentBuffer);
+        }
       }
       gl.deleteBuffer(this.cornerBuffer);
       gl.deleteProgram(this.program);
