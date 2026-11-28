@@ -44,7 +44,7 @@ function getPointSize(zoom) {
 function createLayer(id, name, color, positions, metadata) {
   const vertexCount = positions.length / 2;
   const positionBuffer = new Float32Array(4 * vertexCount);
-  const index = new Flatbush(vertexCount, 16, Float32Array);
+  const bush = new Flatbush(vertexCount, 16, Float32Array);
 
   for (let i = 0; i < vertexCount; i++) {
     const coordinates = [positions[2 * i], positions[2 * i + 1]];
@@ -56,11 +56,11 @@ function createLayer(id, name, color, positions, metadata) {
     positionBuffer[4 * i + 1] = highY;
     positionBuffer[4 * i + 2] = x - highX;
     positionBuffer[4 * i + 3] = y - highY;
-    index.add(coordinates[0], coordinates[1]);
+    bush.add(coordinates[0], coordinates[1]);
   }
-  index.finish();
+  bush.finish();
 
-  const bounds = new LngLatBounds([index.minX, index.minY], [index.maxX, index.maxY]);
+  const bounds = new LngLatBounds([bush.minX, bush.minY], [bush.maxX, bush.maxY]);
 
   return {
     id,
@@ -68,7 +68,7 @@ function createLayer(id, name, color, positions, metadata) {
     renderingMode: '2d',
 
     name,
-    index,
+    bush,
     bounds,
     positions,
     metadata,
@@ -168,7 +168,7 @@ export function useRendererPoi(map) {
 
     let nearest = null;
     for (const layer of layers.values()) {
-      for (const candidate of layer.index.search(
+      for (const candidate of layer.bush.search(
         northEast.lng,
         southWest.lat,
         southWest.lng,

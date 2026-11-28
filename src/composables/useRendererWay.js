@@ -97,7 +97,7 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
 
   const segmentStartIndices = new Uint32Array(segmentCount);
   const segmentEndIndices = new Uint32Array(segmentCount);
-  const index = new Flatbush(segmentCount, 16, Float32Array);
+  const bush = new Flatbush(segmentCount, 16, Float32Array);
 
   let segment = 0;
   for (const indices of lines) {
@@ -111,7 +111,7 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
       const lat1 = positions[2 * start + 1];
       const lng2 = positions[2 * end];
       const lat2 = positions[2 * end + 1];
-      index.add(
+      bush.add(
         Math.min(lng1, lng2),
         Math.min(lat1, lat2),
         Math.max(lng1, lng2),
@@ -120,7 +120,7 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
       segment++;
     }
   }
-  index.finish();
+  bush.finish();
 
   const chunks = [];
   const createChunks = (segmentIndices, minX, minY, maxX, maxY) => {
@@ -164,7 +164,7 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
   for (let segment = 0; segment < segmentCount; segment++) {
     segmentIndices[segment] = segment;
   }
-  createChunks(segmentIndices, index.minX, index.minY, index.maxX, index.maxY);
+  createChunks(segmentIndices, bush.minX, bush.minY, bush.maxX, bush.maxY);
 
   return {
     chunks: chunks.map((segmentIndices) => {
@@ -214,8 +214,8 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
     }),
     segmentStartIndices,
     segmentEndIndices,
-    index,
-    bounds: new LngLatBounds([index.minX, index.minY], [index.maxX, index.maxY]),
+    bush,
+    bounds: new LngLatBounds([bush.minX, bush.minY], [bush.maxX, bush.maxY]),
     zoom,
   };
 }
@@ -384,7 +384,7 @@ export function useRendererWay(map) {
     let nearest = null;
     for (const layer of layers.values()) {
       const lod = layer.lod;
-      for (const candidate of lod.index.search(
+      for (const candidate of lod.bush.search(
         northEast.lng,
         southWest.lat,
         southWest.lng,
