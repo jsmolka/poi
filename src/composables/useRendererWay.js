@@ -49,7 +49,7 @@ const vertexShader = `#version 300 es
 `;
 
 const fragmentShader = `#version 300 es
-  precision mediump float;
+  precision highp float;
   uniform vec4 u_color;
   uniform highp float u_lineWidth;
   in vec2 v_start;
