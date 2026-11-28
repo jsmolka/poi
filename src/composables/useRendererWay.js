@@ -1,6 +1,6 @@
 ﻿import { createProgram } from '@/utils/gl';
 import { satelliteUrl } from '@/utils/googleMaps';
-import { intersects } from '@/utils/mapbox';
+import { intersects, lockDoubleClickZoom } from '@/utils/mapbox';
 import { mapRange } from '@/utils/numeric';
 import { lineString } from '@turf/helpers';
 import { nearestPointOnLine } from '@turf/nearest-point-on-line';
@@ -374,6 +374,13 @@ function createLayer(id, name, color, positions, startIndices) {
 export function useRendererWay(map) {
   const layers = new Map();
   const popup = new Popup({ closeButton: false, closeOnClick: false });
+  let releaseDoubleClickZoom;
+
+  const removePopup = () => {
+    popup.remove();
+    releaseDoubleClickZoom?.();
+    releaseDoubleClickZoom = null;
+  };
 
   const findWay = (point) => {
     const pointCoordinates = map.unproject(point).toArray();
@@ -411,11 +418,14 @@ export function useRendererWay(map) {
   const onClick = (event) => {
     const way = findWay(event.point);
     if (way == null || event.defaultPrevented) {
-      popup.remove();
+      removePopup();
       return;
     }
 
     event.preventDefault();
+    if (!popup.isOpen()) {
+      releaseDoubleClickZoom = lockDoubleClickZoom(map);
+    }
 
     popup.setHTML(`
       <a href="${satelliteUrl(way.coordinates)}" target="_blank" class="underline">
@@ -447,7 +457,7 @@ export function useRendererWay(map) {
       return;
     }
 
-    popup.remove();
+    removePopup();
     map.removeLayer(id);
   };
 
