@@ -96,22 +96,27 @@ export function decode(buffer) {
   const state = { position: 0 };
 
   let startIndex = 0;
-  const startIndices = Uint32Array.from({ length: readVarint(buffer, state) }, () => {
+  const startIndices = new Uint32Array(readVarint(buffer, state));
+  for (let i = 0; i < startIndices.length; i++) {
     startIndex += readVarint(buffer, state);
-    return startIndex;
-  });
+    startIndices[i] = startIndex;
+  }
 
   const previous = [0, 0];
-  const positions = Float32Array.from({ length: 2 * startIndices.at(-1) }, (_, index) => {
-    previous[index & 0x1] += unzigzag(readVarint(buffer, state));
-    return previous[index & 0x1] / SCALE;
-  });
+  const positions = new Float32Array(2 * startIndices.at(-1));
+  for (let i = 0; i < positions.length; i++) {
+    previous[i & 0x1] += unzigzag(readVarint(buffer, state));
+    positions[i] = previous[i & 0x1] / SCALE;
+  }
 
-  const metadata = Array.from({ length: readVarint(buffer, state) }, () => {
-    return Array.from({ length: readVarint(buffer, state) }, () => {
-      return readString(buffer, state);
-    });
-  });
+  const metadata = new Array(readVarint(buffer, state));
+  for (let i = 0; i < metadata.length; i++) {
+    const strings = new Array(readVarint(buffer, state));
+    for (let j = 0; j < strings.length; j++) {
+      strings[j] = readString(buffer, state);
+    }
+    metadata[i] = strings;
+  }
 
   return { positions, startIndices, metadata };
 }
