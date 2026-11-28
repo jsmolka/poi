@@ -1,6 +1,6 @@
 ﻿import { createProgram } from '@/utils/gl';
 import { satelliteUrl } from '@/utils/googleMaps';
-import { intersects, lockDoubleClickZoom } from '@/utils/mapbox';
+import { intersects, lockTapZoom } from '@/utils/mapbox';
 import { mapRange } from '@/utils/numeric';
 import { lineString } from '@turf/helpers';
 import { nearestPointOnLine } from '@turf/nearest-point-on-line';
@@ -374,12 +374,12 @@ function createLayer(id, name, color, positions, startIndices) {
 export function useRendererWay(map) {
   const layers = new Map();
   const popup = new Popup({ closeButton: false, closeOnClick: false });
-  let releaseDoubleClickZoom;
+  let releaseTapZoom;
 
   const removePopup = () => {
     popup.remove();
-    releaseDoubleClickZoom?.();
-    releaseDoubleClickZoom = null;
+    releaseTapZoom?.();
+    releaseTapZoom = null;
   };
 
   const findWay = (point) => {
@@ -424,7 +424,7 @@ export function useRendererWay(map) {
 
     event.preventDefault();
     if (!popup.isOpen()) {
-      releaseDoubleClickZoom = lockDoubleClickZoom(map);
+      releaseTapZoom = lockTapZoom(map);
     }
 
     popup.setHTML(`

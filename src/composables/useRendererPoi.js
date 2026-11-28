@@ -1,6 +1,6 @@
 import { createProgram } from '@/utils/gl';
 import { satelliteUrl } from '@/utils/googleMaps';
-import { intersects, lockDoubleClickZoom } from '@/utils/mapbox';
+import { intersects, lockTapZoom } from '@/utils/mapbox';
 import { clamp, mapRange } from '@/utils/numeric';
 import Flatbush from 'flatbush';
 import { LngLatBounds, MercatorCoordinate, Popup } from 'mapbox-gl';
@@ -160,12 +160,12 @@ function createLayer(id, name, color, positions, metadata) {
 export function useRendererPoi(map) {
   const layers = new Map();
   const popup = new Popup({ closeButton: false, closeOnClick: false });
-  let releaseDoubleClickZoom;
+  let releaseTapZoom;
 
   const removePopup = () => {
     popup.remove();
-    releaseDoubleClickZoom?.();
-    releaseDoubleClickZoom = null;
+    releaseTapZoom?.();
+    releaseTapZoom = null;
   };
 
   const findPoi = (point) => {
@@ -201,7 +201,7 @@ export function useRendererPoi(map) {
 
     event.preventDefault();
     if (!popup.isOpen()) {
-      releaseDoubleClickZoom = lockDoubleClickZoom(map);
+      releaseTapZoom = lockTapZoom(map);
     }
 
     const [name, openingHours] = poi.layer.metadata[poi.candidate] ?? [];

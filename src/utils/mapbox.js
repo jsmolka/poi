@@ -30,19 +30,15 @@ export function intersects(viewport, bounds) {
 
 const locks = new WeakMap();
 
-export function lockDoubleClickZoom(map) {
+export function lockTapZoom(map) {
   let lock = locks.get(map);
   if (lock == null) {
-    lock = { count: 0, wasEnabled: map.doubleClickZoom.isEnabled(), timeout: null };
+    lock = { count: 0 };
     locks.set(map, lock);
-  }
-
-  if (lock.wasEnabled) {
     map.doubleClickZoom.disable();
+    map.touchZoomRotate.disableTapDragZoom();
   }
 
-  clearTimeout(lock.timeout);
-  lock.timeout = null;
   lock.count++;
 
   let released = false;
@@ -54,19 +50,10 @@ export function lockDoubleClickZoom(map) {
     released = true;
 
     lock.count--;
-    if (lock.count > 0) {
-      return;
-    }
-
-    lock.timeout = setTimeout(() => {
-      if (lock.count > 0) {
-        return;
-      }
-
-      if (lock.wasEnabled) {
-        map.doubleClickZoom.enable();
-      }
+    if (lock.count === 0) {
       locks.delete(map);
-    }, 500);
+      map.doubleClickZoom.enable();
+      map.touchZoomRotate.enableTapDragZoom();
+    }
   };
 }
