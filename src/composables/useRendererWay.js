@@ -80,20 +80,21 @@ function createIndices(projectedPositions, start, end, tolerance) {
 }
 
 function createSegments(positions, projectedPositions, startIndices, zoom) {
+  let segmentCount = 0;
+
   const lines = [];
   const tolerance = 1 / (512 * 2 ** zoom);
   for (let startIndex = 0; startIndex < startIndices.length - 1; startIndex++) {
-    lines.push(
-      createIndices(
-        projectedPositions,
-        startIndices[startIndex],
-        startIndices[startIndex + 1],
-        tolerance,
-      ),
+    const indices = createIndices(
+      projectedPositions,
+      startIndices[startIndex],
+      startIndices[startIndex + 1],
+      tolerance,
     );
+    lines.push(indices);
+    segmentCount += indices.length - 1;
   }
 
-  const segmentCount = lines.reduce((total, indices) => total + indices.length - 1, 0);
   const segmentStartIndices = new Uint32Array(segmentCount);
   const segmentEndIndices = new Uint32Array(segmentCount);
   const index = new Flatbush(segmentCount, 16, Float32Array);
@@ -122,7 +123,7 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
   index.finish();
 
   const chunks = [];
-  const chunk = (segmentIndices, minX, minY, maxX, maxY) => {
+  const createChunks = (segmentIndices, minX, minY, maxX, maxY) => {
     if (segmentIndices.length < MAX_SEGMENTS_PER_CHUNK) {
       chunks.push(segmentIndices);
       return;
@@ -152,7 +153,7 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
       }
 
       if (quadrant.indices.length >= MAX_SEGMENTS_PER_CHUNK) {
-        chunk(quadrant.indices, quadrant.minX, quadrant.minY, quadrant.maxX, quadrant.maxY);
+        createChunks(quadrant.indices, quadrant.minX, quadrant.minY, quadrant.maxX, quadrant.maxY);
       } else {
         chunks.push(quadrant.indices);
       }
@@ -163,31 +164,25 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
   for (let segment = 0; segment < segmentCount; segment++) {
     segmentIndices[segment] = segment;
   }
-  chunk(segmentIndices, index.minX, index.minY, index.maxX, index.maxY);
+  createChunks(segmentIndices, index.minX, index.minY, index.maxX, index.maxY);
 
   return {
     chunks: chunks.map((segmentIndices) => {
-      const segments = new Float32Array(segmentIndices.length * FLOATS_PER_SEGMENT);
       let minX = Infinity;
       let minY = Infinity;
       let maxX = -Infinity;
       let maxY = -Infinity;
+
+      const segments = new Float32Array(segmentIndices.length * FLOATS_PER_SEGMENT);
       for (let chunkSegment = 0; chunkSegment < segmentIndices.length; chunkSegment++) {
         const segment = segmentIndices[chunkSegment];
         const start = segmentStartIndices[segment];
         const end = segmentEndIndices[segment];
+
         const x1 = projectedPositions[2 * start];
         const y1 = projectedPositions[2 * start + 1];
         const x2 = projectedPositions[2 * end];
         const y2 = projectedPositions[2 * end + 1];
-        const lng1 = positions[2 * start];
-        const lat1 = positions[2 * start + 1];
-        const lng2 = positions[2 * end];
-        const lat2 = positions[2 * end + 1];
-        minX = Math.min(minX, lng1, lng2);
-        minY = Math.min(minY, lat1, lat2);
-        maxX = Math.max(maxX, lng1, lng2);
-        maxY = Math.max(maxY, lat1, lat2);
         const highX1 = Math.fround(x1);
         const highY1 = Math.fround(y1);
         const highX2 = Math.fround(x2);
@@ -201,6 +196,15 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
         segments[offset + 5] = highY2;
         segments[offset + 6] = x2 - highX2;
         segments[offset + 7] = y2 - highY2;
+
+        const lng1 = positions[2 * start];
+        const lat1 = positions[2 * start + 1];
+        const lng2 = positions[2 * end];
+        const lat2 = positions[2 * end + 1];
+        minX = Math.min(minX, lng1, lng2);
+        minY = Math.min(minY, lat1, lat2);
+        maxX = Math.max(maxX, lng1, lng2);
+        maxY = Math.max(maxY, lat1, lat2);
       }
       return {
         segments,
@@ -210,7 +214,6 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
     }),
     segmentStartIndices,
     segmentEndIndices,
-    segmentCount,
     index,
     bounds: new LngLatBounds([index.minX, index.minY], [index.maxX, index.maxY]),
     zoom,
@@ -273,8 +276,8 @@ function createLayer(id, name, color, positions, startIndices) {
           chunk.segmentBuffer = gl.createBuffer();
           gl.bindBuffer(gl.ARRAY_BUFFER, chunk.segmentBuffer);
           gl.bufferData(gl.ARRAY_BUFFER, chunk.segments, gl.STATIC_DRAW);
+          gl.bindBuffer(gl.ARRAY_BUFFER, null);
         }
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
       }
 
       this.attributes = {
@@ -348,12 +351,12 @@ function createLayer(id, name, color, positions, startIndices) {
           gl.vertexAttribDivisor(attribute, 1);
         }
         gl.drawArraysInstanced(gl.TRIANGLES, 0, CORNERS_PER_TRIANGLE, chunk.segmentCount);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
       }
 
       for (const attribute of attributes) {
         gl.vertexAttribDivisor(attribute, 0);
       }
-      gl.bindBuffer(gl.ARRAY_BUFFER, null);
     },
 
     onRemove(_, gl) {
