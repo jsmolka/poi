@@ -162,8 +162,9 @@ export function useRendererPoi(map) {
   const popup = new Popup({ closeButton: false, closeOnClick: false });
 
   const findPoi = (point) => {
-    const northEast = map.unproject([point.x - 32, point.y - 32]);
-    const southWest = map.unproject([point.x + 32, point.y + 32]);
+    const pointSize = getPointSize(map.getZoom());
+    const northEast = map.unproject([point.x - pointSize / 2, point.y - pointSize / 2]);
+    const southWest = map.unproject([point.x + pointSize / 2, point.y + pointSize / 2]);
 
     let nearest = null;
     for (const layer of layers.values()) {
@@ -181,7 +182,7 @@ export function useRendererPoi(map) {
         }
       }
     }
-    return nearest && nearest.distance <= getPointSize(map.getZoom()) / 2 ? nearest : null;
+    return nearest && nearest.distance <= pointSize / 2 ? nearest : null;
   };
 
   const onClick = (event) => {
