@@ -381,14 +381,14 @@ export function useRendererWay(map) {
     let nearest = null;
     for (const layer of layers.values()) {
       const lod = layer.lod;
-      for (const index of lod.index.search(
+      for (const candidate of lod.index.search(
         northEast.lng,
         southWest.lat,
         southWest.lng,
         northEast.lat,
       )) {
-        const start = lod.segmentStartIndices[index];
-        const end = lod.segmentEndIndices[index];
+        const start = lod.segmentStartIndices[candidate];
+        const end = lod.segmentEndIndices[candidate];
         const segment = lineString([
           [layer.positions[2 * start], layer.positions[2 * start + 1]],
           [layer.positions[2 * end], layer.positions[2 * end + 1]],
@@ -398,7 +398,7 @@ export function useRendererWay(map) {
         const screenPoint = map.project(coordinates);
         const distance = Math.hypot(point.x - screenPoint.x, point.y - screenPoint.y);
         if (nearest == null || distance < nearest.distance) {
-          nearest = { index, coordinates, distance, layer };
+          nearest = { candidate, coordinates, distance, layer };
         }
       }
     }

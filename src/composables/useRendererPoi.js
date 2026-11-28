@@ -168,17 +168,17 @@ export function useRendererPoi(map) {
 
     let nearest = null;
     for (const layer of layers.values()) {
-      for (const index of layer.index.search(
+      for (const candidate of layer.index.search(
         northEast.lng,
         southWest.lat,
         southWest.lng,
         northEast.lat,
       )) {
-        const coordinates = [layer.positions[2 * index], layer.positions[2 * index + 1]];
+        const coordinates = [layer.positions[2 * candidate], layer.positions[2 * candidate + 1]];
         const screenPoint = map.project(coordinates);
         const distance = Math.hypot(screenPoint.x - point.x, screenPoint.y - point.y);
         if (nearest == null || distance < nearest.distance) {
-          nearest = { index, coordinates, distance, layer };
+          nearest = { candidate, coordinates, distance, layer };
         }
       }
     }
@@ -194,7 +194,7 @@ export function useRendererPoi(map) {
 
     event.preventDefault();
 
-    const [name, openingHours] = poi.layer.metadata[poi.index] ?? [];
+    const [name, openingHours] = poi.layer.metadata[poi.candidate] ?? [];
     popup.setHTML(`
       <a href="${satelliteUrl(poi.coordinates)}" target="_blank" class="underline">
         ${name || poi.layer.name}
