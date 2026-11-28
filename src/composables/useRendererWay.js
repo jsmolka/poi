@@ -9,7 +9,7 @@ import { LngLatBounds, MercatorCoordinate, Popup } from 'mapbox-gl';
 import simplify from 'simplify-js';
 
 const FLOATS_PER_SEGMENT = 8;
-const MAX_SEGMENTS_PER_CHUNK = 1_000_000;
+const MAX_SEGMENTS_PER_CHUNK = 250_000;
 const CORNERS = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
 const CORNERS_PER_TRIANGLE = CORNERS.length / 2;
 
@@ -122,57 +122,48 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
   index.finish();
 
   const chunks = [];
-  const markers = new Uint32Array(segmentCount);
-  let markerId = 0;
-  const splitIntoChunks = (segmentIndices, minX, minY, maxX, maxY) => {
+  const chunk = (segmentIndices, minX, minY, maxX, maxY) => {
     if (segmentIndices.length < MAX_SEGMENTS_PER_CHUNK) {
       chunks.push(segmentIndices);
       return;
     }
 
-    const segmentMarker = ++markerId;
-    for (const segment of segmentIndices) {
-      markers[segment] = segmentMarker;
-    }
-
     const midX = (minX + maxX) / 2;
     const midY = (minY + maxY) / 2;
     const quadrants = [
-      [minX, minY, midX, midY, false, false],
-      [midX, minY, maxX, midY, true, false],
-      [minX, midY, midX, maxY, false, true],
-      [midX, midY, maxX, maxY, true, true],
+      { indices: [], minX: minX, minY: minY, maxX: midX, maxY: midY },
+      { indices: [], minX: midX, minY: minY, maxX: maxX, maxY: midY },
+      { indices: [], minX: minX, minY: midY, maxX: midX, maxY: maxY },
+      { indices: [], minX: midX, minY: midY, maxX: maxX, maxY: maxY },
     ];
-    for (const [minX, minY, maxX, maxY, east, north] of quadrants) {
-      const quadrantIndices = [];
-      for (const candidate of index.search(minX, minY, maxX, maxY)) {
-        if (markers[candidate] !== segmentMarker) {
-          continue;
-        }
-        const start = segmentStartIndices[candidate];
-        const end = segmentEndIndices[candidate];
-        const centerX = (positions[2 * start] + positions[2 * end]) / 2;
-        const centerY = (positions[2 * start + 1] + positions[2 * end + 1]) / 2;
-        if (centerX >= midX === east && centerY >= midY === north) {
-          quadrantIndices.push(candidate);
-        }
+
+    for (const segment of segmentIndices) {
+      const start = segmentStartIndices[segment];
+      const end = segmentEndIndices[segment];
+      const centerX = (positions[2 * start] + positions[2 * end]) / 2;
+      const centerY = (positions[2 * start + 1] + positions[2 * end + 1]) / 2;
+      const quadrantIndex = (centerY >= midY ? 2 : 0) + (centerX >= midX ? 1 : 0);
+      quadrants[quadrantIndex].indices.push(segment);
+    }
+
+    for (const quadrant of quadrants) {
+      if (quadrant.indices.length === 0) {
+        continue;
       }
 
-      if (quadrantIndices.length >= MAX_SEGMENTS_PER_CHUNK) {
-        splitIntoChunks(quadrantIndices, minX, minY, maxX, maxY);
-      } else if (quadrantIndices.length > 0) {
-        chunks.push(quadrantIndices);
+      if (quadrant.indices.length >= MAX_SEGMENTS_PER_CHUNK) {
+        chunk(quadrant.indices, quadrant.minX, quadrant.minY, quadrant.maxX, quadrant.maxY);
+      } else {
+        chunks.push(quadrant.indices);
       }
     }
   };
 
-  splitIntoChunks(
-    index.search(index.minX, index.minY, index.maxX, index.maxY),
-    index.minX,
-    index.minY,
-    index.maxX,
-    index.maxY,
-  );
+  const segmentIndices = new Uint32Array(segmentCount);
+  for (let segment = 0; segment < segmentCount; segment++) {
+    segmentIndices[segment] = segment;
+  }
+  chunk(segmentIndices, index.minX, index.minY, index.maxX, index.maxY);
 
   return {
     chunks: chunks.map((segmentIndices) => {
@@ -221,6 +212,7 @@ function createSegments(positions, projectedPositions, startIndices, zoom) {
     segmentEndIndices,
     segmentCount,
     index,
+    bounds: new LngLatBounds([index.minX, index.minY], [index.maxX, index.maxY]),
     zoom,
   };
 }
@@ -242,11 +234,6 @@ function createLayer(id, name, color, positions, startIndices) {
     createSegments(positions, projectedPositions, startIndices, zoom),
   );
 
-  const bounds = new LngLatBounds(
-    [lods.at(-1).index.minX, lods.at(-1).index.minY],
-    [lods.at(-1).index.maxX, lods.at(-1).index.maxY],
-  );
-
   return {
     id,
     type: 'custom',
@@ -254,7 +241,6 @@ function createLayer(id, name, color, positions, startIndices) {
 
     name,
     lods,
-    bounds,
     positions,
     startIndices,
 
@@ -312,7 +298,7 @@ function createLayer(id, name, color, positions, startIndices) {
 
     render(gl, matrix) {
       const lod = this.lod;
-      if (!intersects(this.map.getBounds(), this.bounds)) {
+      if (!intersects(this.map.getBounds(), this.lod.bounds)) {
         return;
       }
 
