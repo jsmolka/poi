@@ -189,7 +189,7 @@ function createLayer(id, name, color, positions, startIndices) {
           return lod;
         }
       }
-      return this.lods[0];
+      return this.lods.at(-1);
     },
 
     onAdd(map, gl) {
