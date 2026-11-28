@@ -377,9 +377,9 @@ export function useRendererWay(map) {
 
   const findWay = (point) => {
     const pointCoordinates = map.unproject(point).toArray();
-    const lineWidth = getLineWidth(map.getZoom());
-    const northEast = map.unproject([point.x - lineWidth / 2, point.y - lineWidth / 2]);
-    const southWest = map.unproject([point.x + lineWidth / 2, point.y + lineWidth / 2]);
+    const catchDist = 2 * getLineWidth(map.getZoom());
+    const northEast = map.unproject([point.x - catchDist, point.y - catchDist]);
+    const southWest = map.unproject([point.x + catchDist, point.y + catchDist]);
 
     let nearest = null;
     for (const layer of layers.values()) {
@@ -405,7 +405,7 @@ export function useRendererWay(map) {
         }
       }
     }
-    return nearest && nearest.distance <= lineWidth / 2 ? nearest : null;
+    return nearest && nearest.distance <= catchDist ? nearest : null;
   };
 
   const onClick = (event) => {
