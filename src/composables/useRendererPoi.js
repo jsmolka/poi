@@ -1,6 +1,6 @@
 import { createProgram } from '@/utils/gl';
 import { satelliteUrl } from '@/utils/googleMaps';
-import { intersects } from '@/utils/mapbox';
+import { intersects, lockDoubleClickZoom } from '@/utils/mapbox';
 import { clamp, mapRange } from '@/utils/numeric';
 import Flatbush from 'flatbush';
 import { LngLatBounds, MercatorCoordinate, Popup } from 'mapbox-gl';
@@ -161,6 +161,13 @@ export function useRendererPoi(map) {
   const layers = new Map();
   const popup = new Popup({ closeButton: false, closeOnClick: false });
 
+  let releaseDoubleClickZoom;
+  const removePopup = () => {
+    popup.remove();
+    releaseDoubleClickZoom?.();
+    releaseDoubleClickZoom = null;
+  };
+
   const findPoi = (point) => {
     const catchDist = getPointSize(map.getZoom());
     const northEast = map.unproject([point.x - catchDist, point.y - catchDist]);
@@ -188,11 +195,14 @@ export function useRendererPoi(map) {
   const onClick = (event) => {
     const poi = findPoi(event.point);
     if (poi == null || event.defaultPrevented) {
-      popup.remove();
+      removePopup();
       return;
     }
 
     event.preventDefault();
+    if (!popup.isOpen()) {
+      releaseDoubleClickZoom = lockDoubleClickZoom(map);
+    }
 
     const [name, openingHours] = poi.layer.metadata[poi.candidate] ?? [];
     popup.setHTML(`
@@ -226,7 +236,7 @@ export function useRendererPoi(map) {
       return;
     }
 
-    popup.remove();
+    removePopup();
     map.removeLayer(id);
   };
 

@@ -27,3 +27,32 @@ export function intersects(viewport, bounds) {
     boundsWest + nearestWorldOffset <= viewportEast
   );
 }
+
+const locks = new WeakMap();
+
+export function lockDoubleClickZoom(map) {
+  let lock = locks.get(map);
+  if (lock == null) {
+    lock = { count: 0, wasEnabled: map.doubleClickZoom.isEnabled() };
+    locks.set(map, lock);
+    map.doubleClickZoom.disable();
+  }
+
+  lock.count++;
+
+  let released = false;
+  return () => {
+    if (released) {
+      return;
+    }
+
+    released = true;
+    lock.count--;
+    if (lock.count === 0) {
+      if (lock.wasEnabled) {
+        map.doubleClickZoom.enable();
+      }
+      locks.delete(map);
+    }
+  };
+}
