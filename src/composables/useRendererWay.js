@@ -301,7 +301,7 @@ function createLayer(id, name, color, positions, startIndices) {
 
     render(gl, matrix) {
       const lod = this.lod;
-      if (!intersects(this.map.getBounds(), this.lod.bounds)) {
+      if (!intersects(this.map.getBounds(), lod.bounds)) {
         return;
       }
 
